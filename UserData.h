@@ -3,6 +3,7 @@
 #define USERDATA_H
 
 #define HASHMAP_SIZE 3072
+#define MAX_LENGTH 20
 #include <stdio.h>
 
 typedef struct {

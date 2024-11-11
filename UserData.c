@@ -9,7 +9,7 @@
 
 typedef struct account {
     char username[20];
-    exercise_data_t exercise_data;
+    exercise_data_t exercise_user_data;
 } account;
 
 static struct account accounts[10];
@@ -30,7 +30,7 @@ void read_file(struct account accounts[]) {
     rewind(file);  // Line I added
     // read each line and put into accounts
     while(j!=i-1) {
-        fscanf(file, "%s %s", accounts[j].id, accounts[j].password);
+        fscanf(file, "%s %s", accounts[j].username, accounts[j].password);
         ++j;
     }
 
@@ -130,11 +130,39 @@ int userVerify(char* usernameInput, HashMap* map) {
     return 0;
 }
 
-int
+void create_new_user(FILE* file, char username[16]) {
+    int user_count = 0;
 
-int main()
-{
+    fseek(file, 0, SEEK_SET);
+
+    fread(&user_count, sizeof(int), 1, file);
+
+    //for(int i = 0; i <)
+
+    fseek(file, 0, SEEK_END);
+
+    fwrite(username, 16, 1, file);
+
+
+}
+
+int main() {
+    char usernameInput[MAX_LENGTH];
+
     read_file(accounts);
+
+    // Create username hashmap
+    HashMap* map = createHashMap();
+    char tempUsername[128];
+    int m = 0;
+    while (fscanf(accountsFILE, "%s", tempUsername) != EOF) {
+        set(map, tempUsername, m);
+        m++;
+    }
+    printf("Loaded %d usernames into the hashmap\n", m);
+
+    userVerify(usernameInput, map);
+    create_new_user(accountsFILE, usernameInput)
     // check if it works or not
     printf("%s, %s,\n%s, %s,\n%s, %s\n",
         accounts[0].id, accounts[0].password,
@@ -142,5 +170,3 @@ int main()
         accounts[2].id, accounts[2].password);
     return 0;
 }
-
-const char* USER_DATA_HEADER_PATH = "./UserData.dat";
