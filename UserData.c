@@ -1,9 +1,6 @@
 #include "UserData.h"
 #include "exercises.h"
 
-
-
-
 /*
 static struct account accounts[10];
 
@@ -127,23 +124,21 @@ int userVerify(char* usernameInput, HashMap* map) {
 void create_new_user(FILE* accountsFILE, char username[MAX_LENGTH]) {
     int user_count = 0;
 
-    fseek(file, 0, SEEK_SET);
+    fseek(accountsFILE, 0, SEEK_SET);
 
-    fread(&user_count, sizeof(int), 1, file);
+    fread(&user_count, sizeof(int), 1, accountsFILE);
 
     //for(int i = 0; i <)
 
-    fseek(file, 0, SEEK_END);
+    fseek(accountsFILE, 0, SEEK_END);
 
-    fwrite(username, 16, 1, file);
+    fwrite(username, 16, 1, accountsFILE);
 
 
 }
 
 int main() {
     char usernameInput[MAX_LENGTH];
-
-    //read_file(accounts);
 
     // Create username hashmap
     HashMap* map = createHashMap();
