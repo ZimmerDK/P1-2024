@@ -1,11 +1,9 @@
-//
-// Created by magnu on 11/11/2024.
-//
 
 #ifndef USERDATA_H
 #define USERDATA_H
 
 #define HASHMAP_SIZE 3072
+#include <stdio.h>
 
 typedef struct {
     char* key;
@@ -16,5 +14,10 @@ typedef struct {
     HashMapEntry* entries;
     int size;
 } HashMap;
+
+const char* USER_DATA_FILE = "./userfiles/accounts.dat";
+
+FILE* accountsFILE = fopen(USER_DATA_FILE, "r+");
+
 
 #endif //USERDATA_H

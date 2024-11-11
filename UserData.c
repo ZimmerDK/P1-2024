@@ -120,6 +120,18 @@ int get(HashMap* map, char* key) {
     }
 }
 
+int userVerify(char* usernameInput, HashMap* map) {
+    int index = get(map, usernameInput);
+    if (index == -1) {
+        printf("Invalid word.\n");
+    } else {
+        return 1;
+    }
+    return 0;
+}
+
+int
+
 int main()
 {
     read_file(accounts);
