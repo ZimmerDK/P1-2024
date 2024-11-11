@@ -12,7 +12,9 @@ endif()
 project ("P1")
 
 # Add source to this project's executable.
-add_executable (P1 "P1.c" "P1.h" "UserLogin.c")
+add_executable (P1 "P1.c" "P1.h" "UserLogin.c"
+        exercises.c
+        exercises.h)
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
   set_property(TARGET P1 PROPERTY CXX_STANDARD 20)
