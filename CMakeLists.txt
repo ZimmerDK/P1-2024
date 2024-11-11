@@ -12,7 +12,7 @@ endif()
 project ("P1")
 
 # Add source to this project's executable.
-add_executable (P1 "P1.c" "P1.h" "UserLogin.c"
+add_executable (P1 "P1.c" "P1.h" "UserLogin.c" "UserData.c" "UserData.h"
         exercises.c
         exercises.h
         UserData.c
