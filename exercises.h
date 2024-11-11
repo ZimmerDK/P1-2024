@@ -2,8 +2,7 @@
 #define EXERCISES_H
 #include <stdio.h>
 
-#endif //EXERCISES_H
-
+//
 typedef enum exercise_type_e {
     COMPOUND, SECONDARY, ISOLATION
 } exercise_type_e;
@@ -27,10 +26,10 @@ struct exercise_data_t {
     exercise_t* exercise;
  };
 
+extern const exercise_t exercise_c[3];
+
 // Exercises
-const exercise_t exercise_c[3] = {
-    {"Bench Press", 2.5, 8, 12, COMPOUND, 9.0, NULL},
-    {"Squat", 2.5, 8, 12, COMPOUND, 9.0, NULL},
-    {"Deadlift", 2.5, 8, 12, COMPOUND, 9.0, NULL},
-};
+
+#endif
+
 
