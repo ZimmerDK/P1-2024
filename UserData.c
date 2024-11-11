@@ -1,44 +1,4 @@
 #include "UserData.h"
-#include "exercises.h"
-
-/*
-static struct account accounts[10];
-
-void read_file(struct account accounts[]) {
-    FILE *file;
-    int found = 0;
-    int i=0;   // count how many lines are in the file
-    int c;
-    file=fopen("UserData.txt", "r");
-    while(!feof(file)) {
-        c=fgetc(file);
-        if(c=='\n')
-            ++i;
-    }
-
-    int j=0;
-    rewind(file);  // Line I added
-    // read each line and put into accounts
-    while(j!=i-1) {
-        fscanf(file, "%s %s", accounts[j].username, accounts[j].password);
-        ++j;
-    }
-
-    i = 0;
-    while(!feof(file) && !found)
-    {
-        ++i;
-        fscanf(file, "%s", username);
-        if (strcmp(username, "") == 0)
-        {
-            printf("Record found (#%d): %s\n", i, username);
-            found = 1;
-        }
-    }
-    if (!found)
-        printf("Record could not be found");
-}
-*/
 
 /**
  * A simple hashmap implementation using linear probing for collision resolution.
