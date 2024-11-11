@@ -8,6 +8,7 @@
 #include<malloc.h>
 #include<string.h>
 #include<stdlib.h>
+#include<ctype.h>
 
 #define HASHMAP_SIZE 3072
 #define MAX_LENGTH 20
@@ -29,7 +30,6 @@ typedef struct {
 
 const char* USER_DATA_FILE = "./userfiles/accounts.dat";
 
-FILE* accountsFILE = fopen(USER_DATA_FILE, "r+");
 
 
 #endif //USERDATA_H
