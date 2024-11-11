@@ -2,9 +2,20 @@
 #ifndef USERDATA_H
 #define USERDATA_H
 
+#include "exercises.h"
+#include<stdio.h>
+#include<math.h>
+#include<malloc.h>
+#include<string.h>
+#include<stdlib.h>
+
 #define HASHMAP_SIZE 3072
 #define MAX_LENGTH 20
-#include <stdio.h>
+
+typedef struct account {
+    char username[20];
+    exercise_data_t exercise_user_data;
+} account;
 
 typedef struct {
     char* key;

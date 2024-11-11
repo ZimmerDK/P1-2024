@@ -1,17 +1,10 @@
 #include "UserData.h"
 #include "exercises.h"
 
-#include<stdio.h>
-#include<math.h>
-#include<malloc.h>
-#include<string.h>
-#include<stdlib.h>
 
-typedef struct account {
-    char username[20];
-    exercise_data_t exercise_user_data;
-} account;
 
+
+/*
 static struct account accounts[10];
 
 void read_file(struct account accounts[]) {
@@ -48,6 +41,7 @@ void read_file(struct account accounts[]) {
     if (!found)
         printf("Record could not be found");
 }
+*/
 
 HashMap* createHashMap() {
     HashMap* map = malloc(sizeof(HashMap));
@@ -130,7 +124,7 @@ int userVerify(char* usernameInput, HashMap* map) {
     return 0;
 }
 
-void create_new_user(FILE* file, char username[16]) {
+void create_new_user(FILE* accountsFILE, char username[MAX_LENGTH]) {
     int user_count = 0;
 
     fseek(file, 0, SEEK_SET);
@@ -149,7 +143,7 @@ void create_new_user(FILE* file, char username[16]) {
 int main() {
     char usernameInput[MAX_LENGTH];
 
-    read_file(accounts);
+    //read_file(accounts);
 
     // Create username hashmap
     HashMap* map = createHashMap();
@@ -159,14 +153,19 @@ int main() {
         set(map, tempUsername, m);
         m++;
     }
-    printf("Loaded %d usernames into the hashmap\n", m);
+    printf("\nLoaded %d usernames into the hashmap\n", m);
+
+    printf("\nLogin or signup?");
+    printf("\nType 'login' if you already have an account.");
+    printf("\nType 'signup' if you want to create a new account.");
 
     userVerify(usernameInput, map);
-    create_new_user(accountsFILE, usernameInput)
-    // check if it works or not
+    create_new_user(accountsFILE, usernameInput);
+    /*// check if it works or not
     printf("%s, %s,\n%s, %s,\n%s, %s\n",
         accounts[0].id, accounts[0].password,
         accounts[1].id, accounts[1].password,
         accounts[2].id, accounts[2].password);
+        */
     return 0;
 }
