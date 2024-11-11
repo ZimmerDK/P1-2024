@@ -48,6 +48,78 @@ void read_file(struct account accounts[]) {
     if (!found)
         printf("Record could not be found");
 }
+
+HashMap* createHashMap() {
+    HashMap* map = malloc(sizeof(HashMap));
+    map->entries = calloc(HASHMAP_SIZE, sizeof(HashMapEntry));
+    map->size = 0;
+    return map;
+}
+
+unsigned int hash(char* key) {
+    unsigned int hash = 5381;
+    int c;
+
+    while ((c = *key++)) {
+        hash = ((hash << 5) + hash) + c;
+    }
+
+    return hash % HASHMAP_SIZE;
+}
+
+void set(HashMap* map, char* key, int value) {
+    unsigned int index = hash(key);
+
+    if (map->entries[index].key == NULL) {
+        map->entries[index].key = strdup(key);
+        map->entries[index].value = value;
+        map->size++;
+    }
+
+    else if (strcmp(map->entries[index].key, key) == 0) {
+        map->entries[index].value = value;
+    }
+
+    else {
+        for (int i = (index + 1) % HASHMAP_SIZE; i != index; i = (i + 1) % HASHMAP_SIZE) {
+            if (map->entries[i].key == NULL) {
+                map->entries[i].key = strdup(key);
+                map->entries[i].value = value;
+                map->size++;
+                return;
+            }
+            else if (strcmp(map->entries[i].key, key) == 0) {
+                map->entries[i].value = value;
+                return;
+            }
+        }
+        // If no available slot is found, the hashmap is full
+        printf("Error: Hashmap is full\n");
+    }
+}
+
+int get(HashMap* map, char* key) {
+    unsigned int index = hash(key);
+
+    if (map->entries[index].key == NULL) {
+        return -1;
+    }
+    else if (strcmp(map->entries[index].key, key) == 0) {
+        return map->entries[index].value;
+    }
+    else {
+        for (int i = (index + 1) % HASHMAP_SIZE; i != index; i = (i + 1) % HASHMAP_SIZE) {
+            if (map->entries[i].key == NULL) {
+                return -1;
+            }
+            else if (strcmp(map->entries[i].key, key) == 0) {
+                return map->entries[i].value;
+            }
+        }
+        return -1;
+    }
+}
+
 int main()
 {
     read_file(accounts);
