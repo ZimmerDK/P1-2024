@@ -1,4 +1,3 @@
-
 #ifndef EXERCISES_H
 #define EXERCISES_H
 #include <stdio.h>
@@ -30,8 +29,8 @@ struct exercise_data_t {
 
 // Exercises
 const exercise_t exercise_c[3] = {
-    {" Benchpress", 2.5, 8, 12, COMPOUND, 9.0, NULL},
-    {" Squat", 2.5, 8, 12, COMPOUND, 9.0, NULL},
-    {" Deadlift", 2.5, 8, 12, COMPOUND, 9.0, NULL},
+    {"Bench Press", 2.5, 8, 12, COMPOUND, 9.0, NULL},
+    {"Squat", 2.5, 8, 12, COMPOUND, 9.0, NULL},
+    {"Deadlift", 2.5, 8, 12, COMPOUND, 9.0, NULL},
 };
 
