@@ -121,11 +121,16 @@ int userVerify(char* usernameInput, HashMap* map) {
     return 0;
 }
 
-void create_new_user(FILE* accountsFILE, char username[MAX_LENGTH], HashMap* map) {
+void create_new_user(FILE* accountsFILE, char username[MAX_LENGTH]) {
     int user_count = 0;
 
+    fseek(accountsFILE, 0, SEEK_SET);
+
+    fread(&user_count, sizeof(int), 1, accountsFILE);
 
     //for(int i = 0; i <)
+
+    fseek(accountsFILE, 0, SEEK_END);
 
     fwrite(username, 16, 1, accountsFILE);
 
@@ -133,7 +138,7 @@ void create_new_user(FILE* accountsFILE, char username[MAX_LENGTH], HashMap* map
 }
 
 int main() {
-    char input[MAX_LENGTH];
+    char usernameInput[MAX_LENGTH];
 
     // Create username hashmap
     HashMap* map = createHashMap();
@@ -149,8 +154,8 @@ int main() {
     printf("\nType 'login' if you already have an account.");
     printf("\nType 'signup' if you want to create a new account.");
 
-    userVerify(input, map);
-    create_new_user(accountsFILE, input, map);
+    userVerify(usernameInput, map);
+    create_new_user(accountsFILE, usernameInput);
     /*// check if it works or not
     printf("%s, %s,\n%s, %s,\n%s, %s\n",
         accounts[0].id, accounts[0].password,
