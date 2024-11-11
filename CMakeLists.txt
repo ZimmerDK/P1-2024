@@ -15,7 +15,9 @@ project ("P1")
 add_executable (P1 "P1.c" "P1.h" "UserLogin.c"
         exercises.c
         exercises.h
-        UserData.c)
+        UserData.c
+        UserData.h)
+
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
   set_property(TARGET P1 PROPERTY CXX_STANDARD 20)
