@@ -3,7 +3,7 @@
 #include <stdio.h>
 
 #endif //EXERCISES_H
-//
+
 typedef enum exercise_type_e {
     COMPOUND, SECONDARY, ISOLATION
 } exercise_type_e;
