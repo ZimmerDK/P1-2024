@@ -197,11 +197,31 @@ int main() {
 
     // Create username hashmap
     HashMap* map = createHashMap();
+    if (!map) {
+        printf("Error: Could not create hashmap\n");
+        fclose(accountsFILE);
+        return 1;
+    }
+
     char tempUsername[MAX_LENGTH];
     int m = 0;
 
-    // Read fixed-length records from accounts file
-    while (fread(tempUsername, MAX_LENGTH, 1, accountsFILE) == 1) {
+    // Read line by line instead of fixed-length records
+    while (fgets(tempUsername, MAX_LENGTH, accountsFILE)) {
+        // Remove newline character if present
+        size_t len = strlen(tempUsername);
+        if (len > 0 && (tempUsername[len-1] == '\n' || tempUsername[len-1] == '\r')) {
+            tempUsername[len-1] = '\0';
+        }
+        // Remove second character of CRLF if present
+        len = strlen(tempUsername);
+        if (len > 0 && (tempUsername[len-1] == '\n' || tempUsername[len-1] == '\r')) {
+            tempUsername[len-1] = '\0';
+        }
+
+        // Debug output
+        printf("Read username: '%s'\n", tempUsername);
+
         // Store file position as value in hashmap
         set(map, tempUsername, m * MAX_LENGTH);
         m++;
@@ -262,12 +282,35 @@ int main() {
             }if (userVerify(input, map)) {
                 printf("\nUsername already exists!\n");
             } else {
-                userFILE = create_new_user(accountsFILE, input, map);
+                // Reopen file in append mode for writing
+                fclose(accountsFILE);
+                accountsFILE = fopen(USER_DATA_FILE, "a");
+                if (!accountsFILE) {
+                    printf("Error reopening accounts file for writing\n");
+                    break;
+                }
+
+                // Write the new username with a newline
+                fprintf(accountsFILE, "%s\n", input);
+                fflush(accountsFILE);
+
+                // Create user's data file
+                char filename[MAX_LENGTH + 4];
+                snprintf(filename, sizeof(filename), "%s.dat", input);
+                userFILE = fopen(filename, "w+");
+
                 if (userFILE) {
+                    // Add to hashmap
+                    set(map, input, m * MAX_LENGTH);
+                    m++;
                     printf("\nAccount created successfully!\n");
                 } else {
                     printf("\nError creating account!\n");
                 }
+
+                // Reopen in read mode for continued operation
+                fclose(accountsFILE);
+                accountsFILE = fopen(USER_DATA_FILE, "r");
             }
         }
         else if (strcmp(input, "exit") == 0) {

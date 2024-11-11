@@ -9,12 +9,6 @@
 #include<stdlib.h>
 #include<ctype.h>
 
-#ifdef _WIN32
-    #include <direct.h>
-#else
-    #include <sys/stat.h>
-#endif
-
 // #define HASHMAP_SIZE 3072
 /** @brief Initial capacity of the hashmap */
 #define INITIAL_SIZE 16
