@@ -74,13 +74,19 @@ struct workout_result_t calculate_workout(struct set_data_t* data, exercise_data
 	}
 	else {
 		if (maxScore != 10 && collectedScore < (estIntensity - 0.5)) {
-			if (exercise_data->reps == maxRep) {
+			if (maxScore <= estIntensity / 2) {
 				workoutResult.weightChange = weight_step;
-				workoutResult.repChange = -repDiff;
+				workoutResult.repChange = -(exercise_data->reps - minRep);
+			} else {
+				if (exercise_data->reps == maxRep) {
+					workoutResult.weightChange = weight_step;
+					workoutResult.repChange = -repDiff;
+				}
+				else if (exercise_data->reps < maxRep) {
+					workoutResult.repChange = 1;
+				}
 			}
-			else if (exercise_data->reps < maxRep) {
-				workoutResult.repChange = 1;
-			}
+
 		}
 	}
 
@@ -114,11 +120,11 @@ void calibrate_workout_routine(struct exercise_data_t* calibration_data) {
 int main(void) {
 
 	struct set_data_t* setData = malloc(sizeof(struct set_data_t) * 3);
-	exercise_data_t workoutData = { 12, 40.0, &exercise_c[0]};
+	exercise_data_t workoutData = { 10, 40.0, &exercise_c[0]};
 
-	setData[0].intensity = 6;
-	setData[1].intensity = 7;
-	setData[2].intensity = 9;
+	setData[0].intensity = 1;
+	setData[1].intensity = 2;
+	setData[2].intensity = 3;
 
 	struct workout_result_t result = calculate_workout(setData, &workoutData, 3);
 
