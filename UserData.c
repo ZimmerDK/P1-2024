@@ -122,6 +122,7 @@ int userVerify(char* usernameInput, HashMap* map) {
 }
 
 void create_new_user(FILE* accountsFILE, char username[MAX_LENGTH]) {
+    // Adds new user to accounts.dat file
     int user_count = 0;
 
     fseek(accountsFILE, 0, SEEK_SET);
@@ -133,6 +134,9 @@ void create_new_user(FILE* accountsFILE, char username[MAX_LENGTH]) {
     fseek(accountsFILE, 0, SEEK_END);
 
     fwrite(username, 16, 1, accountsFILE);
+
+
+    // Creates new user file in ./userfiles
 
 
 }
