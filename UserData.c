@@ -226,51 +226,42 @@ int main() {
     for(int n = 0; input[n]; n++) {
         input[n] = tolower(input[n]);
     }
-    switch (input) {
-        case 'login': {
-            printf("\nEnter your username:");
-            scanf("%s", input);
-            for(int n = 0; input[n]; n++) {
-                input[n] = tolower(input[n]);
-            }
-            if (userVerify(input, map) == 1) {
-                printf("\nLogged in as %s!", input);
-                strcat(input, ".dat");
-                FILE* userFILE = fopen(input, "rb+");
-            } else {
-                printf("\nUsername does not exist!");
-                goto login;
-            }
-            break;
+    if (strcmp(input, "login") == 0) {
+        printf("\nEnter your username:");
+        scanf("%s", input);
+        for(int n = 0; input[n]; n++) {
+            input[n] = tolower(input[n]);
         }
-        case 'signup': {
-            printf("\nEnter your desired username (Max 16 characters):");
-            scanf("%s", input);
-            for(int n = 0; input[n]; n++) {
-                input[n] = tolower(input[n]);
-            }
-            if (strlen(input) <= 16) {
-                if (userVerify(input, map) == 0) {
-                    FILE* userFILE = create_new_user(accountsFILE, input, map);
-                    goto login;
-                } else {
-                    printf("\nUsername already exists!");
-                    goto login;
-                }
-            }
-            printf("\nError in signup case!\n");
-            break;
-        }
-        case 'exit': {
-            exit(EXIT_SUCCESS);
-        }
-        default: {
-            printf("\nInvalid input!\n");
+        if (userVerify(input, map) == 1) {
+            printf("\nLogged in as %s!", input);
+            strcat(input, ".dat");
+            FILE* userFILE = fopen(input, "rb+");
+        } else {
+            printf("\nUsername does not exist!");
             goto login;
         }
+    } else if (strcmp(input, "signup") == 0) {
+        printf("\nEnter your desired username (Max 16 characters):");
+        scanf("%s", input);
+        for(int n = 0; input[n]; n++) {
+            input[n] = tolower(input[n]);
+        }
+        if (strlen(input) <= 16) {
+            if (userVerify(input, map) == 0) {
+                FILE* userFILE = create_new_user(accountsFILE, input, map);
+                goto login;
+            } else {
+                printf("\nUsername already exists!");
+                goto login;
+            }
+        }
+        printf("\nError in signup case!\n");
+    } else if (strcmp(input, "exit") == 0) {
+        exit(EXIT_SUCCESS);
+    } else {
+        printf("\nInvalid input!\n");
+        goto login;
     }
-
-
 
     // These fclose and free need to be in the end of the program
     //fclose(userFILE);
