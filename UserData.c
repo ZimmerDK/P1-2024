@@ -1,4 +1,5 @@
 #include "UserData.h"
+#include <sys/stat.h>
 
 /**@brief Creates and initializes a new hashmap
  * @return HashMap* Pointer to the newly created hashmap, or NULL if allocation fails */
@@ -159,6 +160,20 @@ int userVerify(char* usernameInput, HashMap* map) {
     return (value != -1); // Return 1 if username exists, 0 if it does not
 }
 
+/**@brief Creates necessary directories for user files if they don't exist
+ * @return int Returns 1 on success, 0 on failure */
+static int ensure_user_directory() {
+    struct stat st = {0};
+    if (stat(USER_FILES_DIR, &st) == -1) {
+        #ifdef _WIN32
+        return mkdir(USER_FILES_DIR) == 0;
+        #else
+        return mkdir(USER_FILES_DIR, 0700) == 0;
+        #endif
+    }
+    return 1;
+}
+
 /**@brief Creates a new user and adds them to the system
  *
  * @param accountsFILE File pointer to the accounts database
@@ -166,6 +181,12 @@ int userVerify(char* usernameInput, HashMap* map) {
  * @param map Hashmap containing existing usernames
  * @return FILE* Pointer to the newly created user file, NULL if creation fails */
 FILE* create_new_user(FILE* accountsFILE, char username[MAX_LENGTH], HashMap* map) {
+    // Ensure user directory exists
+    if (!ensure_user_directory()) {
+        printf("Error: Could not create user directory\n");
+        return NULL;
+    }
+
     // Get current position for the new user's index
     long position = ftell(accountsFILE);
 
@@ -176,17 +197,26 @@ FILE* create_new_user(FILE* accountsFILE, char username[MAX_LENGTH], HashMap* ma
     // Add username to hashmap with its position as value
     set(map, username, position);
 
-    // Create user's data file
-    char filename[MAX_LENGTH + 4];  // +4 for ".dat" and null terminator
-    snprintf(filename, sizeof(filename), "%s.dat", username);
-    FILE* userFILE = fopen(filename, "w+");
+    // Create path for user's data file
+    char filepath[MAX_LENGTH + 15];  // +15 for directory, separator, ".dat" and null terminator
+    snprintf(filepath, sizeof(filepath), "%s/%s.dat", USER_FILES_DIR, username);
+    FILE* userFILE = fopen(filepath, "w+");
 
     return userFILE;
 }
 
 int main() {
+    // Ensure user directory exists before opening files
+    if (!ensure_user_directory()) {
+        printf("Error: Could not create user directory\n");
+        return 1;
+    }
 
-    FILE* accountsFILE = fopen(USER_DATA_FILE, "r+");
+    // Update accounts file path
+    char accounts_path[MAX_LENGTH + 15];
+    snprintf(accounts_path, sizeof(accounts_path), "%s/%s", USER_FILES_DIR, USER_ACCOUNTS_FILE);
+
+    FILE* accountsFILE = fopen(accounts_path, "r+");
     if (!accountsFILE) {
         printf("Error: Could not open accounts file\n");
         return 1;
@@ -254,11 +284,12 @@ int main() {
             for(int n = 0; input[n]; n++) {
                 input[n] = tolower(input[n]);
             }
+            // Update the login section where userfile is opened:
             if (userVerify(input, map)) {
                 printf("\nLogged in as %s!\n", input);
-                char filename[MAX_LENGTH + 4];
-                snprintf(filename, sizeof(filename), "%s.dat", input);
-                userFILE = fopen(filename, "rb+");
+                char filepath[MAX_LENGTH + 15];
+                snprintf(filepath, sizeof(filepath), "%s/%s.dat", USER_FILES_DIR, input);
+                userFILE = fopen(filepath, "rb+");
                 if (!userFILE) {
                     printf("Error opening user file\n");
                 }
@@ -284,7 +315,8 @@ int main() {
             } else {
                 // Reopen file in append mode for writing
                 fclose(accountsFILE);
-                accountsFILE = fopen(USER_DATA_FILE, "a");
+                snprintf(accounts_path, sizeof(accounts_path), "%s/%s", USER_FILES_DIR, USER_ACCOUNTS_FILE);
+                accountsFILE = fopen(accounts_path, "a");
                 if (!accountsFILE) {
                     printf("Error reopening accounts file for writing\n");
                     break;
@@ -295,9 +327,9 @@ int main() {
                 fflush(accountsFILE);
 
                 // Create user's data file
-                char filename[MAX_LENGTH + 4];
-                snprintf(filename, sizeof(filename), "%s.dat", input);
-                userFILE = fopen(filename, "w+");
+                char filepath[MAX_LENGTH + 15];
+                snprintf(filepath, sizeof(filepath), "%s/%s.dat", USER_FILES_DIR, input);
+                userFILE = fopen(filepath, "w+");
 
                 if (userFILE) {
                     // Add to hashmap
@@ -310,7 +342,7 @@ int main() {
 
                 // Reopen in read mode for continued operation
                 fclose(accountsFILE);
-                accountsFILE = fopen(USER_DATA_FILE, "r");
+                accountsFILE = fopen(accounts_path, "r");
             }
         }
         else if (strcmp(input, "exit") == 0) {

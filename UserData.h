@@ -9,6 +9,13 @@
 #include<stdlib.h>
 #include<ctype.h>
 
+#ifdef _WIN32
+    #include <direct.h>
+#else
+    #include <sys/stat.h>
+    #include <sys/types.h>
+#endif
+
 // #define HASHMAP_SIZE 3072
 /** @brief Initial capacity of the hashmap */
 #define INITIAL_SIZE 16
@@ -17,7 +24,8 @@
 
 // For the userdata username and file
 #define MAX_LENGTH 17  // 16 chars + '\0'
-#define USER_DATA_FILE "userfiles/accounts.dat"
+#define USER_ACCOUNTS_FILE "accounts.dat"
+#define USER_FILES_DIR "userfiles"
 
 typedef struct account {
     char username[20];
@@ -35,7 +43,7 @@ typedef struct {
     size_t size;     // Number of items stored
 } HashMap;
 
-//const char* USER_DATA_FILE = "./userfiles/accounts.dat";
+
 
 
 
