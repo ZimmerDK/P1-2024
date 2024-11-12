@@ -205,6 +205,29 @@ FILE* create_new_user(FILE* accountsFILE, char username[MAX_LENGTH], HashMap* ma
     return userFILE;
 }
 
+/**
+ * Writes workout data (number of days and workout time) to a user file.
+ * @param userFILE The file pointer to write to
+ * @param numDays Number of days worked out
+ * @param workoutTime Time spent working out
+ * @return 1 on success, 0 on failure
+ */
+int writeWorkoutData(FILE* userFILE, int value) {
+    // Write each number on a separate line
+    if (fprintf(userFILE, "%d\n", value) < 0) {
+        printf("Error: Failed to write workout data\n");
+        return 0;
+    }
+
+    // Ensure data is written to disk
+    if (fflush(userFILE) != 0) {
+        printf("Error: Failed to flush file buffer\n");
+        return 0;
+    }
+
+    return 1;
+}
+
 int main() {
     // Ensure user directory exists before opening files
     if (!ensure_user_directory()) {
@@ -339,6 +362,8 @@ int main() {
                 } else {
                     printf("\nError creating account!\n");
                 }
+
+
 
                 // Reopen in read mode for continued operation
                 fclose(accountsFILE);
