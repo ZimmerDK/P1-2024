@@ -8,6 +8,8 @@
 #include <string.h>
 #include <stdlib.h>
 #include <ctype.h>
+#include <sys/stat.h>
+#include <time.h>
 
 #ifdef _WIN32
     #include <direct.h>
@@ -25,7 +27,7 @@
 // For the userdata username and file
 #define MAX_LENGTH 17  // 16 chars + '\0'
 #define USER_ACCOUNTS_FILE "accounts.dat"
-#define USER_FILES_DIR "userfiles"
+#define USER_FILES_DIR "../userfiles"
 
 typedef struct account {
     char username[20];
