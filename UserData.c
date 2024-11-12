@@ -212,9 +212,9 @@ FILE* create_new_user(FILE* accountsFILE, char username[MAX_LENGTH], HashMap* ma
  * @param workoutTime Time spent working out
  * @return 1 on success, 0 on failure
  */
-int writeWorkoutData(FILE* userFILE, int numDays, int workoutTime) {
+int writeWorkoutData(FILE* userFILE, int value) {
     // Write each number on a separate line
-    if (fprintf(userFILE, "%d\n%d\n", numDays, workoutTime) < 0) {
+    if (fprintf(userFILE, "%d\n", value) < 0) {
         printf("Error: Failed to write workout data\n");
         return 0;
     }
@@ -226,6 +226,41 @@ int writeWorkoutData(FILE* userFILE, int numDays, int workoutTime) {
     }
 
     return 1;
+}
+
+void user_setup(FILE* userFILE, int initial_setup) {
+    int days, time;
+
+    if (initial_setup) {
+        printf("\nWelcome! Let's set up your preferences.\n");
+
+        // Get days input
+        do {
+            printf("Enter number of days (1-7): ");
+            if (scanf("%d", &days) != 1 || days < 1 || days > 7) {
+                printf("Invalid input! Please enter a number between 1 and 7.\n");
+                while (getchar() != '\n'); // Clear input buffer
+                continue;
+            }
+            writeWorkoutData(userFILE, days);
+            break;
+        } while (1);
+
+        // Get time input
+        do {
+            printf("Enter preferred time (24-hour format, 0-23): ");
+            if (scanf("%d", &time) != 1 || time < 0 || time > 23) {
+                printf("Invalid input! Please enter a number between 0 and 23.\n");
+                while (getchar() != '\n'); // Clear input buffer
+                continue;
+            }
+            writeWorkoutData(userFILE, time);
+            break;
+        } while (1);
+
+        fflush(userFILE); // Ensure data is written to disk
+        printf("\nPreferences saved successfully!\n");
+    }
 }
 
 int main() {
