@@ -12,15 +12,21 @@ endif()
 project ("P1")
 
 # Add source to this project's executable.
-add_executable (P1 "P1.c" "P1.h" "UserLogin.c"
+add_executable (P1 "P1.c" "P1.h" "UserLogin.c" "UserData.c" "UserData.h"
         exercises.c
         exercises.h
-        workout_program.c
-        workout_program.h)
+        UserData.c
+        UserData.h)
+
+add_executable (UserData "UserData.c" "UserData.h"
+        #exercises.c
+        #exercises.h
+        UserData.c
+        UserData.h)
+
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
   set_property(TARGET P1 PROPERTY CXX_STANDARD 20)
 endif()
 
 # TODO: Add tests and install targets if needed.
-add_executable(workout_program workout_program.c)
