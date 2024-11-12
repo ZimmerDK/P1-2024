@@ -212,9 +212,9 @@ FILE* create_new_user(FILE* accountsFILE, char username[MAX_LENGTH], HashMap* ma
  * @param workoutTime Time spent working out
  * @return 1 on success, 0 on failure
  */
-int writeWorkoutData(FILE* userFILE, int value) {
+int writeWorkoutData(FILE* userFILE, int numDays, int workoutTime) {
     // Write each number on a separate line
-    if (fprintf(userFILE, "%d\n", value) < 0) {
+    if (fprintf(userFILE, "%d\n%d\n", numDays, workoutTime) < 0) {
         printf("Error: Failed to write workout data\n");
         return 0;
     }
@@ -362,8 +362,6 @@ int main() {
                 } else {
                     printf("\nError creating account!\n");
                 }
-
-
 
                 // Reopen in read mode for continued operation
                 fclose(accountsFILE);
