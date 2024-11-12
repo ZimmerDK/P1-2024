@@ -205,13 +205,10 @@ FILE* create_new_user(FILE* accountsFILE, char username[MAX_LENGTH], HashMap* ma
     return userFILE;
 }
 
-/**
- * Writes workout data (number of days and workout time) to a user file.
+/**@brief Writes workout data to a user file.
  * @param userFILE The file pointer to write to
- * @param numDays Number of days worked out
- * @param workoutTime Time spent working out
- * @return 1 on success, 0 on failure
- */
+ * @param value whatever the user inputs (eg. 'days' and 'time')
+ * @return 1 on success, 0 on failure */
 int writeWorkoutData(FILE* userFILE, int value) {
     // Write each number on a separate line
     if (fprintf(userFILE, "%d\n", value) < 0) {
@@ -228,39 +225,47 @@ int writeWorkoutData(FILE* userFILE, int value) {
     return 1;
 }
 
-void user_setup(FILE* userFILE, int initial_setup) {
-    int days, time;
+/**@brief Sets up user preferences for a new account.
+ *
+ * Prompts the user to enter the number of days (1-7) and the preferred time in minutes (15-90).
+ * Writes the user preferences to the user's data file.
+ *
+ * @param userFILE Pointer to the user's data file */
+void user_setup(FILE* userFILE) {
+    UserPreferences prefs;
 
-    if (initial_setup) {
-        printf("\nWelcome! Let's set up your preferences.\n");
+    printf("\nWelcome! Let's set up your preferences.\n");
 
-        // Get days input
-        do {
-            printf("Enter number of days (1-7): ");
-            if (scanf("%d", &days) != 1 || days < 1 || days > 7) {
-                printf("Invalid input! Please enter a number between 1 and 7.\n");
-                while (getchar() != '\n'); // Clear input buffer
-                continue;
-            }
-            writeWorkoutData(userFILE, days);
-            break;
-        } while (1);
+    // Get days input
+    do {
+        printf("Enter number of days (1-7): ");
+        if (scanf("%d", &prefs.days) != 1 || prefs.days < 1 || prefs.days > 7) {
+            printf("Invalid input! Please enter a number between 1 and 7.\n");
+            while (getchar() != '\n'); // Clear input buffer
+            continue;
+        }
+        break;
+    } while (1);
 
-        // Get time input
-        do {
-            printf("Enter preferred time (24-hour format, 0-23): ");
-            if (scanf("%d", &time) != 1 || time < 0 || time > 23) {
-                printf("Invalid input! Please enter a number between 0 and 23.\n");
-                while (getchar() != '\n'); // Clear input buffer
-                continue;
-            }
-            writeWorkoutData(userFILE, time);
-            break;
-        } while (1);
+    // Get time input
+    do {
+        printf("Enter preferred time in minutes (15-90): ");
+        if (scanf("%d", &prefs.minutes) != 1 || prefs.minutes < 15 || prefs.minutes > 90) {
+            printf("Invalid input! Please enter a number between 15 and 90.\n");
+            while (getchar() != '\n'); // Clear input buffer
+            continue;
+        }
+        break;
+    } while (1);
 
-        fflush(userFILE); // Ensure data is written to disk
-        printf("\nPreferences saved successfully!\n");
+    // Write preferences to file
+    if (fwrite(&prefs, sizeof(UserPreferences), 1, userFILE) != 1) {
+        printf("Error writing preferences to file!\n");
+        return;
     }
+
+    fflush(userFILE); // Ensure data is written to disk
+    printf("\nPreferences saved successfully!\n");
 }
 
 int main() {
@@ -389,6 +394,10 @@ int main() {
                 snprintf(filepath, sizeof(filepath), "%s/%s.dat", USER_FILES_DIR, input);
                 userFILE = fopen(filepath, "w+");
 
+                // Asks user for first-time preferences setup
+                user_setup(userFILE);
+
+                // Adding to Hashmap
                 if (userFILE) {
                     // Add to hashmap
                     set(map, input, m * MAX_LENGTH);
@@ -410,6 +419,12 @@ int main() {
             goto login_screen;
         }
     }
+
+    // Test for reading the userFILE
+    UserPreferences prefs;
+    fseek(userFILE, 0, SEEK_SET); // Go to start of file
+    fread(&prefs, sizeof(UserPreferences), 1, userFILE);
+
 
     // These 'fclose' and 'free' should be at the very end of the main program
     // Cleanup
