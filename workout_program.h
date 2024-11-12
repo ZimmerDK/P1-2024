@@ -6,10 +6,14 @@
 
 #endif //WORKOUT_PROGRAM_H
 
+const int amountOfCompound = 10;
+const int amountOfSecondary = 10;
+const int amountOfTertiary = 10;
+
 typedef struct workout_days_t {
-    int compound[10];
-    int secondary[3];
-    int tertiary[3];
+    int compound[amountOfCompound];
+    int secondary[amountOfSecondary];
+    int tertiary[amountOfTertiary];
 
 } workout_days_t;
 
