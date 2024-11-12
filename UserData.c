@@ -16,7 +16,7 @@ HashMap* createHashMap() {
     return map;
 }
 
-/**@brief Computes the hash value for a given string key using DJB2 algorithm
+/**@brief Computes the hash value for a given string key using DJB2 algorithm.
  *
  * @param key The string key to hash
  * @return unsigned int The computed hash value */
