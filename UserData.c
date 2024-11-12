@@ -174,7 +174,7 @@ static int ensure_user_directory() {
     return 1;
 }
 
-/**@brief Creates a new user and adds them to the system
+/**@brief Creates a new user and adds them to the system.
  *
  * @param accountsFILE File pointer to the accounts database
  * @param username Username to create (max MAX_LENGTH characters)
