@@ -43,5 +43,9 @@ typedef struct {
     size_t size;     // Number of items stored
 } HashMap;
 
+typedef struct {
+    int days;
+    int time;
+} UserPreferences;
 
 #endif //USERDATA_H
