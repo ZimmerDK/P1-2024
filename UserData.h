@@ -44,7 +44,4 @@ typedef struct {
 } HashMap;
 
 
-
-
-
 #endif //USERDATA_H
