@@ -29,4 +29,6 @@ if (CMAKE_VERSION VERSION_GREATER 3.12)
   set_property(TARGET P1 PROPERTY CXX_STANDARD 20)
 endif()
 
+add_executable(workout_program workout_program.c)
+
 # TODO: Add tests and install targets if needed.

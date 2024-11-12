@@ -1,25 +1,21 @@
 #include "workout_program.h"
-
 #include <math.h>
-
 #include "exercises.h"
 
 void set_program_day(workout_days_t* program_day, int amountOfDays, int time,
-    exercise_t exercise_compound_c[3], exercise_t exercise_secondary_c[3], exercise_t exercise_tertiary_c[3],
     int amountOfCompound, int amountOfSecondary, int amountOfTertiary);
 
 int main(void) {
     int amountOfDays = 0;
     int time = 0;
     int amountOfCompound = 10;
-    int amountOfSecondary = 3;
-    int amountOfTertiary = 3;
+    int amountOfSecondary = 7;
+    int amountOfTertiary = 12;
 
     user_input(&amountOfDays, &time);
     workout_days_t* program_day = allocate_workout_program(amountOfDays);
 
     set_program_day(program_day, amountOfDays, time,
-        exercise_compound_c, exercise_secondary_c, exercise_tertiary_c,
         amountOfCompound, amountOfSecondary, amountOfTertiary);
 
     print_function(program_day, amountOfDays, amountOfCompound, amountOfSecondary, amountOfTertiary);
@@ -68,13 +64,12 @@ void print_function(workout_days_t* program_day, int number_of_days,
         printf("\n");
         printf("Day: %d\n", i+1);
         for(int j = 0; j < amountOfTertiary; j++) {
-            printf("tertiary %d: %d\n", j+1, program_day[i].tertiary[j%3]);
+            printf("tertiary %d: %d\n", j+1, program_day[i].tertiary[j]);
         }
     }
 }
 
 void set_program_day(workout_days_t* program_day, int amountOfDays, int time,
-    exercise_t exercise_compound_c[3], exercise_t exercise_secondary_c[3], exercise_t exercise_tertiary_c[3],
     int amountOfCompound, int amountOfSecondary, int amountOfTertiary) {
     for(int i = 0; i < amountOfDays; i++) {
         for(int j = 0; j < amountOfCompound; j++) {
@@ -88,34 +83,57 @@ void set_program_day(workout_days_t* program_day, int amountOfDays, int time,
         }
     }
 
-    int maxTime = amountOfDays * time;
-
     int i = 0;
     int day = 0;
+    int counter = 0;
 
-    while((amountOfCompound > i) && (maxTime > 0))
-    {
-        program_day[day%amountOfDays].compound[i%amountOfCompound] = 1;
-        i++;
-        day++;
-        maxTime -= 15;
+    int timePerDay[amountOfDays];
+    for(int i = 0; i < amountOfDays; i++) {
+        timePerDay[i] = time;
     }
 
-    i=0;
-    while((amountOfSecondary > i) && (maxTime > 0))
+
+    while((amountOfCompound > i) && counter <= amountOfDays)
     {
-        program_day[day%amountOfDays].secondary[i%amountOfSecondary] = 1;
-        i++;
+        if(timePerDay[day%amountOfDays] >= 15) {
+            program_day[day%amountOfDays].compound[i] = 1;
+            i++;
+            timePerDay[day%amountOfDays] -= 15;
+        }
+        else {
+            counter++;
+        }
         day++;
-        maxTime -= 12;
     }
 
-    i=0;
-    while((amountOfTertiary > i) && (maxTime > 0))
+    i = 0;
+    counter = 0;
+    while((amountOfSecondary > i) && counter <= amountOfDays)
     {
-        program_day[day%amountOfDays].tertiary[i%amountOfTertiary] = 1;
-        i++;
+        if(timePerDay[day%amountOfDays] >= 12) {
+            program_day[day%amountOfDays].secondary[i] = 1;
+            i++;
+            timePerDay[day%amountOfDays] -= 12;
+        }
+        else {
+            counter++;
+        }
         day++;
-        maxTime -= 9;
+    }
+    counter = 0;
+    i = 0;
+
+    while((amountOfTertiary > i) && counter <= amountOfDays)
+    {
+        if(timePerDay[day % amountOfDays] >= 9) {
+            program_day[day%amountOfDays].tertiary[i] = 1;
+            i++;
+            timePerDay[day%amountOfDays] -= 9;
+        }
+        else {
+            counter++;
+        }
+        day++;
     }
 }
+/* Bør man ikke tage det hvis man ikke kan kører hele programmet igennem? compound / secondary / tertiary */

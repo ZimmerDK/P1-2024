@@ -5,11 +5,10 @@
 #define WORKOUT_PROGRAM_H
 
 #endif //WORKOUT_PROGRAM_H
-
 typedef struct workout_days_t {
     int compound[10];
-    int secondary[3];
-    int tertiary[3];
+    int secondary[7];
+    int tertiary[12];
 
 } workout_days_t;
 
