@@ -1,5 +1,4 @@
 #include "UserData.h"
-#include <sys/stat.h>
 
 int main() {
     // Ensure user directory exists before opening files
@@ -9,8 +8,9 @@ int main() {
     }
 
     // Update accounts file path
-    char accounts_path[MAX_LENGTH + 15];
+    char accounts_path[64];
     snprintf(accounts_path, sizeof(accounts_path), "%s/%s", USER_FILES_DIR, USER_ACCOUNTS_FILE);
+    // printf("%s\n", accounts_path);
 
     FILE* accountsFILE = fopen(accounts_path, "r+");
     if (!accountsFILE) {
@@ -304,6 +304,12 @@ int userVerify(char* usernameInput, HashMap_t* map) {
     return (value != -1); // Return 1 if username exists, 0 if it does not
 }
 
+/**@brief Reads usernames from a file and stores them in a hashmap.
+ *
+ * @param accountsFILE The open file containing the user accounts.
+ * @param map The hashmap to store the usernames and their file positions.
+ * @return The number of usernames loaded into the hashmap.
+ */
 int startHashMap(FILE* accountsFILE, HashMap_t* map) {
     char tempUsername[MAX_LENGTH];
     int m = 0;
@@ -315,7 +321,7 @@ int startHashMap(FILE* accountsFILE, HashMap_t* map) {
         if (len > 0 && (tempUsername[len-1] == '\n' || tempUsername[len-1] == '\r')) {
             tempUsername[len-1] = '\0';
         }
-        // Remove second character of CRLF if present
+        // Remove second character of CRLR if present
         len = strlen(tempUsername);
         if (len > 0 && (tempUsername[len-1] == '\n' || tempUsername[len-1] == '\r')) {
             tempUsername[len-1] = '\0';
@@ -377,26 +383,6 @@ FILE* create_new_user(FILE* accountsFILE, char username[MAX_LENGTH], HashMap_t* 
     return userFILE;
 }
 
-/**@brief Writes workout data to a user file.
- * @param userFILE The file pointer to write to
- * @param value whatever the user inputs (eg. 'days' and 'time')
- * @return 1 on success, 0 on failure */
-int writeWorkoutData(FILE* userFILE, int value) {
-    // Write each number on a separate line
-    if (fprintf(userFILE, "%d\n", value) < 0) {
-        printf("Error: Failed to write workout data\n");
-        return 0;
-    }
-
-    // Ensure data is written to disk
-    if (fflush(userFILE) != 0) {
-        printf("Error: Failed to flush file buffer\n");
-        return 0;
-    }
-
-    return 1;
-}
-
 /**@brief Sets up user preferences for a new account.
  *
  * Prompts the user to enter the number of days (1-7) and the preferred time in minutes (15-90).
@@ -430,8 +416,14 @@ void user_setup(FILE* userFILE) {
         break;
     } while (1);
 
-    // Write preferences to file
-    if (fwrite(&prefs, sizeof(UserPreferences_t), 1, userFILE) != 1) {
+    // Write days preferences to file
+    if (fwrite(&prefs.days, sizeof(int), 1, userFILE) != 1) {
+        printf("\nError writing preferences to file!\n");
+        return;
+    }
+
+    // Write time preferences to file
+    if (fwrite(&prefs.time, sizeof(int), 1, userFILE) != 1) {
         printf("\nError writing preferences to file!\n");
         return;
     }
