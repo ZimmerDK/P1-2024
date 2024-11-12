@@ -17,7 +17,7 @@
 
 // For the userdata username and file
 #define MAX_LENGTH 17  // 16 chars + '\0'
-/* #define USER_DATA_FILE "accounts.dat" */
+#define USER_DATA_FILE "userfiles/accounts.dat"
 
 typedef struct account {
     char username[20];
@@ -35,7 +35,7 @@ typedef struct {
     size_t size;     // Number of items stored
 } HashMap;
 
-const char* USER_DATA_FILE = "./userfiles/accounts.dat";
+//const char* USER_DATA_FILE = "./userfiles/accounts.dat";
 
 
 
