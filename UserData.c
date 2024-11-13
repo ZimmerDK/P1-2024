@@ -8,7 +8,7 @@ int main() {
     }
 
     // Update accounts file path
-    char accounts_path[64];
+    char accounts_path[MAX_LENGTH + 15];
     snprintf(accounts_path, sizeof(accounts_path), "%s/%s", USER_FILES_DIR, USER_ACCOUNTS_FILE);
     // printf("%s\n", accounts_path);
 
