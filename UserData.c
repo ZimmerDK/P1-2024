@@ -1,5 +1,11 @@
 #include "UserData.h"
 #include "exercises.h"
+#include "P1.h"
+
+typedef struct workout_result_t {
+    int repChange;
+    double weightChange;
+} workout_result_t;
 
 int main() {
     // Ensure user directory exists before opening files
@@ -66,7 +72,35 @@ int main() {
                 snprintf(filepath, sizeof(filepath), "%s/%s.dat", USER_FILES_DIR, input);
                 userFILE = fopen(filepath, "rb+");
                 fill_user_data(userFILE);
-                read_user_data(userFILE);
+
+                do {
+                    char input_exercise[MAX_LENGTH+10];
+                    printf("Input desired exercise to test: ");
+                    scanf(" %s", &input_exercise);
+                    if (input_exercise == "exit") {
+                        break;
+                    }
+                    exercise_data_t input_exercise_data = read_exercise_by_name(userFILE, input_exercise);
+                    printf("%s\n", input_exercise);
+                    printf("Weight: %.2f kg\n", input_exercise_data.weight);
+                    printf("Reps: %d\n", input_exercise_data.reps);
+                } while (1);
+
+                /*
+                // Read by name
+                exercise_data_t deadlift_data = read_exercise_by_name(userFILE, "Deadlift");
+                printf("Deadlift:\n");
+                printf("Weight: %.2f kg\n", deadlift_data.weight);
+                printf("Reps: %d\n", deadlift_data.reps);
+
+                // Or if you know the index (0 for Bench Press, 1 for Squat, 2 for Deadlift)
+                exercise_data_t squat_data = read_user_data(userFILE, 1);  // 1 for Squat
+                printf("\nSquat:\n");
+                printf("Weight: %.2f kg\n", squat_data.weight);
+                printf("Reps: %d\n", squat_data.reps);
+                */
+
+                fclose(userFILE);
 
                 if (!userFILE) {
                     printf("Error opening user file\n");
@@ -436,16 +470,27 @@ void user_setup(FILE* userFILE) {
     printf("\nPreferences saved successfully!\n");
 }
 
+/**@brief Writes exercise data to a file for all exercises in exercise_c array
+ * @param userFILE Pointer to the file where data will be written
+ * @note Each exercise record consists of a weight (double) and reps (int) */
 void fill_user_data(FILE* userFILE) {
-    if (userFILE == NULL) {
-        printf("Error: Invalid file pointer\n");
-    }
-    int i;
-    for(i = 0; i < sizeof(exercise_c) / sizeof(exercise_t); i++) {
-        fseek(userFILE, 0, SEEK_END);
+    const size_t RECORD_SIZE = sizeof(double) + sizeof(int);
+
+    for(int i = 0; i < sizeof(exercise_c) / sizeof(exercise_t); i++) {
+        fseek(userFILE, i * RECORD_SIZE, SEEK_SET);
+
+        workout_result_t workoutResult = {
+        i,i};
+
         exercise_data_t current_exercise_data = {
-        .weight = 20.0,
-        .reps = 8};
+            .weight = 20.0 /* base weight for testing right now      /exercise_c[i].starting_weight*/,
+            .reps = exercise_c[i].min_reps,
+        };
+        current_exercise_data.weight += workoutResult.weightChange;
+        current_exercise_data.reps += workoutResult.repChange;
+
+        printf("Writing data for %s at index %d\n", exercise_c[i].name, i);
+
         if (fwrite(&current_exercise_data.weight, sizeof(double), 1, userFILE) != 1) {
             printf("\nError writing weight to file!\n");
         }
@@ -453,7 +498,72 @@ void fill_user_data(FILE* userFILE) {
             printf("\nError writing reps to file!\n");
         }
     }
-    printf("i = %d", i);
-    fflush(userFILE); // Ensure data is written to disk
+
+    fflush(userFILE);
     printf("\nUser Exercise Data saved successfully!\n");
+}
+
+/**@brief Finds the index of an exercise in the exercise_c array by its name
+ * @param exercise_name The name of the exercise to find
+ * @return The index of the exercise if found, -1 if not found*/
+int get_exercise_index(const char* exercise_name) {
+    for (int i = 0; i < sizeof(exercise_c) / sizeof(exercise_t); i++) {
+        if (strcmp(exercise_c[i].name, exercise_name) == 0) {
+            return i;
+        }
+    }
+    return -1;  // Return -1 if exercise not found
+}
+
+/**@brief Reads exercise data from file by exercise name
+ * @param userFILE Pointer to the file containing exercise data
+ * @param exercise_name Name of the exercise to read
+ * @return exercise_data_t structure containing weight and reps, zeros if error occurs */
+exercise_data_t read_exercise_by_name(FILE* userFILE, const char* exercise_name) {
+    exercise_data_t data = {0};  // Initialize to zeros
+
+    int index = get_exercise_index(exercise_name);
+    if (index == -1) {
+                printf("Error: Exercise '%s' not found\n", exercise_name);
+        return data;
+    }
+
+    return read_user_data(userFILE, index);
+}
+
+/**@brief Reads exercise data from file by index
+ * @param userFILE Pointer to the file containing exercise data
+ * @param exercise_index Index of the exercise in exercise_c array
+ * @return exercise_data_t structure containing weight and reps, zeros if error occurs
+ * @note This function assumes the file contains records in the format: weight(double) followed by reps(int) */
+exercise_data_t read_user_data(FILE* userFILE, int exercise_index) {
+    exercise_data_t data = {0};
+    const size_t RECORD_SIZE = sizeof(double) + sizeof(int);
+
+    if (userFILE == NULL) {
+        printf("Error: Invalid file pointer\n");
+        return data;
+    }
+
+    // Calculate position of desired exercise
+    long position = exercise_index * RECORD_SIZE;
+
+    if (fseek(userFILE, position, SEEK_SET) != 0) {
+        printf("Error: Could not seek to exercise position\n");
+        return data;
+    }
+
+    if (fread(&data.weight, sizeof(double), 1, userFILE) != 1) {
+        printf("Error reading weight for exercise %d (%s)\n",
+               exercise_index, exercise_c[exercise_index].name);
+        return data;
+    }
+
+    if (fread(&data.reps, sizeof(int), 1, userFILE) != 1) {
+        printf("Error reading reps for exercise %d (%s)\n",
+               exercise_index, exercise_c[exercise_index].name);
+        return data;
+    }
+
+    return data;
 }

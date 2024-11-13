@@ -62,7 +62,12 @@ static int ensure_user_directory();
 FILE* create_new_user(FILE* accountsFILE, char username[MAX_LENGTH], HashMap_t* map);
 int writeWorkoutData(FILE* userFILE, int value);
 void user_setup(FILE* userFILE);
+
+int get_exercise_index(const char* exercise_name);
 void fill_user_data(FILE* userFILE);
-exercise_data_t read_user_data(FILE* userFILE);
+exercise_data_t read_exercise_by_name(FILE* userFILE, const char* exercise_name);
+exercise_data_t read_user_data(FILE* userFILE, int exercise_index);
+
+void calibrate_workout_routine(struct exercise_data_t* calibration_data);
 
 #endif //USERDATA_H
