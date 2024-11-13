@@ -1,4 +1,5 @@
 #include "UserData.h"
+#include "exercises.h"
 
 int main() {
     // Ensure user directory exists before opening files
@@ -64,6 +65,9 @@ int main() {
                 char filepath[MAX_LENGTH + 15];
                 snprintf(filepath, sizeof(filepath), "%s/%s.dat", USER_FILES_DIR, input);
                 userFILE = fopen(filepath, "rb+");
+                fill_user_data(userFILE);
+                read_user_data(userFILE);
+
                 if (!userFILE) {
                     printf("Error opening user file\n");
                 }
@@ -72,6 +76,7 @@ int main() {
                 printf("\nUsername does not exist!\n");
                 goto login_screen;
             }
+
         } else if (strcmp(input, "signup") == 0) {
             printf("\nEnter your desired username (Max %d characters): ", MAX_LENGTH-1);
             if (scanf("%s", input) != 1) {
@@ -387,7 +392,6 @@ FILE* create_new_user(FILE* accountsFILE, char username[MAX_LENGTH], HashMap_t* 
  *
  * Prompts the user to enter the number of days (1-7) and the preferred time in minutes (15-90).
  * Writes the user preferences to the user's data file.
- *
  * @param userFILE Pointer to the user's data file */
 void user_setup(FILE* userFILE) {
     UserPreferences_t prefs;
@@ -430,4 +434,26 @@ void user_setup(FILE* userFILE) {
 
     fflush(userFILE); // Ensure data is written to disk
     printf("\nPreferences saved successfully!\n");
+}
+
+void fill_user_data(FILE* userFILE) {
+    if (userFILE == NULL) {
+        printf("Error: Invalid file pointer\n");
+    }
+    int i;
+    for(i = 0; i < sizeof(exercise_c) / sizeof(exercise_t); i++) {
+        fseek(userFILE, 0, SEEK_END);
+        exercise_data_t current_exercise_data = {
+        .weight = 20.0,
+        .reps = 8};
+        if (fwrite(&current_exercise_data.weight, sizeof(double), 1, userFILE) != 1) {
+            printf("\nError writing weight to file!\n");
+        }
+        if (fwrite(&current_exercise_data.reps, sizeof(int), 1, userFILE) != 1) {
+            printf("\nError writing reps to file!\n");
+        }
+    }
+    printf("i = %d", i);
+    fflush(userFILE); // Ensure data is written to disk
+    printf("\nUser Exercise Data saved successfully!\n");
 }

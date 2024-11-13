@@ -27,7 +27,7 @@
 // For the userdata username and file
 #define MAX_LENGTH 17  // 16 chars + '\0'
 #define USER_ACCOUNTS_FILE "accounts.dat"
-#define USER_FILES_DIR "../userfiles"
+#define USER_FILES_DIR "./userfiles"
 
 typedef struct account {
     char username[20];
@@ -62,5 +62,7 @@ static int ensure_user_directory();
 FILE* create_new_user(FILE* accountsFILE, char username[MAX_LENGTH], HashMap_t* map);
 int writeWorkoutData(FILE* userFILE, int value);
 void user_setup(FILE* userFILE);
+void fill_user_data(FILE* userFILE);
+exercise_data_t read_user_data(FILE* userFILE);
 
 #endif //USERDATA_H
