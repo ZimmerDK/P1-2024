@@ -19,8 +19,8 @@ add_executable (P1 "P1.c" "P1.h" "UserLogin.c" "UserData.c" "UserData.h"
         UserData.h)
 
 add_executable (UserData "UserData.c" "UserData.h"
-        #exercises.c
-        #exercises.h
+        exercises.c
+        exercises.h
         UserData.c
         UserData.h)
 
