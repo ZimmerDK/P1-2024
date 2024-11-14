@@ -28,7 +28,7 @@ struct exercise_data_t {
     int reps;
     double weight;
     exercise_t* exercise;
- };
+};
 
 extern const exercise_t exercise_compound_c[AMOUNT_COMPOUND];
 extern const exercise_t exercise_secondary_c[AMOUNT_SECONDARY];
