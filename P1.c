@@ -3,6 +3,7 @@
 
 #include "exercises.h"
 #include "P1.h"
+#include "workout_program.h"
 
 #include<stdio.h>
 #include<math.h>
@@ -130,6 +131,20 @@ void calibrate_workout_routine(struct exercise_data_t* calibration_data) {
 	else {
 		calibration_data->weight += 5.0;
 		calibrate_workout_routine(calibration_data);
+	}
+}
+
+void run_day(workout_days_t* workout_day) {
+	printf("Starting compound exercises:\n");
+	for (int i = 0; i < AMOUNT_COMPOUND; i++) {
+		if (workout_day->compound[i] == 1) {
+			struct set_data_t* setData = malloc(sizeof(struct set_data_t) * 3);
+			exercise_data_t workoutData = { 10, 40.0, &exercise_compound_c[i]};
+			scanf("%d %d %d", &setData[0].intensity, &setData[1].intensity, &setData[2].intensity);
+
+			struct workout_result_t workout_result = calculate_workout(setData, &workoutData, 3);
+
+		}
 	}
 }
 
