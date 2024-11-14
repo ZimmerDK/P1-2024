@@ -137,7 +137,7 @@ void calibrate_workout_routine(struct exercise_data_t* calibration_data) {
 int main(void) {
 
 	struct set_data_t* setData = malloc(sizeof(struct set_data_t) * 3);
-	exercise_data_t workoutData = { 10, 40.0, &exercise_c[0]};
+	exercise_data_t workoutData = { 10, 40.0, &exercise_compound_c[0]};
 
 	setData[0].intensity = 1;
 	setData[1].intensity = 2;
@@ -171,7 +171,7 @@ int - header end
 struct user_meta_data {
 	char username[16];
 };
-
+/*
 void create_new_user(FILE* file, char username[16]) {
 	int user_count = 0;
 
@@ -186,7 +186,7 @@ void create_new_user(FILE* file, char username[16]) {
 	fwrite(username, 16, 1, file);
 
 
-}
+}*/
 /*
 int main(void) {
 	FILE* file = fopen(USER_DATA_HEADER_DEBUG_PATH, "rb+");

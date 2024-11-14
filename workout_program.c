@@ -4,7 +4,7 @@
 
 void set_program_day(workout_days_t* program_day, int amountOfDays, int time );
 
-int main(void) {
+/*int main(void) {
     int amountOfDays = 0;
     int time = 0;
 
@@ -18,7 +18,7 @@ int main(void) {
     free(program_day);
 
     return 0;
-}
+}*/
 
 workout_days_t* allocate_workout_program(int amountOfDays) {
     workout_days_t* program_day = (workout_days_t*)malloc(amountOfDays* sizeof(workout_days_t));
@@ -76,7 +76,7 @@ void set_program_day(workout_days_t* program_day, int amountOfDays, int time) {
     int day = 0;
     int counter = 0;
 
-    int timePerDay[amountOfDays];
+    int* timePerDay = (int*)malloc(sizeof(int)*amountOfDays);
     for(int i = 0; i < amountOfDays; i++) {
         timePerDay[i] = time;
     }

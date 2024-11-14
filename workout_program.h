@@ -1,4 +1,3 @@
-#include "P1.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include "exercises.h"

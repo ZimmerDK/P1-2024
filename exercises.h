@@ -24,11 +24,11 @@ typedef struct exercise_t {
 } exercise_t;
 
 // Exercise User Data
-struct exercise_data_t {
+typedef struct exercise_data_t {
     int reps;
     double weight;
     exercise_t* exercise;
- };
+ } exercise_data_t;
 
 extern const exercise_t exercise_compound_c[AMOUNT_COMPOUND];
 extern const exercise_t exercise_secondary_c[AMOUNT_SECONDARY];
