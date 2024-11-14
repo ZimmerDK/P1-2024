@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "exercises.h"
+#include <math.h>
 #pragma once
 #ifndef WORKOUT_PROGRAM_H
 #define WORKOUT_PROGRAM_H
