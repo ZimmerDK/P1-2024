@@ -134,16 +134,46 @@ void calibrate_workout_routine(struct exercise_data_t* calibration_data) {
 	}
 }
 
+void run_exercise(exercise_t exercise) {
+
+	printf("#############################################\n");
+	printf("Starting exercise: %s\n", exercise.name);
+	printf("Estimated Intensity: %lf\n", exercise.est_intensity);
+	printf("Current Weight: %lf\n", /*exercise.user_exercise_data->weight*/ 40.0);
+	printf("Current Reps: %d\n", /*exercise.user_exercise_data->reps*/ 10);
+	printf("#############################################\n\n");
+	
+	struct set_data_t* setData = malloc(sizeof(struct set_data_t) * 3);
+	exercise_data_t workoutData = { 10, 40.0, &exercise };
+	scanf("%d %d %d", &setData[0].intensity, &setData[1].intensity, &setData[2].intensity);
+
+	struct workout_result_t workout_result = calculate_workout(setData, &workoutData, 3);
+
+	printf("\nRep Change : %d\n", workout_result.repChange);
+	printf("Weight Change : %lf\n", workout_result.weightChange);
+
+	free(setData);
+}
+
 void run_day(workout_days_t* workout_day) {
 	printf("Starting compound exercises:\n");
 	for (int i = 0; i < AMOUNT_COMPOUND; i++) {
 		if (workout_day->compound[i] == 1) {
-			struct set_data_t* setData = malloc(sizeof(struct set_data_t) * 3);
-			exercise_data_t workoutData = { 10, 40.0, &exercise_compound_c[i]};
-			scanf("%d %d %d", &setData[0].intensity, &setData[1].intensity, &setData[2].intensity);
+			run_exercise(exercises_c[exercise_compound_c[i]]);
+		}
+	}
 
-			struct workout_result_t workout_result = calculate_workout(setData, &workoutData, 3);
+	printf("Starting secondary exercises:\n");
+	for (int i = 0; i < AMOUNT_SECONDARY; i++) {
+		if (workout_day->secondary[i] == 1) {
+			run_exercise(exercises_c[exercise_secondary_c[i]]);
+		}
+	}
 
+	printf("Starting tertiary exercises:\n");
+	for (int i = 0; i < AMOUNT_TERTIARY; i++) {
+		if (workout_day->tertiary[i] == 1) {
+			run_exercise(exercises_c[exercise_tertiary_c[i]]);
 		}
 	}
 }
@@ -151,18 +181,13 @@ void run_day(workout_days_t* workout_day) {
 
 int main(void) {
 
-	struct set_data_t* setData = malloc(sizeof(struct set_data_t) * 3);
-	exercise_data_t workoutData = { 10, 40.0, &exercise_compound_c[0]};
 
-	setData[0].intensity = 1;
-	setData[1].intensity = 2;
-	setData[2].intensity = 3;
+	workout_days_t testDay = { {1, 1, 0, 1, 0}, {1, 0, 1}, {0, 0, 1} };
 
-	struct workout_result_t result = calculate_workout(setData, &workoutData, 3);
+	run_day(&testDay);
 
-
-	printf("Rep Change : %d\n", result.repChange);
-	printf("Weight Change : %lf\n", result.weightChange);
+	//printf("Rep Change : %d\n", result.repChange);
+	//printf("Weight Change : %lf\n", result.weightChange);
 
 	/*struct workout_data_t calibrationData = {8, 20.0};
 

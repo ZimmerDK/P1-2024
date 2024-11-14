@@ -30,9 +30,11 @@ typedef struct exercise_data_t {
     exercise_t* exercise;
  } exercise_data_t;
 
-extern const exercise_t exercise_compound_c[AMOUNT_COMPOUND];
-extern const exercise_t exercise_secondary_c[AMOUNT_SECONDARY];
-extern const exercise_t exercise_tertiary_c[AMOUNT_TERTIARY];
+extern const exercise_t exercises_c[11];
+
+extern const int exercise_compound_c[AMOUNT_COMPOUND];
+extern const int exercise_secondary_c[AMOUNT_SECONDARY];
+extern const int exercise_tertiary_c[AMOUNT_TERTIARY];
 
 // Exercises
 

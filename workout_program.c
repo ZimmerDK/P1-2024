@@ -43,17 +43,17 @@ void print_function(exercise_t* exercise_compound, workout_days_t* program_day, 
         printf("Day: %d\n", i+1);
         for(int j = 0; j < AMOUNT_COMPOUND; j++) {
             if ( program_day[i].compound[j] == 1 ) {
-                printf("compound %d: %s\n", j+1, exercise_compound_c[j].name);
+                printf("compound %d: %s\n", j+1, exercises_c[exercise_compound_c[j]].name);
             }
         }
         for(int j = 0; j < AMOUNT_SECONDARY; j++) {
             if ( program_day[i].secondary[j] == 1 ) {
-                printf("secondary %d: %s\n", j+1, exercise_secondary_c[j].name);
+                printf("secondary %d: %s\n", j+1, exercises_c[exercise_secondary_c[j]].name);
             }
         }
         for(int j = 0; j < AMOUNT_TERTIARY; j++) {
             if ( program_day[i].tertiary[j] == 1 ) {
-                printf("tertiary %d: %s\n", j+1, exercise_tertiary_c[j].name);
+                printf("tertiary %d: %s\n", j+1, exercises_c[exercise_tertiary_c[j]].name);
             }
         }
     }
