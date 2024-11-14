@@ -24,7 +24,8 @@ workout_days_t* allocate_workout_program(int amountOfDays) {
     workout_days_t* program_day = (workout_days_t*)malloc(amountOfDays* sizeof(workout_days_t));
     if (program_day == NULL) {
         // Hukommelsen kunne ikke allokeres
-        return NULL;
+        printf("Not allocated memory in Workout Days!");
+        exit(EXIT_FAILURE);
     }
     return program_day;
 }
@@ -36,7 +37,7 @@ void user_input(int *amountOfDays, int *time) {
     scanf(" %d", time);
 }
 
-void print_function(exercise_t* exercise_compound, workout_days_t* program_day, int number_of_days) {
+void print_function(exercise_t*, workout_days_t* program_day, int number_of_days) {
 
     for(int i = 0; i < number_of_days; i++) {
         printf("\n");
