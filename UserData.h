@@ -50,6 +50,12 @@ typedef struct {
     int time;
 } UserPreferences_t;
 
+typedef struct user_exercise_data_t {
+    int index_number;
+    double weight;
+    int reps;
+} user_exercise_data_t;
+
 HashMap_t* createHashMap();
 unsigned int hash(const char* key);
 static int resizeHashMap(HashMap_t* map);
@@ -63,10 +69,10 @@ FILE* create_new_user(FILE* accountsFILE, char username[MAX_LENGTH], HashMap_t* 
 int writeWorkoutData(FILE* userFILE, int value);
 void user_setup(FILE* userFILE);
 
-int get_exercise_index(const char* exercise_name);
 void fill_user_data(FILE* userFILE);
-exercise_data_t read_exercise_by_name(FILE* userFILE, const char* exercise_name);
-exercise_data_t read_user_data(FILE* userFILE, int exercise_index);
+user_exercise_data_t read_user_data(FILE* userFILE, int exercise_index);
+UserPreferences_t read_user_preferences(FILE* userFILE);
+int write_user_data(FILE* userFILE, int exercise_index, user_exercise_data_t new_data);
 
 void calibrate_workout_routine(struct exercise_data_t* calibration_data);
 
