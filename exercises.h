@@ -4,8 +4,8 @@
 #include <stdio.h>
 //
 #define AMOUNT_COMPOUND 5
-#define AMOUNT_SECONDARY 3
-#define AMOUNT_TERTIARY 3
+#define AMOUNT_SECONDARY 6
+#define AMOUNT_TERTIARY 9
 //
 typedef enum exercise_type_e {
     COMPOUND, SECONDARY, ISOLATION
