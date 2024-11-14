@@ -28,6 +28,20 @@ typedef struct workout_result_t {
 	double weightChange;
 };
 
+/**
+* <p>Calculates the workout based on the data given</p>
+* <p>Finds the set with the highest intensity, if the intensity is higher than the estimated intensity, the rest of the sets are evaluated and a score is calculated</p>
+* <p>If the score is higher than the <em>estimated intensity + 0.5</em>, the overall exercise demand is increased</p>
+* <p>If the score is lower than the <em>estimated intensity - 0.5</em>, the overall exercise demand is decreased</p>
+* <p>If the highest intensity is 10 the workout will not increase</p>
+* 
+* @param data The data to calculate the workout from
+* @param exercise_data The constant exercise data to calculate the workout from
+* @param setCount The amount of sets in the data
+* @return The workout result
+* 
+* 
+*/
 struct workout_result_t calculate_workout(struct set_data_t* data, exercise_data_t* exercise_data, int setCount) {
 
 	int maxScore = 0;
@@ -93,7 +107,10 @@ struct workout_result_t calculate_workout(struct set_data_t* data, exercise_data
 	return workoutResult;
 }
 
-
+/** 
+*Test Comment
+*takes in smthing
+*/  
 void calibrate_workout_routine(struct exercise_data_t* calibration_data) {
 
 	printf("6 Reps @ %lf kg\n", calibration_data->weight);
