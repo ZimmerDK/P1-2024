@@ -3,6 +3,8 @@
 //#include "workout_program.h"
 #include <stdio.h>
 //
+#define AMOUNT_EXERCISES 11
+
 #define AMOUNT_COMPOUND 5
 #define AMOUNT_SECONDARY 3
 #define AMOUNT_TERTIARY 3
@@ -30,7 +32,7 @@ typedef struct exercise_data_t {
     exercise_t* exercise;
  } exercise_data_t;
 
-extern const exercise_t exercises_c[11];
+extern exercise_t exercises_c[11];
 
 extern const int exercise_compound_c[AMOUNT_COMPOUND];
 extern const int exercise_secondary_c[AMOUNT_SECONDARY];

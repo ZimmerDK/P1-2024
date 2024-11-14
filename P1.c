@@ -4,6 +4,7 @@
 #include "exercises.h"
 #include "P1.h"
 #include "workout_program.h"
+#include "UserData.h"
 
 #include<stdio.h>
 #include<math.h>
@@ -184,7 +185,10 @@ int main(void) {
 
 	workout_days_t testDay = { {1, 1, 0, 1, 0}, {1, 0, 1}, {0, 0, 1} };
 
-	run_day(&testDay);
+	__main();
+
+
+	//run_day(&testDay);
 
 	//printf("Rep Change : %d\n", result.repChange);
 	//printf("Weight Change : %lf\n", result.weightChange);

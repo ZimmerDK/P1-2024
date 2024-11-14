@@ -56,6 +56,8 @@ typedef struct user_exercise_data_t {
     int reps;
 } user_exercise_data_t;
 
+int __main();
+
 HashMap_t* createHashMap();
 unsigned int hash(const char* key);
 static int resizeHashMap(HashMap_t* map);
@@ -69,6 +71,7 @@ FILE* create_new_user(FILE* accountsFILE, char username[MAX_LENGTH], HashMap_t* 
 int writeWorkoutData(FILE* userFILE, int value);
 void user_setup(FILE* userFILE);
 
+void parse_user_data(exercise_t* exercises, FILE* userFILE);
 void fill_user_data(FILE* userFILE);
 user_exercise_data_t read_user_data(FILE* userFILE, int exercise_index);
 UserPreferences_t read_user_preferences(FILE* userFILE);
