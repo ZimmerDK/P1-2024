@@ -2,8 +2,7 @@
 #include <math.h>
 #include "exercises.h"
 
-void set_program_day(workout_days_t* program_day, int amountOfDays, int time,
-    int amountOfCompound, int amountOfSecondary, int amountOfTertiary);
+void set_program_day(workout_days_t* program_day, int amountOfDays, int time );
 
 int main(void) {
     int amountOfDays = 0;
@@ -12,10 +11,9 @@ int main(void) {
     user_input(&amountOfDays, &time);
     workout_days_t* program_day = allocate_workout_program(amountOfDays);
 
-    set_program_day(program_day, amountOfDays, time,
-        amountOfCompound, amountOfSecondary, amountOfTertiary);
+    set_program_day(program_day, amountOfDays, time );
 
-    print_function(program_day, amountOfDays, amountOfCompound, amountOfSecondary, amountOfTertiary);
+    print_function(exercise_compound_c, program_day, amountOfDays);
 
     free(program_day);
 
@@ -38,44 +36,38 @@ void user_input(int *amountOfDays, int *time) {
     scanf(" %d", time);
 }
 
-void print_function(workout_days_t* program_day, int number_of_days,
-    int amountOfCompound, int amountOfSecondary, int amountOfTertiary) {
+void print_function(exercise_t* exercise_compound, workout_days_t* program_day, int number_of_days) {
 
     for(int i = 0; i < number_of_days; i++) {
         printf("\n");
         printf("Day: %d\n", i+1);
-        for(int j = 0; j < amountOfCompound; j++) {
-            printf("compound %d: %d\n", j+1, program_day[i].compound[j]);
+        for(int j = 0; j < AMOUNT_COMPOUND; j++) {
+            if ( program_day[i].compound[j] == 1 ) {
+                printf("compound %d: %s\n", j+1, exercise_compound_c[j].name);
+            }
         }
-    }
-
-    for(int i = 0; i < number_of_days; i++) {
-        printf("\n");
-        printf("Day: %d\n", i+1);
-        for(int j = 0; j < amountOfSecondary; j++) {
-            printf("secondary %d: %d\n", j+1, program_day[i].secondary[j]);
+        for(int j = 0; j < AMOUNT_SECONDARY; j++) {
+            if ( program_day[i].secondary[j] == 1 ) {
+                printf("secondary %d: %s\n", j+1, exercise_secondary_c[j].name);
+            }
         }
-    }
-
-    for(int i = 0; i < number_of_days; i++) {
-        printf("\n");
-        printf("Day: %d\n", i+1);
-        for(int j = 0; j < amountOfTertiary; j++) {
-            printf("tertiary %d: %d\n", j+1, program_day[i].tertiary[j]);
+        for(int j = 0; j < AMOUNT_TERTIARY; j++) {
+            if ( program_day[i].tertiary[j] == 1 ) {
+                printf("tertiary %d: %s\n", j+1, exercise_tertiary_c[j].name);
+            }
         }
     }
 }
 
-void set_program_day(workout_days_t* program_day, int amountOfDays, int time,
-    int amountOfCompound, int amountOfSecondary, int amountOfTertiary) {
+void set_program_day(workout_days_t* program_day, int amountOfDays, int time) {
     for(int i = 0; i < amountOfDays; i++) {
-        for(int j = 0; j < amountOfCompound; j++) {
+        for(int j = 0; j < AMOUNT_COMPOUND; j++) {
             program_day[i].compound[j] = 0;
         }
-        for(int j = 0; j < amountOfSecondary; j++) {
+        for(int j = 0; j < AMOUNT_SECONDARY; j++) {
             program_day[i].secondary[j] = 0;
         }
-        for(int j = 0; j < amountOfTertiary; j++) {
+        for(int j = 0; j < AMOUNT_TERTIARY; j++) {
             program_day[i].tertiary[j] = 0;
         }
     }
@@ -90,7 +82,7 @@ void set_program_day(workout_days_t* program_day, int amountOfDays, int time,
     }
 
 
-    while((amountOfCompound > i) && counter <= amountOfDays)
+    while((AMOUNT_COMPOUND > i) && counter <= amountOfDays)
     {
         if(timePerDay[day%amountOfDays] >= 15) {
             program_day[day%amountOfDays].compound[i] = 1;
@@ -105,7 +97,7 @@ void set_program_day(workout_days_t* program_day, int amountOfDays, int time,
 
     i = 0;
     counter = 0;
-    while((amountOfSecondary > i) && counter <= amountOfDays)
+    while((AMOUNT_SECONDARY > i) && counter <= amountOfDays)
     {
         if(timePerDay[day%amountOfDays] >= 12) {
             program_day[day%amountOfDays].secondary[i] = 1;
@@ -120,7 +112,7 @@ void set_program_day(workout_days_t* program_day, int amountOfDays, int time,
     counter = 0;
     i = 0;
 
-    while((amountOfTertiary > i) && counter <= amountOfDays)
+    while((AMOUNT_TERTIARY > i) && counter <= amountOfDays)
     {
         if(timePerDay[day % amountOfDays] >= 9) {
             program_day[day%amountOfDays].tertiary[i] = 1;
