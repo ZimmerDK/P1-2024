@@ -16,6 +16,7 @@ typedef struct workout_days_t {
 
 } workout_days_t;
 
+void generate_workout_program(workout_days_t* workout_program, int amountOfDays, int timeMins);
 
 workout_days_t* allocate_workout_program(int number_of_days);
 

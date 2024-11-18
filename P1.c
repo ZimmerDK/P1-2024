@@ -30,20 +30,14 @@ typedef struct workout_result_t {
 	double weightChange;
 };
 
-/**
-* <p>Calculates the workout based on the data given</p>
-* <p>Finds the set with the highest intensity, if the intensity is higher than the estimated intensity, the rest of the sets are evaluated and a score is calculated</p>
-* <p>If the score is higher than the <em>estimated intensity + 0.5</em>, the overall exercise demand is increased</p>
-* <p>If the score is lower than the <em>estimated intensity - 0.5</em>, the overall exercise demand is decreased</p>
-* <p>If the highest intensity is 10 the workout will not increase</p>
-* 
-* @param data The data to calculate the workout from
-* @param exercise_data The constant exercise data to calculate the workout from
-* @param setCount The amount of sets in the data
-* @return The workout result
-* 
-* 
-*/
+
+
+/** @brief Function that calculates the workout
+ *  @param data @in The data from the sets
+ *  @param exercise_data @in The data from the exercise
+ *  @param setCount @in The amount of sets
+ *  @return The workout result
+ */
 struct workout_result_t calculate_workout(struct set_data_t* data, exercise_data_t* exercise_data, int setCount) {
 
 	int maxScore = 0;
@@ -57,7 +51,7 @@ struct workout_result_t calculate_workout(struct set_data_t* data, exercise_data
 
 	struct workout_result_t workoutResult = {0, 0};
 
-	// Finder max score i set data
+	// Find the set with the highest score
 	for (int i = 0; i < setCount; i++) {
 		if (data[i].intensity > maxScore) {
 			max_result = &data[i];
@@ -65,7 +59,7 @@ struct workout_result_t calculate_workout(struct set_data_t* data, exercise_data
 		}
 	}
 
-	// Hvis vi har en score på 9 eller højere i ét af setsne, kig på resten og vurdere en score
+	// Calculate the collected score
 	double collectedScore = 0;
 	double maxPossibleScore = 0;
 	if (max_result->intensity >= estIntensity) {
@@ -79,6 +73,7 @@ struct workout_result_t calculate_workout(struct set_data_t* data, exercise_data
 
 	printf("Collected Score : %lf \n", collectedScore);
 
+	// Check if the collected score is higher or lower than the estimated intensity
 	if (collectedScore > (estIntensity+0.5) + 0.0001) {
 		if (exercise_data->reps == minRep) {
 			workoutResult.weightChange = -weight_step;
@@ -109,10 +104,10 @@ struct workout_result_t calculate_workout(struct set_data_t* data, exercise_data
 	return workoutResult;
 }
 
-/** 
-*Test Comment
-*takes in smthing
-*/  
+/** @brief Function that calibrates the workout routine
+ *  @param calibration_data @in @out The calibration data
+ */
+
 void calibrate_workout_routine(struct exercise_data_t* calibration_data) {
 
 	printf("6 Reps @ %lf kg\n", calibration_data->weight);
@@ -135,7 +130,10 @@ void calibrate_workout_routine(struct exercise_data_t* calibration_data) {
 	}
 }
 
-void run_exercise(exercise_t exercise) {
+/** @brief Function that runs the exercise
+ *  @param exercise @in The exercise
+ */
+void run_exercise(exercise_t* exercise) {
 
 	printf("#############################################\n");
 	printf("Starting exercise: %s\n", exercise.name);
@@ -145,7 +143,7 @@ void run_exercise(exercise_t exercise) {
 	printf("#############################################\n\n");
 	
 	struct set_data_t* setData = malloc(sizeof(struct set_data_t) * 3);
-	exercise_data_t workoutData = { 10, 40.0, &exercise };
+	exercise_data_t workoutData = { 10, 40.0, exercise };
 	scanf("%d %d %d", &setData[0].intensity, &setData[1].intensity, &setData[2].intensity);
 
 	struct workout_result_t workout_result = calculate_workout(setData, &workoutData, 3);
@@ -156,6 +154,10 @@ void run_exercise(exercise_t exercise) {
 	free(setData);
 }
 
+
+/** @brief Function that runs the day
+ *  @param workout_day @in The workout day
+ */
 void run_day(workout_days_t* workout_day) {
 	printf("Starting compound exercises:\n");
 	for (int i = 0; i < AMOUNT_COMPOUND; i++) {
@@ -186,6 +188,8 @@ int main(void) {
 	workout_days_t testDay = { {1, 1, 0, 1, 0}, {1, 0, 1}, {0, 0, 1} };
 
 	__main();
+
+
 
 
 	//run_day(&testDay);

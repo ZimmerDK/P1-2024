@@ -1,5 +1,8 @@
 #include "workout_program.h"
 #include "exercises.h"
+#include <stdlib.h>
+#include <stdio.h>
+#include <assert.h>
 
 void set_program_day(workout_days_t* program_day, int amountOfDays, int time );
 
@@ -19,7 +22,20 @@ void set_program_day(workout_days_t* program_day, int amountOfDays, int time );
     return 0;
 }*/
 
-//Function that allocates enough memory for all the structs of workout days. enough space for each day is alocated.
+/** @brief Function that generates a workout program
+ *  @param workout_program @out A pointer to the workout program
+ *  @param amountOfDays @in The amount of days the program should be
+ *  @param time @in The time per day
+ */
+
+void generate_workout_program(workout_days_t* workout_program, int amountOfDays, int timeMins) {
+	set_program_day(workout_program, amountOfDays, timeMins);
+}
+
+/** @brief Function that allocates memory for the workout program
+ *  @param amountOfDays @in The amount of days the program should be
+ *  @return A pointer to the workout program
+ */
 workout_days_t* allocate_workout_program(int amountOfDays) {
     workout_days_t* program_day = (workout_days_t*)malloc(amountOfDays* sizeof(workout_days_t));
     if (program_day == NULL) {
@@ -40,9 +56,13 @@ void user_input(int *amountOfDays, int *time) {
     scanf(" %d", time);
 }
 
-/*Fuction that prints which exercises per day.
-It uses the struct Exercise_t, the structs program_day and number_of_days */
-void print_function(exercise_t*, workout_days_t* program_day, int number_of_days) {
+
+/** @brief Function that prints the workout program
+ *  @param exercises @in An array of exercises
+ *  @param program_day @in The workout program
+ *  @param number_of_days @in The amount of days in the program
+ */
+void print_function(exercise_t* exercises, workout_days_t* program_day, int number_of_days) {
 
     for(int i = 0; i < number_of_days; i++) {
         printf("\n");
@@ -51,27 +71,35 @@ void print_function(exercise_t*, workout_days_t* program_day, int number_of_days
         //Prints the compound for the day
         for(int j = 0; j < AMOUNT_COMPOUND; j++) {
             if ( program_day[i].compound[j] == 1 ) {
-                printf("compound %d: %s\n", j+1, exercise_compound_c[j].name);
+                printf("compound %d: %s\n", j+1, exercises[exercise_compound_c[j]].name);
             }
         }
 
         //Prints the secondary for the day
         for(int j = 0; j < AMOUNT_SECONDARY; j++) {
             if ( program_day[i].secondary[j] == 1 ) {
-                printf("secondary %d: %s\n", j+1, exercise_secondary_c[j].name);
+                printf("secondary %d: %s\n", j+1, exercises[exercise_secondary_c[j]].name);
             }
         }
 
         //Prints the tertiary for the day
         for(int j = 0; j < AMOUNT_TERTIARY; j++) {
             if ( program_day[i].tertiary[j] == 1 ) {
-                printf("tertiary %d: %s\n", j+1, exercise_tertiary_c[j].name);
+                printf("tertiary %d: %s\n", j+1, exercises[exercise_tertiary_c[j]].name);
             }
         }
     }
 }
 
+
+/** @brief Function that sets the workout program
+ *  @param program_day @out The workout program
+ *  @param amountOfDays @in The amount of days in the program
+ *  @param time @in The time per day
+ */
 void set_program_day(workout_days_t* program_day, int amountOfDays, int time) {
+    
+    // Initialize all values to 0
     for(int i = 0; i < amountOfDays; i++) {
         for(int j = 0; j < AMOUNT_COMPOUND; j++) {
             program_day[i].compound[j] = 0;
@@ -84,6 +112,7 @@ void set_program_day(workout_days_t* program_day, int amountOfDays, int time) {
         }
     }
 
+    // Determine how many different days the program should have
     int DifferentProgramDays = 0;
     switch(amountOfDays) {
         case 1: DifferentProgramDays = 1; break;
@@ -96,7 +125,15 @@ void set_program_day(workout_days_t* program_day, int amountOfDays, int time) {
         default: printf("input amount between 1 and 7");
     }
 
-    int timePerDay[amountOfDays];
+    
+    int* timePerDay = (int*)malloc(sizeof(int) * amountOfDays);
+    
+    if(*timePerDay == NULL) {
+		printf("Not allocated memory in timePerDay!");
+		exit(EXIT_FAILURE);
+	}
+
+    // Set the time per day
     for(int i = 0; i < DifferentProgramDays; i++) {
         timePerDay[i] = time;
     }
@@ -107,6 +144,7 @@ void set_program_day(workout_days_t* program_day, int amountOfDays, int time) {
     int day = 0;
     int counter = 0;
 
+    // Sets the compound exercises, if there is time (17 minutes)
     while((AMOUNT_COMPOUND > i) && counter <= DifferentProgramDays )
     {
         if(timePerDay[day%DifferentProgramDays] >= 17) {
@@ -122,8 +160,9 @@ void set_program_day(workout_days_t* program_day, int amountOfDays, int time) {
 
     }
 
-    i = 0;
-    counter = 0;
+    i = 0; counter = 0;
+    
+    // Sets the secondary exercises, if there is time (14 minutes)
     while(AMOUNT_SECONDARY > i && counter <= DifferentProgramDays && CompoundCounter < maxAmountOfCompound)
     {
         if(timePerDay[day%DifferentProgramDays] >= 14) {
@@ -137,9 +176,9 @@ void set_program_day(workout_days_t* program_day, int amountOfDays, int time) {
         }
         day++;
     }
-    counter = 0;
-    i = 0;
+    counter = 0; i = 0;
 
+    // Sets the tertiary exercises, if there is time (10 minutes)
     while((AMOUNT_TERTIARY > i) && counter <= DifferentProgramDays)
     {
         if(timePerDay[day % DifferentProgramDays] >= 10) {
@@ -152,6 +191,11 @@ void set_program_day(workout_days_t* program_day, int amountOfDays, int time) {
         }
         day++;
     }
+
+    // Free the allocated memory
+    free(timePerDay);
+
+	// If there are more days in the program than the different days, the program will be repeated
     if ( amountOfDays > DifferentProgramDays ) {
         switch (amountOfDays) {
             case 4: program_day[2] = program_day[0];
@@ -170,21 +214,6 @@ void set_program_day(workout_days_t* program_day, int amountOfDays, int time) {
                     program_day[6] = program_day[3];
                     break;
         }
-    }
-    counter = 0;
-    i = 0;
-
-    while((AMOUNT_TERTIARY > i) && counter <= amountOfDays)
-    {
-        if(timePerDay[day % amountOfDays] >= 9) {
-            program_day[day%amountOfDays].tertiary[i] = 1;
-            i++;
-            timePerDay[day%amountOfDays] -= 9;
-        }
-        else {
-            counter++;
-        }
-        day++;
     }
 }
 /* Bør man ikke tage det hvis man ikke kan kører hele programmet igennem? compound / secondary / tertiary */
