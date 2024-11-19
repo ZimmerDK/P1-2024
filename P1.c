@@ -136,17 +136,17 @@ void calibrate_workout_routine(struct exercise_data_t* calibration_data) {
 void run_exercise(exercise_t* exercise) {
 
 	printf("#############################################\n");
-	printf("Starting exercise: %s\n", exercise.name);
-	printf("Estimated Intensity: %lf\n", exercise.est_intensity);
-	printf("Current Weight: %lf\n", /*exercise.user_exercise_data->weight*/ 40.0);
-	printf("Current Reps: %d\n", /*exercise.user_exercise_data->reps*/ 10);
+	printf("Starting exercise: %s\n", exercise->name);
+	printf("Estimated Intensity: %lf\n", exercise->est_intensity);
+	printf("Current Weight: %lf\n", exercise->user_exercise_data->weight);
+	printf("Current Reps: %d\n", exercise->user_exercise_data->reps);
 	printf("#############################################\n\n");
 	
 	struct set_data_t* setData = malloc(sizeof(struct set_data_t) * 3);
-	exercise_data_t workoutData = { 10, 40.0, exercise };
+
 	scanf("%d %d %d", &setData[0].intensity, &setData[1].intensity, &setData[2].intensity);
 
-	struct workout_result_t workout_result = calculate_workout(setData, &workoutData, 3);
+	struct workout_result_t workout_result = calculate_workout(setData, exercise->user_exercise_data, 3);
 
 	printf("\nRep Change : %d\n", workout_result.repChange);
 	printf("Weight Change : %lf\n", workout_result.weightChange);
@@ -162,21 +162,21 @@ void run_day(workout_days_t* workout_day) {
 	printf("Starting compound exercises:\n");
 	for (int i = 0; i < AMOUNT_COMPOUND; i++) {
 		if (workout_day->compound[i] == 1) {
-			run_exercise(exercises_c[exercise_compound_c[i]]);
+			run_exercise(&exercises_c[exercise_compound_c[i]]);
 		}
 	}
 
 	printf("Starting secondary exercises:\n");
 	for (int i = 0; i < AMOUNT_SECONDARY; i++) {
 		if (workout_day->secondary[i] == 1) {
-			run_exercise(exercises_c[exercise_secondary_c[i]]);
+			run_exercise(&exercises_c[exercise_secondary_c[i]]);
 		}
 	}
 
 	printf("Starting tertiary exercises:\n");
 	for (int i = 0; i < AMOUNT_TERTIARY; i++) {
 		if (workout_day->tertiary[i] == 1) {
-			run_exercise(exercises_c[exercise_tertiary_c[i]]);
+			run_exercise(&exercises_c[exercise_tertiary_c[i]]);
 		}
 	}
 }
@@ -184,15 +184,24 @@ void run_day(workout_days_t* workout_day) {
 
 int main(void) {
 
+	UserPreferences_t* userPrefs = malloc(sizeof(UserPreferences_t));
 
-	workout_days_t testDay = { {1, 1, 0, 1, 0}, {1, 0, 1}, {0, 0, 1} };
+	if (userPrefs == NULL) {
+		printf("Memory allocation failed");
+		return -1;
+	};
 
-	__main();
+	__main(userPrefs);
 
+	workout_days_t* workout = (workout_days_t*)generate_workout_program(*userPrefs);
+	
+	print_workout_program(workout, userPrefs->days);
 
+	for (int i = 0; i < userPrefs->days; i++) {
+		run_day(&workout[i]);
+	};
 
-
-	//run_day(&testDay);
+	
 
 	//printf("Rep Change : %d\n", result.repChange);
 	//printf("Weight Change : %lf\n", result.weightChange);

@@ -3,33 +3,23 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <assert.h>
+#include "UserData.h";
 
 void set_program_day(workout_days_t* program_day, int amountOfDays, int time );
 
-/*int main(void) {
-    int amountOfDays = 0;
-    int time = 0;
-
-    user_input(&amountOfDays, &time);
-    workout_days_t* program_day = allocate_workout_program(amountOfDays);
-
-    set_program_day(program_day, amountOfDays, time );
-
-    print_function(exercise_compound_c, program_day, amountOfDays);
-
-    free(program_day);
-
-    return 0;
-}*/
-
-/** @brief Function that generates a workout program
- *  @param workout_program @out A pointer to the workout program
- *  @param amountOfDays @in The amount of days the program should be
- *  @param time @in The time per day
+/** @brief Function that generates the workout program
+ *  @param userPrefs @in The user preferences
+ *  @return A pointer to the workout program
  */
+workout_days_t* generate_workout_program(UserPreferences_t userPrefs) {
+	
+    int amountOfDays = userPrefs.days;
+	int time = userPrefs.time;
+	workout_days_t* program_day = allocate_workout_program(amountOfDays);
 
-void generate_workout_program(workout_days_t* workout_program, int amountOfDays, int timeMins) {
-	set_program_day(workout_program, amountOfDays, timeMins);
+	set_program_day(program_day, amountOfDays, time );
+
+	return program_day;
 }
 
 /** @brief Function that allocates memory for the workout program
@@ -54,6 +44,221 @@ void user_input(int *amountOfDays, int *time) {
     scanf(" %d", amountOfDays);
     printf("How much time per day?\n");
     scanf(" %d", time);
+}
+
+
+void _print_add_spacing(char c, int amountDays) {
+	for (int i = 0; i <= 30*amountDays; i++) {
+        printf("%c", c);
+	}
+	printf("\n");
+}
+
+void _print_add_spacing_with_ends(char spacing, char ends, int amountDays) {
+	printf("%c", ends);
+	for (int i = 0; i < 30*amountDays-1; i++) {
+		printf("%c", spacing);
+	}
+	printf("%c\n", ends);
+}
+
+void _print_add_seperation(char seperator, char inbetween, int amountDays) {
+
+    for (int i = 0; i < amountDays; i++) {
+		printf("%c", seperator);
+		for (int j = 0; j < 29; j++) {
+			printf("%c", inbetween);
+		}
+	}
+	printf("%c\n", seperator);
+
+}
+
+void print_workout_program(workout_days_t* program, int amountofdays) {
+    
+    // Print some kind of table
+    int* e_counter = (int*)malloc(sizeof(int) * amountofdays);
+    if(*e_counter == NULL) {
+        printf("Not allocated memory in e_counter!");
+        exit(EXIT_FAILURE);
+    }
+
+    for(int i = 0; i < amountofdays; i++) {
+		e_counter[i] = 0;
+	}
+    /*
+    ##############################################
+    #    DAY 1     #    DAY 2     #    DAY 3     #
+    ##############################################
+    # Compound     # Compound     # Compound     #
+    # ...		  # ...          # ...          #
+    # Secondary    # Secondary    # Secondary    #
+    # ...          # ...          # ...          #
+    # Tertiary     # Tertiary     # Tertiary     #
+    # ...          # ...          # ...          #
+    ##############################################
+    */
+
+    _print_add_spacing('#', amountofdays);
+
+    _print_add_seperation('#', ' ', amountofdays);
+
+    
+    for (int i = 0; i < amountofdays; i++) {
+		printf("#            DAY %d            ", i+1);
+	}
+    printf("#\n");
+
+    
+    _print_add_seperation('#', ' ', amountofdays);
+
+    _print_add_spacing('#', amountofdays);
+
+    _print_add_seperation('#', '(', amountofdays);
+
+    printf("#");
+    for (int i = 0; i < (amountofdays/2 * 30)-5; i++) {
+        printf(" ");
+    }
+    printf("COMPOUND");
+    for (int i = 0; i < (amountofdays/2 * 30)-5; i++) {
+		printf(" ");
+	}
+    printf(" #\n");
+
+    _print_add_seperation('#', ')', amountofdays);
+
+    _print_add_spacing('#', amountofdays);
+        
+    for(int i = 0; i < AMOUNT_COMPOUND; i++) {
+        for (int j = 0; j < amountofdays; j++) {
+            // get the next exercise using e_counter
+            while(e_counter[j] < AMOUNT_COMPOUND && program[j].compound[e_counter[j]] == 0) {
+				e_counter[j]++;
+			}
+            if (e_counter[j] < AMOUNT_COMPOUND) {
+
+				//printf("# %s", exercises_c[exercise_compound_c[e_counter[j]]].name);
+				
+                // Pad to 30 characters
+                printf("# %s", exercises_c[exercise_compound_c[e_counter[j]]].name);
+				for (int k = 0; k < 28 - strlen(exercises_c[exercise_compound_c[e_counter[j]]].name); k++) {
+                    printf(" ");
+				}
+                e_counter[j]++;
+			}
+			else {
+                // Pad to 30 characters
+                printf("#");
+				for (int k = 0; k <=28; k++) {
+					printf(" ");
+				}
+			}
+        }
+        printf("#\n");
+	}
+
+    _print_add_spacing('#', amountofdays);
+
+    _print_add_seperation('#', '/', amountofdays);
+
+    printf("#");
+    for (int i = 0; i < (amountofdays / 2 * 30) - 6; i++) {
+        printf(" ");
+    }
+    printf("SECONDARY");
+    for (int i = 0; i < (amountofdays / 2 * 30) - 5; i++) {
+        printf(" ");
+    }
+    printf(" #\n");
+
+    _print_add_seperation('#', '\\', amountofdays);
+
+    _print_add_spacing('#', amountofdays);
+
+    for (int i = 0; i < amountofdays; i++) {
+        e_counter[i] = 0;
+    }
+
+    for (int i = 0; i < AMOUNT_SECONDARY; i++) {
+        for (int j = 0; j < amountofdays; j++) {
+            // get the next exercise using e_counter
+            while (e_counter[j] < AMOUNT_SECONDARY && program[j].secondary[e_counter[j]] == 0) {
+                e_counter[j]++;
+            }
+            if (e_counter[j] < AMOUNT_SECONDARY) {
+
+                //printf("# %s", exercises_c[exercise_compound_c[e_counter[j]]].name);
+
+                // Pad to 30 characters
+                printf("# %s", exercises_c[exercise_secondary_c[e_counter[j]]].name);
+                for (int k = 0; k < 28 - strlen(exercises_c[exercise_secondary_c[e_counter[j]]].name); k++) {
+                    printf(" ");
+                }
+                e_counter[j]++;
+            }
+            else {
+                // Pad to 30 characters
+                printf("#");
+                for (int k = 0; k <= 28; k++) {
+                    printf(" ");
+                }
+            }
+        }
+        printf("#\n");
+    }
+
+    _print_add_spacing('#', amountofdays);
+
+    _print_add_seperation('#', '<', amountofdays);
+
+    printf("#");
+    for (int i = 0; i < (amountofdays / 2 * 30) - 5; i++) {
+        printf(" ");
+    }
+    printf("TERTIARY");
+    for (int i = 0; i < (amountofdays / 2 * 30) - 5; i++) {
+        printf(" ");
+    }
+    printf(" #\n");
+
+    _print_add_seperation('#', '>', amountofdays);
+
+    _print_add_spacing('#', amountofdays);
+
+    for (int i = 0; i < amountofdays; i++) {
+        e_counter[i] = 0;
+    }
+
+    for (int i = 0; i < AMOUNT_TERTIARY; i++) {
+        for (int j = 0; j < amountofdays; j++) {
+            // get the next exercise using e_counter
+            while (e_counter[j] < AMOUNT_TERTIARY && program[j].tertiary[e_counter[j]] == 0) {
+                e_counter[j]++;
+            }
+            if (e_counter[j] < AMOUNT_TERTIARY) {
+
+                //printf("# %s", exercises_c[exercise_compound_c[e_counter[j]]].name);
+
+                // Pad to 30 characters
+                printf("# %s", exercises_c[exercise_tertiary_c[e_counter[j]]].name);
+                for (int k = 0; k < 28 - strlen(exercises_c[exercise_tertiary_c[e_counter[j]]].name); k++) {
+                    printf(" ");
+                }
+                e_counter[j]++;
+            }
+            else {
+                // Pad to 30 characters
+                printf("#");
+                for (int k = 0; k <= 28; k++) {
+                    printf(" ");
+                }
+            }
+        }
+        printf("#\n");
+    }
+
+    _print_add_spacing('#', amountofdays);
 }
 
 
@@ -145,7 +350,7 @@ void set_program_day(workout_days_t* program_day, int amountOfDays, int time) {
     int counter = 0;
 
     // Sets the compound exercises, if there is time (17 minutes)
-    while((AMOUNT_COMPOUND > i) && counter <= DifferentProgramDays )
+    while((AMOUNT_COMPOUND > i) && (counter <= DifferentProgramDays) && (CompoundCounter < maxAmountOfCompound))
     {
         if(timePerDay[day%DifferentProgramDays] >= 17) {
             program_day[day%DifferentProgramDays].compound[i] = 1;
@@ -163,13 +368,12 @@ void set_program_day(workout_days_t* program_day, int amountOfDays, int time) {
     i = 0; counter = 0;
     
     // Sets the secondary exercises, if there is time (14 minutes)
-    while(AMOUNT_SECONDARY > i && counter <= DifferentProgramDays && CompoundCounter < maxAmountOfCompound)
+    while(AMOUNT_SECONDARY > i && counter <= DifferentProgramDays)
     {
         if(timePerDay[day%DifferentProgramDays] >= 14) {
             program_day[day%DifferentProgramDays].secondary[i] = 1;
             i++;
             timePerDay[day%DifferentProgramDays] -= 14;
-            CompoundCounter++;
         }
         else {
             counter++;

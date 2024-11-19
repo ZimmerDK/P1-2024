@@ -3,11 +3,11 @@
 //#include "workout_program.h"
 #include <stdio.h>
 //
-#define AMOUNT_EXERCISES 11
+#define AMOUNT_EXERCISES 18
 
 #define AMOUNT_COMPOUND 5
-#define AMOUNT_SECONDARY 3
-#define AMOUNT_TERTIARY 3
+#define AMOUNT_SECONDARY 4
+#define AMOUNT_TERTIARY 9
 //
 typedef enum exercise_type_e {
     COMPOUND, SECONDARY, ISOLATION
@@ -32,7 +32,7 @@ typedef struct exercise_data_t {
     exercise_t* exercise;
  } exercise_data_t;
 
-extern exercise_t exercises_c[11];
+extern exercise_t exercises_c[AMOUNT_EXERCISES];
 
 extern const int exercise_compound_c[AMOUNT_COMPOUND];
 extern const int exercise_secondary_c[AMOUNT_SECONDARY];

@@ -8,7 +8,7 @@ typedef struct workout_result_t {
     double weightChange;  // Change in weight used
 } workout_result_t;
 
-int __main() {
+int __main(UserPreferences_t* userprefs) {
     // Ensure user directory exists before opening files
     if (!ensure_user_directory()) {
         printf("Error: Could not create user directory\n");
@@ -138,8 +138,7 @@ int __main() {
                 userFILE = fopen(filepath, "rb+");
 
                 // Read and display user preferences
-                UserPreferences_t user_prefs_t = read_user_preferences(userFILE);
-                printf("User Prefs: DAYS=%d TIME=%d\n", user_prefs_t.days, user_prefs_t.time);
+                *userprefs = read_user_preferences(userFILE);
 
                 // Load user data into exercise structures
                 parse_user_data(exercises_c, userFILE);
