@@ -3,7 +3,7 @@
 #pragma once
 
 
-#ifdef P1_H
+#ifndef P1_H
 #define P1_h
 
 #endif // P1_H

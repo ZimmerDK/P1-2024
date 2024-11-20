@@ -3,6 +3,8 @@
 
 #include "exercises.h"
 #include "P1.h"
+#include "workout_program.h"
+#include "UserData.h"
 
 #include<stdio.h>
 #include<math.h>
@@ -28,6 +30,14 @@ typedef struct workout_result_t {
 	double weightChange;
 };
 
+
+
+/** @brief Function that calculates the workout
+ *  @param data @in The data from the sets
+ *  @param exercise_data @in The data from the exercise
+ *  @param setCount @in The amount of sets
+ *  @return The workout result
+ */
 struct workout_result_t calculate_workout(struct set_data_t* data, exercise_data_t* exercise_data, int setCount) {
 
 	int maxScore = 0;
@@ -41,7 +51,7 @@ struct workout_result_t calculate_workout(struct set_data_t* data, exercise_data
 
 	struct workout_result_t workoutResult = {0, 0};
 
-	// Finder max score i set data
+	// Find the set with the highest score
 	for (int i = 0; i < setCount; i++) {
 		if (data[i].intensity > maxScore) {
 			max_result = &data[i];
@@ -49,7 +59,7 @@ struct workout_result_t calculate_workout(struct set_data_t* data, exercise_data
 		}
 	}
 
-	// Hvis vi har en score på 9 eller højere i ét af setsne, kig på resten og vurdere en score
+	// Calculate the collected score
 	double collectedScore = 0;
 	double maxPossibleScore = 0;
 	if (max_result->intensity >= estIntensity) {
@@ -63,6 +73,7 @@ struct workout_result_t calculate_workout(struct set_data_t* data, exercise_data
 
 	printf("Collected Score : %lf \n", collectedScore);
 
+	// Check if the collected score is higher or lower than the estimated intensity
 	if (collectedScore > (estIntensity+0.5) + 0.0001) {
 		if (exercise_data->reps == minRep) {
 			workoutResult.weightChange = -weight_step;
@@ -93,6 +104,9 @@ struct workout_result_t calculate_workout(struct set_data_t* data, exercise_data
 	return workoutResult;
 }
 
+/** @brief Function that calibrates the workout routine
+ *  @param calibration_data @in @out The calibration data
+ */
 
 void calibrate_workout_routine(struct exercise_data_t* calibration_data) {
 
@@ -116,21 +130,81 @@ void calibrate_workout_routine(struct exercise_data_t* calibration_data) {
 	}
 }
 
+/** @brief Function that runs the exercise
+ *  @param exercise @in The exercise
+ */
+void run_exercise(exercise_t* exercise) {
+
+	printf("#############################################\n");
+	printf("Starting exercise: %s\n", exercise->name);
+	printf("Estimated Intensity: %lf\n", exercise->est_intensity);
+	printf("Current Weight: %lf\n", exercise->user_exercise_data->weight);
+	printf("Current Reps: %d\n", exercise->user_exercise_data->reps);
+	printf("#############################################\n\n");
+	
+	struct set_data_t* setData = malloc(sizeof(struct set_data_t) * 3);
+
+	scanf("%d %d %d", &setData[0].intensity, &setData[1].intensity, &setData[2].intensity);
+
+	struct workout_result_t workout_result = calculate_workout(setData, exercise->user_exercise_data, 3);
+
+	printf("\nRep Change : %d\n", workout_result.repChange);
+	printf("Weight Change : %lf\n", workout_result.weightChange);
+
+	free(setData);
+}
+
+
+/** @brief Function that runs the day
+ *  @param workout_day @in The workout day
+ */
+void run_day(workout_days_t* workout_day) {
+	printf("Starting compound exercises:\n");
+	for (int i = 0; i < AMOUNT_COMPOUND; i++) {
+		if (workout_day->compound[i] == 1) {
+			run_exercise(&exercises_c[exercise_compound_c[i]]);
+		}
+	}
+
+	printf("Starting secondary exercises:\n");
+	for (int i = 0; i < AMOUNT_SECONDARY; i++) {
+		if (workout_day->secondary[i] == 1) {
+			run_exercise(&exercises_c[exercise_secondary_c[i]]);
+		}
+	}
+
+	printf("Starting tertiary exercises:\n");
+	for (int i = 0; i < AMOUNT_TERTIARY; i++) {
+		if (workout_day->tertiary[i] == 1) {
+			run_exercise(&exercises_c[exercise_tertiary_c[i]]);
+		}
+	}
+}
+
 
 int main(void) {
 
-	struct set_data_t* setData = malloc(sizeof(struct set_data_t) * 3);
-	exercise_data_t workoutData = { 10, 40.0, &exercise_c[0]};
+	UserPreferences_t* userPrefs = malloc(sizeof(UserPreferences_t));
 
-	setData[0].intensity = 1;
-	setData[1].intensity = 2;
-	setData[2].intensity = 3;
+	if (userPrefs == NULL) {
+		printf("Memory allocation failed");
+		return -1;
+	};
 
-	struct workout_result_t result = calculate_workout(setData, &workoutData, 3);
+	UserData_main(userPrefs);
 
+	workout_days_t* workout = (workout_days_t*)generate_workout_program(*userPrefs);
+	
+	print_workout_program(workout, userPrefs->days);
 
-	printf("Rep Change : %d\n", result.repChange);
-	printf("Weight Change : %lf\n", result.weightChange);
+	for (int i = 0; i < userPrefs->days; i++) {
+		run_day(&workout[i]);
+	};   
+
+	
+
+	//printf("Rep Change : %d\n", result.repChange);
+	//printf("Weight Change : %lf\n", result.weightChange);
 
 	/*struct workout_data_t calibrationData = {8, 20.0};
 
@@ -154,7 +228,7 @@ int - header end
 struct user_meta_data {
 	char username[16];
 };
-
+/*
 void create_new_user(FILE* file, char username[16]) {
 	int user_count = 0;
 
@@ -169,7 +243,7 @@ void create_new_user(FILE* file, char username[16]) {
 	fwrite(username, 16, 1, file);
 
 
-}
+}*/
 /*
 int main(void) {
 	FILE* file = fopen(USER_DATA_HEADER_DEBUG_PATH, "rb+");

@@ -8,7 +8,7 @@ typedef struct workout_result_t {
     double weightChange;  // Change in weight used
 } workout_result_t;
 
-int main() {
+int UserData_main(UserPreferences_t* userprefs) {
     // Ensure user directory exists before opening files
     if (!ensure_user_directory()) {
         printf("Error: Could not create user directory\n");
@@ -138,10 +138,13 @@ int main() {
                 userFILE = fopen(filepath, "rb+");
 
                 // Read and display user preferences
-                UserPreferences_t user_prefs_t = read_user_preferences(userFILE);
-                printf("User Prefs: DAYS=%d TIME=%d\n", user_prefs_t.days, user_prefs_t.time);
+                *userprefs = read_user_preferences(userFILE);
+
+                // Load user data into exercise structures
+                parse_user_data(exercises_c, userFILE);
 
                 // Exercise data test loop
+                /*
                 do {
                     char input_exercise[MAX_LENGTH+10];
                     printf("Input desired exercise to test: ");
@@ -160,7 +163,7 @@ int main() {
                     write_user_data(userFILE, 1, input_exercise_data);
                     fflush(userFILE);
 
-                } while (1);
+                } while (1); */
 
                 fclose(userFILE);
 
@@ -438,7 +441,7 @@ void user_setup(FILE* userFILE) {
     printf("\nPreferences saved successfully!\n");
 }
 
-/**@brief Initializes exercise data for all exercises in the exercise_c array
+/**@brief Initializes exercise data for all exercises in the exercises_c array
  * @param userFILE Pointer to the file where exercise data will be written
  * @note Writes weight (double) and reps (int) for each exercise
  * @note Skips past user preferences section before writing exercise data */
@@ -446,8 +449,8 @@ void fill_user_data(FILE* userFILE) {
     const size_t RECORD_SIZE = sizeof(double) + sizeof(int);
     const size_t SKIP_PREFS = sizeof(UserPreferences_t);
 
-    // Iterate through all exercises in exercise_c array
-    for(int i = 0; i < sizeof(exercise_c) / sizeof(exercise_t); i++) {
+    // Iterate through all exercises in exercises_c array
+    for(int i = 0; i < sizeof(exercises_c) / sizeof(exercise_t); i++) {
         // Position file pointer after preferences section
         fseek(userFILE, SKIP_PREFS + i * RECORD_SIZE, SEEK_SET);
 
@@ -457,14 +460,14 @@ void fill_user_data(FILE* userFILE) {
         // Initialize exercise data with base values
         exercise_data_t current_exercise_data = {
             .weight = 20.0, // Base weight for testing
-            .reps = exercise_c[i].min_reps,
+            .reps = exercises_c[i].min_reps,
         };
 
         // Apply workout changes
         current_exercise_data.weight += workoutResult.weightChange;
         current_exercise_data.reps += workoutResult.repChange;
 
-        printf("Writing data for %s at index %d\n", exercise_c[i].name, i);
+        printf("Writing data for %s at index %d\n", exercises_c[i].name, i);
 
         // Write weight and reps with error checking
         if (fwrite(&current_exercise_data.weight, sizeof(double), 1, userFILE) != 1) {
@@ -479,9 +482,21 @@ void fill_user_data(FILE* userFILE) {
     printf("\nUser Exercise Data saved successfully!\n");
 }
 
+/**@brief Parses user data from the user's file and assigns it to exercise structures
+ * @param exercises Pointer to the exercise array to update with user data */
+void parse_user_data(exercise_t exercises[], FILE* userFILE) {
+    for (int i = 0; i < AMOUNT_EXERCISES; i++) {
+        user_exercise_data_t data = read_user_data(userFILE, i);
+        exercises[i].user_exercise_data = malloc(sizeof(exercise_data_t));
+        exercises[i].user_exercise_data->weight = data.weight;
+        exercises[i].user_exercise_data->reps = data.reps;
+        exercises[i].user_exercise_data->exercise = &exercises[i];
+    }
+}
+
 /**@brief Retrieves exercise data for a specific exercise from the user's file
  * @param userFILE Pointer to the file containing exercise data
- * @param exercise_index Index of the desired exercise in exercise_c array
+ * @param exercise_index Index of the desired exercise in exercises_c array
  * @return user_exercise_data_t structure containing weight, reps, and index
  * @note Returns zeroed structure if any error occurs */
 user_exercise_data_t read_user_data(FILE* userFILE, int exercise_index) {
@@ -507,13 +522,13 @@ user_exercise_data_t read_user_data(FILE* userFILE, int exercise_index) {
     // Read weight and reps with error checking
     if (fread(&data.weight, sizeof(double), 1, userFILE) != 1) {
         printf("Error reading weight for exercise %d (%s)\n",
-               exercise_index, exercise_c[exercise_index].name);
+               exercise_index, exercises_c[exercise_index].name);
         return data;
     }
 
     if (fread(&data.reps, sizeof(int), 1, userFILE) != 1) {
         printf("Error reading reps for exercise %d (%s)\n",
-               exercise_index, exercise_c[exercise_index].name);
+               exercise_index, exercises_c[exercise_index].name);
         return data;
     }
 
@@ -577,13 +592,13 @@ int write_user_data(FILE* userFILE, int exercise_index, user_exercise_data_t new
     // Write weight and reps with error checking
     if (fwrite(&new_data.weight, sizeof(double), 1, userFILE) != 1) {
         printf("Error writing weight for exercise %d (%s)\n",
-               exercise_index, exercise_c[exercise_index].name);
+               exercise_index, exercises_c[exercise_index].name);
         return -1;
     }
 
     if (fwrite(&new_data.reps, sizeof(int), 1, userFILE) != 1) {
         printf("Error writing reps for exercise %d (%s)\n",
-               exercise_index, exercise_c[exercise_index].name);
+               exercise_index, exercises_c[exercise_index].name);
         return -1;
     }
 
