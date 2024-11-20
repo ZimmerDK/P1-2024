@@ -12,10 +12,6 @@
 #include<stdlib.h>
 
 
-const char* USER_DATA_HEADER_PATH = "./UserData.dat";
-const char* USER_DATA_HEADER_DEBUG_PATH = "C:\\Users\\kikoi\\Desktop\\P1\\P1\\UserData.dat";
-const char* USER_DATA_DIR_PATH = "C:\\Users\\kikoi\\Desktop\\P1\\P1\\out\\Users\\";
-
 void run_day(workout_days_t* workout_day);
 
 typedef struct set_data_t {
