@@ -77,6 +77,7 @@ int ProfilePage(FILE* userFILE, UserPreferences_t* userPrefs) {
 	scanf(" %d", &input);
 
 	switch (input) {
+
 		case 1:
 			*userPrefs = read_user_preferences(userFILE);
 			workout_days_t* workout = (workout_days_t*)generate_workout_program(*userPrefs);
@@ -97,10 +98,12 @@ int ProfilePage(FILE* userFILE, UserPreferences_t* userPrefs) {
 				goto want_to_start_workout;
 			}
 			break;
+
 		case 2:
 			user_setup(userFILE);
 			goto UserOptions;
 			break;
+
 		case 3:
 			UserProfileView:
 			printf("USER PROFILE  |  Logged in as: %s\n", username);
@@ -119,6 +122,7 @@ int ProfilePage(FILE* userFILE, UserPreferences_t* userPrefs) {
 					}
 					break;
 			}
+
 		default:
 			if (input < 1 || input > 3) {
 			printf("ERROR: Please input a valid option!\n");
