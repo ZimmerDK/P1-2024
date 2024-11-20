@@ -78,4 +78,13 @@ int write_user_data(FILE* userFILE, int exercise_index, user_exercise_data_t new
 
 void calibrate_workout_routine(struct exercise_data_t* calibration_data);
 
+
+// username malloc thing
+extern char* username;  // Declare the variable as external
+
+// Function declarations
+void init_username(const char* input);
+void cleanup_username(void);
+
+
 #endif //USERDATA_H

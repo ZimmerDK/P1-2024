@@ -130,6 +130,8 @@ int UserData_main(UserPreferences_t* userprefs) {
                 input[n] = tolower(input[n]);
             }
 
+            init_username(input);
+
             // Verify user exists and handle login
             if (userVerify(input, map)) {
                 printf("\nLogged in as %s!\n", input);
@@ -395,6 +397,23 @@ FILE* create_new_user(FILE* accountsFILE, char username[MAX_LENGTH], HashMap_t* 
     return userFILE;
 }
 
+
+char* username = NULL;  // Define the actual variable
+
+void init_username(const char* input) {
+    if (input != NULL) {
+        username = malloc(strlen(input) + 1);  // +1 for null terminator
+        if (username != NULL) {
+            strcpy(username, input);
+        }
+    }
+}
+
+void cleanup_username(void) {
+    free(username);
+    username = NULL;
+}
+
 /**@brief Sets up user preferences for a new account
  * @param userFILE Pointer to the user's data file where preferences will be stored
  * @note Prompts user for days (1-7) and time (15-120 minutes) preferences
@@ -404,6 +423,23 @@ void user_setup(FILE* userFILE) {
 
     printf("\nWelcome! Let's set up your preferences.\n");
 
+
+    const size_t RECORD_SIZE = sizeof(int) * 2;
+
+    // Validate file pointer
+    if (userFILE == NULL) {
+        printf("Error: Invalid file pointer\n");
+    }
+
+    // Seek to start of file where preferences are stored
+    long position = fseek(userFILE, 0, SEEK_SET);
+
+    // Seek to exercise position
+    if (fseek(userFILE, position, SEEK_SET) != 0) {
+        printf("Error: Could not seek to exercise position\n");
+    }
+
+    // Write weight and reps with error checking
     // Get days input with input validation
     do {
         printf("Enter preferred number of days you would like to workout(1-7): ");

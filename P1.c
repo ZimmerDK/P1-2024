@@ -4,7 +4,7 @@
 #include "exercises.h"
 #include "P1.h"
 #include "workout_program.h"
-#include "UserData.h"
+//#include "UserData.h"
 
 #include<stdio.h>
 #include<math.h>
@@ -42,15 +42,20 @@ int main(void) {
 
 	UserData_main(userPrefs);
 
-	workout_days_t* workout = (workout_days_t*)generate_workout_program(*userPrefs);
+	//workout_days_t* workout = (workout_days_t*)generate_workout_program(*userPrefs);
 
-	print_workout_program(workout, userPrefs->days);
 
-	for (int i = 0; i < userPrefs->days; i++) {
+	FILE* userFILE = NULL;
+	char filepath[MAX_LENGTH + 15];
+	snprintf(filepath, sizeof(filepath), "%s/%s.dat", USER_FILES_DIR, username);
+	userFILE = fopen(filepath, "rb+");
+	ProfilePage(userFILE, userPrefs);
+
+	//print_workout_program(workout, userPrefs->days);
+
+	/*for (int i = 0; i < userPrefs->days; i++) {
 		run_day(&workout[i]);
-	};
-
-
+	};*/
 
 	//printf("Rep Change : %d\n", result.repChange);
 	//printf("Weight Change : %lf\n", result.weightChange);
@@ -62,6 +67,72 @@ int main(void) {
 	printf("Calibration Result: %lf kg", calibrationData.weight);
 	*/
 	//printf("Hello World!");
+
+	return 0;
+}
+
+int ProfilePage(FILE* userFILE, UserPreferences_t* userPrefs) {
+	int input;
+	printf("Welcome!\n");
+	UserOptions:
+	printf("Please input an option below:\n");
+	printf("1 = Print workout plan   |   2 = Edit user preferences   |   "
+		   "3 = User Profile and Stats\n>");
+	scanf(" %d", &input);
+
+	switch (input) {
+		case 1:
+			*userPrefs = read_user_preferences(userFILE);
+			workout_days_t* workout = (workout_days_t*)generate_workout_program(*userPrefs);
+			print_workout_program(workout, userPrefs->days);
+			char c_input;
+			want_to_start_workout:
+			printf("Do you want to start the workout? (y/n)\n");
+			scanf(" %c", &c_input);
+			if (c_input == 'n') {
+				goto UserOptions;
+			} else if (c_input == 'y') {
+				// Run day workout
+				for (int i = 0; i < userPrefs->days; i++) {
+					run_day(&workout[i]);
+				};
+			} else {
+				printf("ERROR: Please enter valid input ('y' or 'n')\n");
+				goto want_to_start_workout;
+			}
+			break;
+		case 2:
+			user_setup(userFILE);
+			goto UserOptions;
+			break;
+		case 3:
+			UserProfileView:
+			printf("USER PROFILE  |  Logged in as: %s\n", username);
+			printf("Please input an option below:\n");
+			printf("1 = View Progress Report   |   2 = Workout Streak\n>");
+			scanf(" %d", &input);
+			switch (input) {
+				case 1:
+					//Print Progress Report [TO DO]
+				case 2:
+					//Print Workout Streak [TO DO]
+				default:
+					if (input < 1 || input > 2) {
+						printf("ERROR: Please input a valid option!\n");
+						goto UserProfileView;
+					}
+					break;
+			}
+		default:
+			if (input < 1 || input > 3) {
+			printf("ERROR: Please input a valid option!\n");
+			goto UserOptions;
+			}
+			break;
+	}
+
+
+	free(userPrefs);
 
 	return 0;
 }
