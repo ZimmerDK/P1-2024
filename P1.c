@@ -56,17 +56,6 @@ int main(void) {
 	};*/
 	user_space_main(userPrefs, workout, userFILE);
 
-	//printf("Rep Change : %d\n", result.repChange);
-	//printf("Weight Change : %lf\n", result.weightChange);
-
-	/*workout_data_t calibrationData = {8, 20.0};
-
-	calibrate_workout_routine(&calibrationData);
-
-	printf("Calibration Result: %lf kg", calibrationData.weight);
-	*/
-	//printf("Hello World!");
-
 	return 0;
 }
 

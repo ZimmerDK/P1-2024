@@ -14,16 +14,16 @@
 #include <stdlib.h>
 
 
-enum Userspace_options {
-	START_WORKOUT = 1,
+enum UserSpace_options {
+	PRINT_WORKOUT_PLAN = 1,
 	RECALIBRATE = 2,
 	CHANGE_PREFERENCES = 3,
 	VIEW_REPORT = 4
 };
 
-void user_space_main(UserPreferences_t* user_prefs, workout_days_t* workout_plan, FILE* user_file);
+void user_space_main(UserPreferences_t* userPrefs, workout_days_t* workout_plan, FILE* user_file);
 
-void user_start_workout(UserPreferences_t* user_prefs, workout_days_t* workout_plan);
+void user_start_workout(UserPreferences_t* userPrefs, workout_days_t* workout_plan);
 
 void user_recalibrate();
 
