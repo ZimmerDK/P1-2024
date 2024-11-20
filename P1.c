@@ -191,7 +191,7 @@ int main(void) {
 		return -1;
 	};
 
-	__main(userPrefs);
+	UserData_main(userPrefs);
 
 	workout_days_t* workout = (workout_days_t*)generate_workout_program(*userPrefs);
 	
@@ -199,7 +199,7 @@ int main(void) {
 
 	for (int i = 0; i < userPrefs->days; i++) {
 		run_day(&workout[i]);
-	};
+	};   
 
 	
 

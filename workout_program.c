@@ -78,7 +78,7 @@ void print_workout_program(workout_days_t* program, int amountofdays) {
     
     // Print some kind of table
     int* e_counter = (int*)malloc(sizeof(int) * amountofdays);
-    if(*e_counter == NULL) {
+    if(e_counter == NULL) {
         printf("Not allocated memory in e_counter!");
         exit(EXIT_FAILURE);
     }
@@ -333,7 +333,7 @@ void set_program_day(workout_days_t* program_day, int amountOfDays, int time) {
     
     int* timePerDay = (int*)malloc(sizeof(int) * amountOfDays);
     
-    if(*timePerDay == NULL) {
+    if(timePerDay == NULL) {
 		printf("Not allocated memory in timePerDay!");
 		exit(EXIT_FAILURE);
 	}

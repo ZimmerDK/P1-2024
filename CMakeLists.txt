@@ -24,8 +24,6 @@ add_executable (P1 "P1.c" "P1.h" "workout_program.c" "workout_program.h" "exerci
 )
 
 add_executable (UserData "UserData.c" "UserData.h"
-        #exercises.c
-        #exercises.h
         UserData.c
         UserData.h)
 

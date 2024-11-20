@@ -8,7 +8,7 @@ typedef struct workout_result_t {
     double weightChange;  // Change in weight used
 } workout_result_t;
 
-int __main(UserPreferences_t* userprefs) {
+int UserData_main(UserPreferences_t* userprefs) {
     // Ensure user directory exists before opening files
     if (!ensure_user_directory()) {
         printf("Error: Could not create user directory\n");
