@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <assert.h>
-#include "UserData.h";
+#include "UserData.h"
 
 void set_program_day(workout_days_t* program_day, int amountOfDays, int time );
 
@@ -12,7 +12,7 @@ void set_program_day(workout_days_t* program_day, int amountOfDays, int time );
  *  @return A pointer to the workout program
  */
 workout_days_t* generate_workout_program(UserPreferences_t userPrefs) {
-	
+
     int amountOfDays = userPrefs.days;
 	int time = userPrefs.time;
 	workout_days_t* program_day = allocate_workout_program(amountOfDays);
@@ -75,7 +75,7 @@ void _print_add_seperation(char seperator, char inbetween, int amountDays) {
 }
 
 void print_workout_program(workout_days_t* program, int amountofdays) {
-    
+
     // Print some kind of table
     int* e_counter = (int*)malloc(sizeof(int) * amountofdays);
     if(e_counter == NULL) {
@@ -103,13 +103,13 @@ void print_workout_program(workout_days_t* program, int amountofdays) {
 
     _print_add_seperation('#', ' ', amountofdays);
 
-    
+
     for (int i = 0; i < amountofdays; i++) {
 		printf("#            DAY %d            ", i+1);
 	}
     printf("#\n");
 
-    
+
     _print_add_seperation('#', ' ', amountofdays);
 
     _print_add_spacing('#', amountofdays);
@@ -129,7 +129,7 @@ void print_workout_program(workout_days_t* program, int amountofdays) {
     _print_add_seperation('#', ')', amountofdays);
 
     _print_add_spacing('#', amountofdays);
-        
+
     for(int i = 0; i < AMOUNT_COMPOUND; i++) {
         for (int j = 0; j < amountofdays; j++) {
             // get the next exercise using e_counter
@@ -139,7 +139,7 @@ void print_workout_program(workout_days_t* program, int amountofdays) {
             if (e_counter[j] < AMOUNT_COMPOUND) {
 
 				//printf("# %s", exercises_c[exercise_compound_c[e_counter[j]]].name);
-				
+
                 // Pad to 30 characters
                 printf("# %s", exercises_c[exercise_compound_c[e_counter[j]]].name);
 				for (int k = 0; k < 28 - strlen(exercises_c[exercise_compound_c[e_counter[j]]].name); k++) {
@@ -303,7 +303,7 @@ void print_function(exercise_t* exercises, workout_days_t* program_day, int numb
  *  @param time @in The time per day
  */
 void set_program_day(workout_days_t* program_day, int amountOfDays, int time) {
-    
+
     // Initialize all values to 0
     for(int i = 0; i < amountOfDays; i++) {
         for(int j = 0; j < AMOUNT_COMPOUND; j++) {
@@ -330,9 +330,9 @@ void set_program_day(workout_days_t* program_day, int amountOfDays, int time) {
         default: printf("input amount between 1 and 7");
     }
 
-    
+
     int* timePerDay = (int*)malloc(sizeof(int) * amountOfDays);
-    
+
     if(timePerDay == NULL) {
 		printf("Not allocated memory in timePerDay!");
 		exit(EXIT_FAILURE);
@@ -366,7 +366,7 @@ void set_program_day(workout_days_t* program_day, int amountOfDays, int time) {
     }
 
     i = 0; counter = 0;
-    
+
     // Sets the secondary exercises, if there is time (14 minutes)
     while(AMOUNT_SECONDARY > i && counter <= DifferentProgramDays)
     {
