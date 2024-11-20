@@ -7,6 +7,17 @@
 #define P1_h
 
 #include "UserData.h"
+#include "workout_program.h"
+#include "UserData.h"
+#include "UserSpace.h"
+
+#include<stdio.h>
+#include<math.h>
+#include<string.h>
+#include<stdlib.h>
+
+void calibrate_workout_routine(exercise_data_t* calibration_data);
+void run_day(workout_days_t* workout_day);
 
 #endif // P1_H
 

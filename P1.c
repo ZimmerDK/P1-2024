@@ -14,6 +14,8 @@
 
 void run_day(workout_days_t* workout_day);
 
+
+
 typedef struct set_data_t {
 	//const int estWorkoutIntensity;
 	
@@ -52,6 +54,7 @@ int main(void) {
 	/*for (int i = 0; i < userPrefs->days; i++) {
 		run_day(&workout[i]);
 	};*/
+	user_space_main(userPrefs, workout);
 
 	//printf("Rep Change : %d\n", result.repChange);
 	//printf("Weight Change : %lf\n", result.weightChange);
