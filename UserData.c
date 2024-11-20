@@ -94,9 +94,7 @@ int UserData_main(UserPreferences_t* userprefs) {
                 fflush(accountsFILE);
 
                 // Create user's data file
-                char filepath[MAX_LENGTH + 15];
-                snprintf(filepath, sizeof(filepath), "%s/%s.dat", USER_FILES_DIR, input);
-                userFILE = fopen(filepath, "w+");
+                FILE* userFILE = create_new_user(accountsFILE, input, map);
 
                 // Initialize user preferences and exercise data
                 user_setup(userFILE);
@@ -111,6 +109,7 @@ int UserData_main(UserPreferences_t* userprefs) {
                     printf("\nError creating account!\n");
                 }
 
+                //Flush
                 fflush(userFILE);
 
                 // Reopen accounts file in read mode
@@ -142,29 +141,6 @@ int UserData_main(UserPreferences_t* userprefs) {
 
                 // Load user data into exercise structures
                 parse_user_data(exercises_c, userFILE);
-
-                // Exercise data test loop
-                /*
-                do {
-                    char input_exercise[MAX_LENGTH+10];
-                    printf("Input desired exercise to test: ");
-                    scanf(" %s", &input_exercise);
-                    if (input_exercise == "exit") {
-                        break;
-                    }
-                    // Read and modify exercise data (test functionality)
-                    user_exercise_data_t input_exercise_data = read_user_data(userFILE, 1);
-                    printf("%s\n", input_exercise);
-                    printf("Weight: %.2f kg\n", input_exercise_data.weight);
-                    printf("Reps: %d\n", input_exercise_data.reps);
-
-                    input_exercise_data.reps += 10;
-                    input_exercise_data.weight += 100;
-                    write_user_data(userFILE, 1, input_exercise_data);
-                    fflush(userFILE);
-
-                } while (1); */
-
                 fclose(userFILE);
 
                 if (!userFILE) {
@@ -392,6 +368,8 @@ FILE* create_new_user(FILE* accountsFILE, char username[MAX_LENGTH], HashMap_t* 
     snprintf(filepath, sizeof(filepath), "%s/%s.dat", USER_FILES_DIR, username);
     FILE* userFILE = fopen(filepath, "w+");
 
+
+
     return userFILE;
 }
 
@@ -602,6 +580,26 @@ int write_user_data(FILE* userFILE, int exercise_index, user_exercise_data_t new
         return -1;
     }
 
+    // Seek to exercise position
+    if (fseek(userFILE, 0, SEEK_END) != 0) {
+        printf("Error: Could not seek to exercise position\n");
+        return -1;
+    }
+
+    if (fwrite(&new_data.weight, sizeof(double), 1, userFILE) != 1) {
+        printf("Error writing weight for exercise %d (%s)\n",
+               exercise_index, exercises_c[exercise_index].name);
+        return -1;
+    }
+
+    if (fwrite(&new_data.reps, sizeof(int), 1, userFILE) != 1) {
+        printf("Error writing reps for exercise %d (%s)\n",
+               exercise_index, exercises_c[exercise_index].name);
+        return -1;
+    }
+
     fflush(userFILE); // Ensure data is written to disk
     return 0; // Success
 }
+
+
