@@ -1,14 +1,7 @@
 #include "UserSpace.h"
 
 
-const void* modes[4] = {
-	user_start_workout,
-	user_recalibrate,
-	user_change_preferences,
-	user_view_report
-};
-
-void user_space_main(UserPreferences_t* user_prefs, workout_days_t* workout_plan) {
+void user_space_main(UserPreferences_t* user_prefs, workout_days_t* workout_plan, FILE* userfile) {
 	int running = 1;
 	while (running) {
 		char input[17];
@@ -81,6 +74,6 @@ void user_view_report() {
 
 }
 
-void user_change_preferences() {
-
+void user_change_preferences(FILE* userFILE) {
+	user_setup(userFILE);
 }

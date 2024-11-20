@@ -40,21 +40,21 @@ int main(void) {
 
 	UserData_main(userPrefs);
 
-	//workout_days_t* workout = (workout_days_t*)generate_workout_program(*userPrefs);
+	workout_days_t* workout = (workout_days_t*)generate_workout_program(*userPrefs);
 
 
 	FILE* userFILE = NULL;
 	char filepath[MAX_LENGTH + 15];
 	snprintf(filepath, sizeof(filepath), "%s/%s.dat", USER_FILES_DIR, username);
 	userFILE = fopen(filepath, "rb+");
-	ProfilePage(userFILE, userPrefs);
+	//ProfilePage(userFILE, userPrefs);
 
 	//print_workout_program(workout, userPrefs->days);
 
 	/*for (int i = 0; i < userPrefs->days; i++) {
 		run_day(&workout[i]);
 	};*/
-	user_space_main(userPrefs, workout);
+	user_space_main(userPrefs, workout, userFILE);
 
 	//printf("Rep Change : %d\n", result.repChange);
 	//printf("Weight Change : %lf\n", result.weightChange);
