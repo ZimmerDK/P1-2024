@@ -2,7 +2,7 @@
 #include "exercises.h"
 #include "P1.h"
 
-/**@brief Struct to track changes in workout performance */
+/**@brief Struct to track changes in workout performance*/
 typedef struct workout_result_t {
     int repChange;        // Change in number of reps
     double weightChange;  // Change in weight used
