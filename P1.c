@@ -23,14 +23,47 @@ typedef struct set_data_t {
 	int intensity;
 
 	//float score;
-};
+} set_data_t;
 
 typedef struct workout_result_t {
 	int repChange;
 	double weightChange;
-};
+} workout_result_t;
+
+int main(void) {
+
+	UserPreferences_t* userPrefs = malloc(sizeof(UserPreferences_t));
+
+	if (userPrefs == NULL) {
+		printf("Memory allocation failed");
+		return -1;
+	};
+
+	UserData_main(userPrefs);
+
+	workout_days_t* workout = (workout_days_t*)generate_workout_program(*userPrefs);
+
+	print_workout_program(workout, userPrefs->days);
+
+	for (int i = 0; i < userPrefs->days; i++) {
+		run_day(&workout[i]);
+	};
 
 
+
+	//printf("Rep Change : %d\n", result.repChange);
+	//printf("Weight Change : %lf\n", result.weightChange);
+
+	/*workout_data_t calibrationData = {8, 20.0};
+
+	calibrate_workout_routine(&calibrationData);
+
+	printf("Calibration Result: %lf kg", calibrationData.weight);
+	*/
+	//printf("Hello World!");
+
+	return 0;
+}
 
 /** @brief Function that calculates the workout
  *  @param data @in The data from the sets
@@ -38,10 +71,10 @@ typedef struct workout_result_t {
  *  @param setCount @in The amount of sets
  *  @return The workout result
  */
-struct workout_result_t calculate_workout(struct set_data_t* data, exercise_data_t* exercise_data, int setCount) {
+workout_result_t calculate_workout(set_data_t* data, exercise_data_t* exercise_data, int setCount) {
 
 	int maxScore = 0;
-	struct set_data_t* max_result;
+	set_data_t* max_result;
 
 	const int minRep = exercise_data->exercise->min_reps;
 	const int maxRep = exercise_data->exercise->max_reps;
@@ -49,7 +82,7 @@ struct workout_result_t calculate_workout(struct set_data_t* data, exercise_data
 	const int repDiff = maxRep - minRep;
 	const double weight_step = exercise_data->exercise->weight_step;
 
-	struct workout_result_t workoutResult = {0, 0};
+	workout_result_t workoutResult = {0, 0};
 
 	// Find the set with the highest score
 	for (int i = 0; i < setCount; i++) {
@@ -108,7 +141,7 @@ struct workout_result_t calculate_workout(struct set_data_t* data, exercise_data
  *  @param calibration_data @in @out The calibration data
  */
 
-void calibrate_workout_routine(struct exercise_data_t* calibration_data) {
+void calibrate_workout_routine(exercise_data_t* calibration_data) {
 
 	printf("6 Reps @ %lf kg\n", calibration_data->weight);
 	printf("Enter Intensity: ");
@@ -142,11 +175,11 @@ void run_exercise(exercise_t* exercise) {
 	printf("Current Reps: %d\n", exercise->user_exercise_data->reps);
 	printf("#############################################\n\n");
 	
-	struct set_data_t* setData = malloc(sizeof(struct set_data_t) * 3);
+	set_data_t* setData = malloc(sizeof(set_data_t) * 3);
 
 	scanf("%d %d %d", &setData[0].intensity, &setData[1].intensity, &setData[2].intensity);
 
-	struct workout_result_t workout_result = calculate_workout(setData, exercise->user_exercise_data, 3);
+	workout_result_t workout_result = calculate_workout(setData, exercise->user_exercise_data, 3);
 
 	printf("\nRep Change : %d\n", workout_result.repChange);
 	printf("Weight Change : %lf\n", workout_result.weightChange);
@@ -181,84 +214,6 @@ void run_day(workout_days_t* workout_day) {
 	}
 }
 
-
-int main(void) {
-
-	UserPreferences_t* userPrefs = malloc(sizeof(UserPreferences_t));
-
-	if (userPrefs == NULL) {
-		printf("Memory allocation failed");
-		return -1;
-	};
-
-	UserData_main(userPrefs);
-
-	workout_days_t* workout = (workout_days_t*)generate_workout_program(*userPrefs);
-	
-	print_workout_program(workout, userPrefs->days);
-
-	for (int i = 0; i < userPrefs->days; i++) {
-		run_day(&workout[i]);
-	};   
-
-	
-
-	//printf("Rep Change : %d\n", result.repChange);
-	//printf("Weight Change : %lf\n", result.weightChange);
-
-	/*struct workout_data_t calibrationData = {8, 20.0};
-
-	calibrate_workout_routine(&calibrationData);
-
-	printf("Calibration Result: %lf kg", calibrationData.weight);
-	*/
-	//printf("Hello World!");
-
-	return 0;
-}
-
-/* FILE LAYOUT
-
-HEADER:
-int - user count
-int - header end
-
-*/
-
 struct user_meta_data {
 	char username[16];
 };
-/*
-void create_new_user(FILE* file, char username[16]) {
-	int user_count = 0;
-
-	fseek(file, 0, SEEK_SET);
-
-	fread(&user_count, sizeof(int), 1, file);
-
-	//for(int i = 0; i <)
-
-	fseek(file, 0, SEEK_END);
-	
-	fwrite(username, 16, 1, file);
-
-
-}*/
-/*
-int main(void) {
-	FILE* file = fopen(USER_DATA_HEADER_DEBUG_PATH, "rb+");
-
-	if (file == NULL) {
-		printf("File did not open :(");
-		return -1;
-	}
-
-	create_new_user(file, "Kristoffer\0");
-	create_new_user(file, "Magnus\0");
-	create_new_user(file, "Gustav\0");
-
-
-
-	fclose(file);
-	return 0;
-}*/
