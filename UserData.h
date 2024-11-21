@@ -84,6 +84,8 @@ void calibrate_workout_routine(struct exercise_data_t* calibration_data);
 // username malloc thing
 extern char userprofile_path[MAX_LENGTH+15];  // Declare the variable as external
 
+extern int userfile_workout_counter;
+
 // Function declarations
 void init_username(const char* input);
 void cleanup_username(void);
