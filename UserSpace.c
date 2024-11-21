@@ -94,7 +94,3 @@ void user_recalibrate() {
 void user_view_report() {
 	// TODO: USER REPORT
 }
-
-void user_change_preferences(FILE* userFILE) {
-	user_setup(userFILE);
-}
