@@ -4,7 +4,7 @@
 #include "exercises.h"
 #include "P1.h"
 #include "workout_program.h"
-//#include "UserData.h"
+#include "UserData.h"
 
 #include<stdio.h>
 #include<math.h>
@@ -38,13 +38,8 @@ int main(void) {
 
 	UserData_main(userPrefs);
 
-	//workout_days_t* workout = (workout_days_t*)generate_workout_program(*userPrefs);
-
-
 	FILE* userFILE = NULL;
-	char filepath[MAX_LENGTH + 15];
-	snprintf(filepath, sizeof(filepath), "%s/%s.dat", USER_FILES_DIR, username);
-	userFILE = fopen(filepath, "rb+");
+	userFILE = fopen(userprofile_path, "rb+");
 	ProfilePage(userFILE, userPrefs);
 
 	//print_workout_program(workout, userPrefs->days);
@@ -92,6 +87,8 @@ int ProfilePage(FILE* userFILE, UserPreferences_t* userPrefs) {
 				// Run day workout
 				for (int i = 0; i < userPrefs->days; i++) {
 					run_day(&workout[i]);
+					backup_user_data();
+					update_user_data();
 				};
 			} else {
 				printf("ERROR: Please enter valid input ('y' or 'n')\n");
@@ -106,7 +103,7 @@ int ProfilePage(FILE* userFILE, UserPreferences_t* userPrefs) {
 
 		case 3:
 			UserProfileView:
-			printf("USER PROFILE  |  Logged in as: %s\n", username);
+			//printf("USER PROFILE  |  Logged in as: %s\n", username);
 			printf("Please input an option below:\n");
 			printf("1 = View Progress Report   |   2 = Workout Streak\n>");
 			scanf(" %d", &input);
@@ -286,6 +283,6 @@ void run_day(workout_days_t* workout_day) {
 	}
 }
 
-struct user_meta_data {
+/*struct user_meta_data {
 	char username[16];
-};
+};*/

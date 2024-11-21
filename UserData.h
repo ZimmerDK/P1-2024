@@ -28,6 +28,7 @@
 #define USER_ACCOUNTS_FILE "accounts.dat"
 #define USER_FILES_DIR "./userfiles"
 
+
 typedef struct account {
     char username[20];
     exercise_data_t exercise_user_data;
@@ -74,13 +75,14 @@ void parse_user_data(exercise_t exercises[], FILE* userFILE);
 void fill_user_data(FILE* userFILE);
 user_exercise_data_t read_user_data(FILE* userFILE, int exercise_index);
 UserPreferences_t read_user_preferences(FILE* userFILE);
-int write_user_data(FILE* userFILE, int exercise_index, user_exercise_data_t new_data);
+int update_user_data();
+int backup_user_data();
 
 void calibrate_workout_routine(struct exercise_data_t* calibration_data);
 
 
 // username malloc thing
-extern char* username;  // Declare the variable as external
+extern char userprofile_path[MAX_LENGTH+15];  // Declare the variable as external
 
 // Function declarations
 void init_username(const char* input);
