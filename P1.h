@@ -16,7 +16,7 @@
 #include<string.h>
 #include<stdlib.h>
 
-void calibrate_workout_routine(exercise_data_t* calibration_data);
+void calibrate_workout_routine(user_exercise_data_t* calibration_data);
 void run_day(workout_days_t* workout_day);
 
 #endif // P1_H

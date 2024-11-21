@@ -1,7 +1,7 @@
 #include "UserSpace.h"
 
 
-void user_space_main(UserPreferences_t* userPrefs, workout_days_t* workout_plan, FILE* userfile) {
+void user_space_main(UserPreferences_t* userPrefs, workout_days_t* workout_plan, FILE* userFILE) {
 	int running = 1;
 	while (running) {
 		char input[17];
@@ -19,30 +19,34 @@ void user_space_main(UserPreferences_t* userPrefs, workout_days_t* workout_plan,
 
 		switch (choice) {
 		case PRINT_WORKOUT_PLAN:
+			*userPrefs = read_user_preferences(userFILE);
+			workout_days_t* workout = (workout_days_t*)generate_workout_program(*userPrefs);
+			print_workout_program(workout, userPrefs->days);
 			char c_input;
 			want_to_start_workout:
 			printf("Do you want to start the workout? (y/n)\n");
 			scanf(" %c", &c_input);
 			if (c_input == 'n') {
+				continue;
 			} else if (c_input == 'y') {
 				user_start_workout(userPrefs, workout_plan);
 			} else {
 				printf("ERROR: Please enter valid input ('y' or 'n')\n");
 				goto want_to_start_workout;
 			}
-			break;
+			continue;
 
 		case RECALIBRATE:
 			user_recalibrate();
-			break;
+			continue;
 
 		case CHANGE_PREFERENCES:
-			user_change_preferences();
-			break;
+			user_setup(userFILE);
+			continue;
 
 		case VIEW_REPORT:
 			user_view_report();
-			break;
+			continue;
 
 		case 5:
 			exit(69420);

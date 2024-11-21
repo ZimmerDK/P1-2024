@@ -59,6 +59,7 @@ int main(void) {
 	return 0;
 }
 
+
 int ProfilePage(FILE* userFILE, UserPreferences_t* userPrefs) {
 	int input;
 	printf("Welcome!\n");
@@ -129,13 +130,14 @@ int ProfilePage(FILE* userFILE, UserPreferences_t* userPrefs) {
 	return 0;
 }
 
+
 /** @brief Function that calculates the workout
  *  @param data @in The data from the sets
  *  @param exercise_data @in The data from the exercise
  *  @param setCount @in The amount of sets
  *  @return The workout result
  */
-workout_result_t calculate_workout(set_data_t* data, exercise_data_t* exercise_data, int setCount) {
+workout_result_t calculate_workout(set_data_t* data, user_exercise_data_t* exercise_data, int setCount) {
 
 	int maxScore = 0;
 	set_data_t* max_result;
@@ -205,7 +207,7 @@ workout_result_t calculate_workout(set_data_t* data, exercise_data_t* exercise_d
  *  @param calibration_data @in @out The calibration data
  */
 
-void calibrate_workout_routine(exercise_data_t* calibration_data) {
+void calibrate_workout_routine(user_exercise_data_t* calibration_data) {
 
 	printf("6 Reps @ %lf kg\n", calibration_data->weight);
 	printf("Enter Intensity: ");
