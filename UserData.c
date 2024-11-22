@@ -1,6 +1,8 @@
 #include "UserData.h"
 #include "exercises.h"
+#include "workout_program.h"
 #include "P1.h"
+
 
 /**@brief Struct to track changes in workout performance*/
 typedef struct workout_result_t {
@@ -597,6 +599,37 @@ int update_user_data() {
 
     fflush(userFILE); // Ensure data is written to disk
     return 0; // Success
+}
+
+int save_workout_data(workout_days_t *workout_days, int days) {
+    printf("Saving Data\n");
+    FILE* userFILE = fopen(userprofile_path, "rb+");
+
+    const size_t SKIP_WORKOUT = (sizeof(double) + sizeof(int)) * AMOUNT_EXERCISES;
+    const size_t SKIP_PREFS = sizeof(UserPreferences_t);
+    const size_t RECORD_SIZE = sizeof(workout_days_t);
+
+    long position = SKIP_PREFS + SKIP_WORKOUT;
+
+    // Validate file pointer
+    if (userFILE == NULL) {
+        printf("Error: Invalid file pointer\n");
+        return -1;
+    }
+
+    // Seek to exercise position
+    if (fseek(userFILE, position, SEEK_SET) != 0) {
+        printf("Error: Could not seek to exercise position\n");
+        return -1;
+    }
+
+    // Write weight and reps with error checking
+    if (fwrite(workout_days, sizeof(workout_days_t), days, userFILE) != 1) {
+        printf("Error saving workout");
+        return -1;
+    }
+
+
 }
 
 int backup_user_data() {
