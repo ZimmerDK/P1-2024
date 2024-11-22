@@ -12,6 +12,8 @@ typedef struct workout_result_t {
 
 char userprofile_path[MAX_LENGTH+15];
 
+int userfile_workout_counter;
+
 int UserData_main(UserPreferences_t* userprefs) {
     // Ensure user directory exists before opening files
     if (!ensure_user_directory()) {
@@ -461,6 +463,10 @@ void fill_user_data(FILE* userFILE) {
             printf("\nError writing reps to file!\n");
         }
     }
+    userfile_workout_counter = 0;
+    if (fwrite(&userfile_workout_counter, sizeof(int), 1, userFILE) != 1) {
+        printf("\nError writing workouts counter to file!\n");
+    }
 
     fflush(userFILE);
     printf("\nUser Exercise Data saved successfully!\n");
@@ -634,9 +640,27 @@ int save_workout_data(workout_days_t *workout_days, int days) {
 int backup_user_data() {
     FILE* userFILE = fopen(userprofile_path, "rb+");
 
+    const size_t RECORD_SIZE = sizeof(double) + sizeof(int);
+    const size_t SKIP_PREFS = sizeof(UserPreferences_t);
+
+    // Calculate position for target exercise
+    long position = SKIP_PREFS + AMOUNT_EXERCISES * RECORD_SIZE;
+
     // Validate file pointer
     if (userFILE == NULL) {
         printf("Error: Invalid file pointer\n");
+        return -1;
+    }
+
+    // Seek to workout counter position
+    if (fseek(userFILE, position - 1, SEEK_SET) != 0) {
+        printf("Error: Could not seek to workout counter position\n");
+        return -1;
+    }
+
+    // Det virker ikke rigtigt det her
+    if (fwrite(&userfile_workout_counter + 1, sizeof(int), 1, userFILE) != 1) {
+        printf("Error updating workout counter in userfile\n");
         return -1;
     }
 
