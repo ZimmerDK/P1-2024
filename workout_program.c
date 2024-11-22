@@ -1,9 +1,8 @@
 #include "workout_program.h"
-#include "exercises.h"
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include <assert.h>
-#include "UserData.h"
 
 void set_program_day(workout_days_t* program_day, int amountOfDays, int time );
 

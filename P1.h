@@ -6,6 +6,7 @@
 #ifndef P1_H
 #define P1_h
 
+#include "workout_program.h"
 #include "UserData.h"
 
 #endif // P1_H

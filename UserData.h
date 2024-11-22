@@ -1,6 +1,7 @@
 #ifndef USERDATA_H
 #define USERDATA_H
 
+#include "workout_program.h"
 #include "exercises.h"
 #include <stdio.h>
 #include <math.h>
@@ -9,6 +10,7 @@
 #include <ctype.h>
 #include <sys/stat.h>
 #include <time.h>
+
 
 #ifdef _WIN32
     #include <direct.h>
@@ -45,10 +47,7 @@ typedef struct {
     size_t size;     // Number of items stored
 } HashMap_t;
 
-typedef struct {
-    int days;
-    int time;
-} UserPreferences_t;
+
 
 typedef struct user_exercise_data_t {
     int index_number;
@@ -77,6 +76,7 @@ user_exercise_data_t read_user_data(FILE* userFILE, int exercise_index);
 UserPreferences_t read_user_preferences(FILE* userFILE);
 int update_user_data();
 int backup_user_data();
+int save_workout_data(workout_days_t *workout_days, int days);
 
 void calibrate_workout_routine(struct exercise_data_t* calibration_data);
 

@@ -1,10 +1,8 @@
 ﻿// P1.cpp : Defines the entry point for the application.
 //
+#include "P1.h"
 
 #include "exercises.h"
-#include "P1.h"
-#include "workout_program.h"
-#include "UserData.h"
 
 #include<stdio.h>
 #include<math.h>
