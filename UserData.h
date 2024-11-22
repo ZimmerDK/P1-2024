@@ -29,6 +29,7 @@
 #define MAX_LENGTH 17  // 16 chars + '\0'
 #define USER_ACCOUNTS_FILE "accounts.dat"
 #define USER_FILES_DIR "./userfiles"
+#define DEFAULT_VALUE 0
 
 
 typedef struct account {

@@ -75,6 +75,7 @@ int ProfilePage(FILE* userFILE, UserPreferences_t* userPrefs) {
 			*userPrefs = read_user_preferences(userFILE);
 			workout_days_t* workout = (workout_days_t*)generate_workout_program(*userPrefs);
 			print_workout_program(workout, userPrefs->days);
+			save_workout_data(workout, userPrefs->days);
 			char c_input;
 			want_to_start_workout:
 			printf("Do you want to start the workout? (y/n)\n");

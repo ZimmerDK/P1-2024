@@ -438,12 +438,14 @@ void fill_user_data(FILE* userFILE) {
     // Iterate through all exercises in exercises_c array
     for(int i = 0; i < sizeof(exercises_c) / sizeof(exercise_t); i++) {
         // Position file pointer after preferences section
-        fseek(userFILE, SKIP_PREFS + i * RECORD_SIZE, SEEK_SET);
+        if (fseek(userFILE, SKIP_PREFS + i * RECORD_SIZE, SEEK_SET) != 0) {
+            printf("Error seeking preferences section!\n");
+        }
 
         // Initialize exercise data with default values
         exercise_data_t default_exercise_data = {
-            .weight = 0, // Default weight value
-            .reps = 0, // Default reps value
+            .weight = DEFAULT_VALUE, // Default weight value
+            .reps = DEFAULT_VALUE, // Default reps value
         };
 
         printf("Writing data for %s at index %d\n", exercises_c[i].name, i);
@@ -461,6 +463,15 @@ void fill_user_data(FILE* userFILE) {
     userfile_workout_counter = 0;
     if (fwrite(&userfile_workout_counter, sizeof(int), 1, userFILE) != 1) {
         printf("\nError writing workouts counter to file!\n");
+    }
+
+    int m = 5;
+    UserPreferences_t user_preferences = read_user_preferences(userFILE);
+    fseek(userFILE, 0, SEEK_END);
+    for (int j = 0; j < user_preferences.days; j++) {
+        for (int n = 0; n < AMOUNT_EXERCISES; n++) {
+            fwrite(&m, sizeof(int), 1, userFILE);
+        }
     }
 
     fflush(userFILE);
@@ -602,14 +613,14 @@ int update_user_data() {
 }
 
 int save_workout_data(workout_days_t *workout_days, int days) {
-    printf("Saving Data\n");
+    printf("Saving Workout Days Data\n");
     FILE* userFILE = fopen(userprofile_path, "rb+");
 
     const size_t SKIP_WORKOUT = (sizeof(double) + sizeof(int)) * AMOUNT_EXERCISES;
     const size_t SKIP_PREFS = sizeof(UserPreferences_t);
-    const size_t RECORD_SIZE = sizeof(workout_days_t);
+    const size_t SKIP_WORKOUT_COUNTER = sizeof(int);
 
-    long position = SKIP_PREFS + SKIP_WORKOUT;
+    long position = SKIP_PREFS + SKIP_WORKOUT + SKIP_WORKOUT_COUNTER;
 
     // Validate file pointer
     if (userFILE == NULL) {
@@ -624,7 +635,7 @@ int save_workout_data(workout_days_t *workout_days, int days) {
     }
 
     // Write weight and reps with error checking
-    if (fwrite(workout_days, sizeof(workout_days_t), days, userFILE) != 1) {
+    if (fwrite(workout_days, sizeof(workout_days_t), days, userFILE) != days) {
         printf("Error saving workout");
         return -1;
     }
