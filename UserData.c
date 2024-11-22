@@ -10,7 +10,7 @@ typedef struct workout_result_t {
 
 char userprofile_path[MAX_LENGTH+15];
 
-int userfile_workout_counter;
+int userfile_workout_counter = 0;
 
 int UserData_main(UserPreferences_t* userprefs) {
     // Ensure user directory exists before opening files
@@ -438,29 +438,24 @@ void fill_user_data(FILE* userFILE) {
         // Position file pointer after preferences section
         fseek(userFILE, SKIP_PREFS + i * RECORD_SIZE, SEEK_SET);
 
-        // Create test workout result (currently using placeholder values)
-        workout_result_t workoutResult = {i,i};
-
-        // Initialize exercise data with base values
-        exercise_data_t current_exercise_data = {
-            .weight = 20.0, // Base weight for testing
-            .reps = exercises_c[i].min_reps,
+        // Initialize exercise data with default values
+        exercise_data_t default_exercise_data = {
+            .weight = 0, // Default weight value
+            .reps = 0, // Default reps value
         };
-
-        // Apply workout changes
-        current_exercise_data.weight += workoutResult.weightChange;
-        current_exercise_data.reps += workoutResult.repChange;
 
         printf("Writing data for %s at index %d\n", exercises_c[i].name, i);
 
         // Write weight and reps with error checking
-        if (fwrite(&current_exercise_data.weight, sizeof(double), 1, userFILE) != 1) {
+        if (fwrite(&default_exercise_data.weight, sizeof(double), 1, userFILE) != 1) {
             printf("\nError writing weight to file!\n");
         }
-        if (fwrite(&current_exercise_data.reps, sizeof(int), 1, userFILE) != 1) {
+        if (fwrite(&default_exercise_data.reps, sizeof(int), 1, userFILE) != 1) {
             printf("\nError writing reps to file!\n");
         }
     }
+    fseek(userFILE, 0, SEEK_END);
+
     userfile_workout_counter = 0;
     if (fwrite(&userfile_workout_counter, sizeof(int), 1, userFILE) != 1) {
         printf("\nError writing workouts counter to file!\n");
@@ -620,13 +615,24 @@ int backup_user_data() {
     }
 
     // Seek to workout counter position
-    if (fseek(userFILE, position - 1, SEEK_SET) != 0) {
+    if (fseek(userFILE, position, SEEK_SET) != 0) {
         printf("Error: Could not seek to workout counter position\n");
         return -1;
     }
 
+    if (fread(&userfile_workout_counter, sizeof(int), 1, userFILE) != 1) {
+        printf("Error reading workout counter in userfile\n");
+    }
+
     // Det virker ikke rigtigt det her
-    if (fwrite(&userfile_workout_counter + 1, sizeof(int), 1, userFILE) != 1) {
+    userfile_workout_counter++;
+
+    if (fseek(userFILE, position, SEEK_SET) != 0) {
+        printf("Error: Could not seek to workout counter position\n");
+        return -1;
+    }
+
+    if (fwrite(&userfile_workout_counter, sizeof(int), 1, userFILE) != 1) {
         printf("Error updating workout counter in userfile\n");
         return -1;
     }
