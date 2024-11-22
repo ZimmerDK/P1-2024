@@ -46,15 +46,25 @@ int main(void) {
 
 	print_workout_program(workout, userPrefs->days);
 
-	for (int i = 0; i < userPrefs->days; i++) {
+	/*for (int i = 0; i < userPrefs->days; i++) {
 		run_day(&workout[i]);
-	};
+	};*/
 
-
+	FILE* gnuplotPipe = _popen("C:\\Users\\kikoi\\Downloads\\gp610-20241113-win64-mingw\\gnuplot\\bin\\gnuplot -p", "w");
 
 	//printf("Rep Change : %d\n", result.repChange);
 	//printf("Weight Change : %lf\n", result.weightChange);
+	
+	//fprintf(gnuplotPipe, "gnuplot");
+	fprintf(gnuplotPipe, "set terminal png\n");
+	fprintf(gnuplotPipe, "set output \"pik.png\"\n");
+	fprintf(gnuplotPipe, "plot [-4:4] exp(-x**2 / 2)\n");
+	fprintf(gnuplotPipe, "replot\n");
+	//fprintf(gnuplotPipe, "set term x11");
 
+	fflush(gnuplotPipe);
+
+	_pclose(gnuplotPipe);
 	/*workout_data_t calibrationData = {8, 20.0};
 
 	calibrate_workout_routine(&calibrationData);
