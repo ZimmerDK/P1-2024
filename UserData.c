@@ -483,7 +483,7 @@ void fill_user_data(FILE* userFILE) {
 void parse_user_data(exercise_t exercises[], FILE* userFILE) {
     for (int i = 0; i < AMOUNT_EXERCISES; i++) {
         user_exercise_data_t data = read_user_data(userFILE, i);
-        exercises[i].user_exercise_data = malloc(sizeof(exercise_data_t));
+        exercises[i].user_exercise_data = malloc(sizeof(user_exercise_data_t));
         exercises[i].user_exercise_data->weight = data.weight;
         exercises[i].user_exercise_data->reps = data.reps;
         exercises[i].user_exercise_data->exercise = &exercises[i];

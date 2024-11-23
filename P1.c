@@ -12,9 +12,11 @@
 
 void run_day(workout_days_t* workout_day);
 
+
+
 typedef struct set_data_t {
 	//const int estWorkoutIntensity;
-	
+
 	int intensity;
 
 	//float score;
@@ -45,20 +47,11 @@ int main(void) {
 	/*for (int i = 0; i < userPrefs->days; i++) {
 		run_day(&workout[i]);
 	};*/
-
-	//printf("Rep Change : %d\n", result.repChange);
-	//printf("Weight Change : %lf\n", result.weightChange);
-
-	/*workout_data_t calibrationData = {8, 20.0};
-
-	calibrate_workout_routine(&calibrationData);
-
-	printf("Calibration Result: %lf kg", calibrationData.weight);
-	*/
-	//printf("Hello World!");
+	user_space_main(userPrefs, workout, userFILE);
 
 	return 0;
 }
+
 
 int ProfilePage(FILE* userFILE, UserPreferences_t* userPrefs) {
 	int input;
@@ -133,13 +126,14 @@ int ProfilePage(FILE* userFILE, UserPreferences_t* userPrefs) {
 	return 0;
 }
 
+
 /** @brief Function that calculates the workout
  *  @param data @in The data from the sets
  *  @param exercise_data @in The data from the exercise
  *  @param setCount @in The amount of sets
  *  @return The workout result
  */
-workout_result_t calculate_workout(set_data_t* data, exercise_data_t* exercise_data, int setCount) {
+workout_result_t calculate_workout(set_data_t* data, user_exercise_data_t* exercise_data, int setCount) {
 
 	int maxScore = 0;
 	set_data_t* max_result;
@@ -207,28 +201,59 @@ workout_result_t calculate_workout(set_data_t* data, exercise_data_t* exercise_d
 
 /** @brief Function that calibrates the workout routine
  *  @param calibration_data @in @out The calibration data
+ *  @param exercises @in exercises_c list
  */
 
-void calibrate_workout_routine(exercise_data_t* calibration_data) {
+void calibrate_workout_routine(user_exercise_data_t* calibration_data, exercise_t exercises[]) {
+
+	const int reps = 5;
+	double estIntensity = exercises->est_intensity;
+	double weight_step = exercises->weight_step;
+	int start_weight = 0;
+
+	for (int i = 0; i < sizeof(exercises_c) / sizeof(exercise_t); i++) {
+		if (strcmp(exercises_c[i].name, "Lateral Raises") == 0) {
+			estIntensity = exercises_c[i].est_intensity;
+			weight_step = exercises_c[i].weight_step;
+			start_weight = 2;
+			exercises[i].user_exercise_data->weight = start_weight;
+			printf("Calibrating for Shoulder exercises\n");
+			for (int j = 0; j < reps; j++) {
+				printf("#############################################\n");
+				printf("Exercise: %s\n", exercises[i].name);
+				printf("Estimated Intensity: %lf\n", exercises[i].est_intensity);
+				printf("Current Weight: %lf\n", exercises[i].user_exercise_data->weight);
+				printf("Current Reps: %d\n", reps);
+				printf("#############################################\n\n");
+				// TODO: Get user to input intensity and then change weight
+
+				// TODO: Set 'exercises[i].user_exercise_data->weight' to the final calculated weight
+			}
+		}
+		// TODO: Same as above for the remaining muscle groups
+
+	}
 
 	printf("6 Reps @ %lf kg\n", calibration_data->weight);
 	printf("Enter Intensity: ");
-	
+
 	int intensity = 0;
 	scanf("%d", &intensity);
 
 	if (intensity >= 9) {
 		return;
-	} 
+	}
 	else if (intensity >= 7)
 	{
 		calibration_data->weight += 2.5;
-		calibrate_workout_routine(calibration_data);
+		calibrate_workout_routine(calibration_data, exercises);
 	}
 	else {
 		calibration_data->weight += 5.0;
-		calibrate_workout_routine(calibration_data);
+		calibrate_workout_routine(calibration_data, exercises);
 	}
+
+	// function that does the opposite of 'parse_user_data'
 }
 
 /** @brief Function that runs the exercise
@@ -242,7 +267,7 @@ void run_exercise(exercise_t* exercise) {
 	printf("Current Weight: %lf\n", exercise->user_exercise_data->weight);
 	printf("Current Reps: %d\n", exercise->user_exercise_data->reps);
 	printf("#############################################\n\n");
-	
+
 	set_data_t* setData = malloc(sizeof(set_data_t) * 3);
 
 	scanf("%d %d %d", &setData[0].intensity, &setData[1].intensity, &setData[2].intensity);

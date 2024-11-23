@@ -32,10 +32,6 @@
 #define DEFAULT_VALUE 0
 
 
-typedef struct account {
-    char username[20];
-    exercise_data_t exercise_user_data;
-} account_t;
 
 typedef struct {
     char* key;
@@ -54,6 +50,7 @@ typedef struct user_exercise_data_t {
     int index_number;
     double weight;
     int reps;
+    exercise_t* exercise;
 } user_exercise_data_t;
 
 int UserData_main(UserPreferences_t* userprefs);
@@ -78,8 +75,6 @@ UserPreferences_t read_user_preferences(FILE* userFILE);
 int update_user_data();
 int backup_user_data();
 int save_workout_data(workout_days_t *workout_days, int days);
-
-void calibrate_workout_routine(struct exercise_data_t* calibration_data);
 
 
 // username malloc thing
