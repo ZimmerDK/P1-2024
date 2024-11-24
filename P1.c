@@ -29,30 +29,23 @@ typedef struct workout_result_t {
 
 int main(void) {
 
-	UserPreferences_t* userPrefs = malloc(sizeof(UserPreferences_t));
+	UserData_main();
 
-	if (userPrefs == NULL) {
-		printf("Memory allocation failed");
-		return -1;
-	};
-
-	UserData_main(userPrefs);
-
-	FILE* userFILE = NULL;
-	userFILE = fopen(userprofile_path, "rb+");
-	ProfilePage(userFILE, userPrefs);
+	//FILE* userFILE = NULL;
+	//userFILE = fopen(userprofile_path, "rb+");
+	//ProfilePage(userFILE, userPrefs);
 
 	//print_workout_program(workout, userPrefs->days);
 
 	/*for (int i = 0; i < userPrefs->days; i++) {
 		run_day(&workout[i]);
 	};*/
-	user_space_main(userPrefs, workout, userFILE);
+	//user_space_main(userPrefs, workout, userFILE);
 
 	return 0;
 }
 
-
+/*
 int ProfilePage(FILE* userFILE, UserPreferences_t* userPrefs) {
 	int input;
 	printf("Welcome!\n");
@@ -125,7 +118,7 @@ int ProfilePage(FILE* userFILE, UserPreferences_t* userPrefs) {
 
 	return 0;
 }
-
+*/
 
 /** @brief Function that calculates the workout
  *  @param data @in The data from the sets

@@ -12,16 +12,20 @@ endif()
 project ("P1")
 
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/userfiles/accounts.dat ${CMAKE_CURRENT_BINARY_DIR}/userfiles/accounts.dat COPYONLY)
-
+ 
 # Add source to this project's executable.
-add_executable (P1 "P1.c" "P1.h" "workout_program.c" "workout_program.h" "exercises.c" "exercises.h" "UserData.c" "UserData.h"
+add_executable (P1 "P1.c" "P1.h" "workout_program.c" "workout_program.h" "exercises.c" "exercises.h" "UserData.c" "UserData.h" "UserSpace.c" "UserSpace.h" "hashmap.c" "hashmap.h"
         exercises.c
         exercises.h
         workout_program.c
         workout_program.h
         UserData.c
         UserData.h
- "UserSpace.c" "UserSpace.h")
+        UserSpace.c
+        UserSpace.h
+        hashmap.c
+        hashmap.h
+ )
 
 add_executable (UserData "UserData.c" "UserData.h"
         UserData.c

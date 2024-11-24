@@ -3,6 +3,7 @@
 
 #include "workout_program.h"
 #include "exercises.h"
+#include "hashmap.h"
 #include <stdio.h>
 #include <math.h>
 #include <string.h>
@@ -19,31 +20,13 @@
     #include <sys/types.h>
 #endif
 
-// #define HASHMAP_SIZE 3072
-/** @brief Initial capacity of the hashmap */
-#define INITIAL_SIZE 16
-/** @brief Maximum load factor before resizing (75%) */
-#define MAX_LOAD_FACTOR 0.75
+
 
 // For the userdata username and file
 #define MAX_LENGTH 17  // 16 chars + '\0'
 #define USER_ACCOUNTS_FILE "accounts.dat"
 #define USER_FILES_DIR "./userfiles"
 #define DEFAULT_VALUE 0
-
-
-
-typedef struct {
-    char* key;
-    int value; // In this case, the value will be the index of the word in the wordlist
-} HashMapEntry_t;
-
-typedef struct {
-    HashMapEntry_t* entries;
-    size_t capacity;  // Current size of entries array
-    size_t size;     // Number of items stored
-} HashMap_t;
-
 
 
 typedef struct user_exercise_data_t {
@@ -53,29 +36,53 @@ typedef struct user_exercise_data_t {
     exercise_t* exercise;
 } user_exercise_data_t;
 
-int UserData_main(UserPreferences_t* userprefs);
+typedef struct {
+    int reps;
+    double weight;
+} user_file_exercise_data;
 
-HashMap_t* createHashMap();
-unsigned int hash(const char* key);
-static int resizeHashMap(HashMap_t* map);
-void set(HashMap_t* map, char* key, int value);
-int get(HashMap_t* map, char* key);
-void freeHashMap(HashMap_t* map);
+typedef struct {
+    int prefered_days;
+    int perfered_time;
+    int workout_counter;
+} user_file_header_prefs;
+
+typedef struct {
+    workout_days_t* workout;
+    user_file_exercise_data exercise_data[AMOUNT_EXERCISES];
+} user_file_header_data;
+
+typedef struct {
+	user_file_header_prefs prefs;
+	user_file_header_data data;
+} user_file_header;
+
+
+
+int UserData_main();
+
+int handle_signup(HashMap_t* map, char* accountsPath, FILE* accountsFILE, char* input);
+int handle_login(HashMap_t* map, FILE* userFILE, char* input);
+
 int userVerify(char* usernameInput, HashMap_t* map);
 int startHashMap(FILE* accountsFILE, HashMap_t* map);
+
 static int ensure_user_directory();
+
 FILE* create_new_user(FILE* accountsFILE, char username[MAX_LENGTH], HashMap_t* map);
-int writeWorkoutData(FILE* userFILE, int value);
-void user_setup(FILE* userFILE);
 
-void parse_user_data(exercise_t exercises[], FILE* userFILE);
-void fill_user_data(FILE* userFILE);
-user_exercise_data_t read_user_data(FILE* userFILE, int exercise_index);
-UserPreferences_t read_user_preferences(FILE* userFILE);
-int update_user_data();
-int backup_user_data();
-int save_workout_data(workout_days_t *workout_days, int days);
+void user_setup(FILE* userFILE, int* days, int* time);
 
+void parse_user_data(exercise_t* exercises);
+void fill_user_data(FILE* userFILE, int days, int time);
+user_file_exercise_data read_single_exercise_data(FILE* userFILE, int exercise_index);
+user_file_header_prefs read_user_preferences(FILE* userFILE);
+
+int update_user_exercise_data();
+
+int update_user_workout_data(workout_days_t *workout);
+
+int write_user_data_post_workout();
 
 // username malloc thing
 extern char userprofile_path[MAX_LENGTH+15];  // Declare the variable as external
@@ -83,8 +90,8 @@ extern char userprofile_path[MAX_LENGTH+15];  // Declare the variable as externa
 extern int userfile_workout_counter;
 
 // Function declarations
-void init_username(const char* input);
-void cleanup_username(void);
+//void init_username(const char* input);
+//void cleanup_username(void);
 
 
 #endif //USERDATA_H

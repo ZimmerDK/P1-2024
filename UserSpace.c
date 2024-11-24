@@ -1,6 +1,7 @@
 #include "UserSpace.h"
 
 
+/*
 void user_space_main(UserPreferences_t* userPrefs, workout_days_t* workout_plan, FILE* userFILE) {
 	int running = 1;
 	while (running) {
@@ -64,6 +65,7 @@ void user_space_main(UserPreferences_t* userPrefs, workout_days_t* workout_plan,
 
 	}
 }
+*/
 
 void user_start_workout(UserPreferences_t* user_prefs, workout_days_t* workout_plan) {
 
