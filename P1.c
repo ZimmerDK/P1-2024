@@ -208,7 +208,7 @@ workout_result_t calculate_workout(set_data_t* data, user_exercise_data_t* exerc
  *  @param exercises @in exercises_c list
  */
 
-void calibrate_workout_routine(user_exercise_data_t* calibration_data, exercise_t exercises[]) {
+void calibrate_workout_routine(exercise_t exercises[]) {
 
 	const int reps = 5;
 	double estIntensity = exercises->est_intensity;
@@ -221,43 +221,267 @@ void calibrate_workout_routine(user_exercise_data_t* calibration_data, exercise_
 			weight_step = exercises_c[i].weight_step;
 			start_weight = 2;
 			exercises[i].user_exercise_data->weight = start_weight;
-			printf("Calibrating for Shoulder exercises\n");
-			for (int j = 0; j < reps; j++) {
+			int current_intensity;
+			printf("Calibrating for SHOULDER exercises\n");
+			do {
 				printf("#############################################\n");
 				printf("Exercise: %s\n", exercises[i].name);
-				printf("Estimated Intensity: %lf\n", exercises[i].est_intensity);
+				// printf("Estimated Intensity: %lf\n", exercises[i].est_intensity);
 				printf("Current Weight: %lf\n", exercises[i].user_exercise_data->weight);
 				printf("Current Reps: %d\n", reps);
 				printf("#############################################\n\n");
-				// TODO: Get user to input intensity and then change weight
 
-				// TODO: Set 'exercises[i].user_exercise_data->weight' to the final calculated weight
+				printf("Input Intensity: ");
+				scanf(" %d", &current_intensity); printf("\n");
+					if (current_intensity <= 3) {
+						exercises[i].user_exercise_data->weight += weight_step*3;
+					} else if (current_intensity >= 4 && current_intensity <= 6) {
+						exercises[i].user_exercise_data->weight += weight_step*2;
+					} else if (current_intensity >= 7 && current_intensity <= 8) {
+						exercises[i].user_exercise_data->weight += weight_step;
+					} else if (current_intensity == 10) {
+						exercises[i].user_exercise_data->weight -= weight_step;
+					}
+			} while (current_intensity < estIntensity);
+
+			printf("Final result for %s = %.2lf kg\n\n", exercises[i].name, exercises[i].user_exercise_data->weight);
+
+			char proceed;
+			printf("Proceed to next calibration exercise? (y/n): ");
+			scanf(" %c", &proceed);
+			if (proceed == 'n') {
+				break;
 			}
 		}
-		// TODO: Same as above for the remaining muscle groups
+		if (strcmp(exercises_c[i].name, "Seated Dumbbell Curls") == 0) {
+			estIntensity = exercises_c[i].est_intensity;
+			weight_step = exercises_c[i].weight_step;
+			start_weight = 2;
+			exercises[i].user_exercise_data->weight = start_weight;
+			int current_intensity;
+			printf("Calibrating for BICEPS exercises\n");
+			do {
+				printf("#############################################\n");
+				printf("Exercise: %s\n", exercises[i].name);
+				// printf("Estimated Intensity: %lf\n", exercises[i].est_intensity);
+				printf("Current Weight: %lf\n", exercises[i].user_exercise_data->weight);
+				printf("Current Reps: %d\n", reps);
+				printf("#############################################\n\n");
 
+				printf("Input Intensity: ");
+				scanf(" %d", &current_intensity); printf("\n");
+				if (current_intensity <= 3) {
+					exercises[i].user_exercise_data->weight += weight_step*3;
+				} else if (current_intensity >= 4 && current_intensity <= 6) {
+					exercises[i].user_exercise_data->weight += weight_step*2;
+				} else if (current_intensity >= 7 && current_intensity <= 8) {
+					exercises[i].user_exercise_data->weight += weight_step;
+				} else if (current_intensity == 10) {
+					exercises[i].user_exercise_data->weight -= weight_step;
+				}
+			} while (current_intensity < estIntensity);
+			printf("Final result for %s = %.2lf kg\n\n", exercises[i].name, exercises[i].user_exercise_data->weight);
+
+			char proceed;
+			printf("Proceed to next calibration exercise? (y/n): ");
+			scanf(" %c", &proceed);
+			if (proceed == 'n') {
+				break;
+			}
+		}
+		if (strcmp(exercises_c[i].name, "Triceps Pushdown") == 0) {
+			estIntensity = exercises_c[i].est_intensity;
+			weight_step = exercises_c[i].weight_step;
+			start_weight = 4;
+			exercises[i].user_exercise_data->weight = start_weight;
+			int current_intensity;
+			printf("Calibrating for TRICEPS exercises\n");
+			do {
+				printf("#############################################\n");
+				printf("Exercise: %s\n", exercises[i].name);
+				// printf("Estimated Intensity: %lf\n", exercises[i].est_intensity);
+				printf("Current Weight: %lf\n", exercises[i].user_exercise_data->weight);
+				printf("Current Reps: %d\n", reps);
+				printf("#############################################\n\n");
+
+				printf("Input Intensity: ");
+				scanf(" %d", &current_intensity); printf("\n");
+				if (current_intensity <= 3) {
+					exercises[i].user_exercise_data->weight += weight_step*3;
+				} else if (current_intensity >= 4 && current_intensity <= 6) {
+					exercises[i].user_exercise_data->weight += weight_step*2;
+				} else if (current_intensity >= 7 && current_intensity <= 8) {
+					exercises[i].user_exercise_data->weight += weight_step;
+				} else if (current_intensity == 10) {
+					exercises[i].user_exercise_data->weight -= weight_step;
+				}
+			} while (current_intensity < estIntensity);
+			printf("Final result for %s = %.2lf kg\n\n", exercises[i].name, exercises[i].user_exercise_data->weight);
+
+			char proceed;
+			printf("Proceed to next calibration exercise? (y/n): ");
+			scanf(" %c", &proceed);
+			if (proceed == 'n') {
+				break;
+			}
+		}
+		if (strcmp(exercises_c[i].name, "Lat Pull-down") == 0) {
+			estIntensity = exercises_c[i].est_intensity;
+			weight_step = exercises_c[i].weight_step;
+			start_weight = 10;
+			exercises[i].user_exercise_data->weight = start_weight;
+			int current_intensity;
+			printf("Calibrating for BACK exercises\n");
+			do {
+				printf("#############################################\n");
+				printf("Exercise: %s\n", exercises[i].name);
+				// printf("Estimated Intensity: %lf\n", exercises[i].est_intensity);
+				printf("Current Weight: %lf\n", exercises[i].user_exercise_data->weight);
+				printf("Current Reps: %d\n", reps);
+				printf("#############################################\n\n");
+
+				printf("Input Intensity: ");
+				scanf(" %d", &current_intensity); printf("\n");
+				if (current_intensity <= 3) {
+					exercises[i].user_exercise_data->weight += weight_step*3;
+				} else if (current_intensity >= 4 && current_intensity <= 6) {
+					exercises[i].user_exercise_data->weight += weight_step*2;
+				} else if (current_intensity >= 7 && current_intensity <= 8) {
+					exercises[i].user_exercise_data->weight += weight_step;
+				} else if (current_intensity == 10) {
+					exercises[i].user_exercise_data->weight -= weight_step;
+				}
+			} while (current_intensity < estIntensity);
+			printf("Final result for %s = %.2lf kg\n\n", exercises[i].name, exercises[i].user_exercise_data->weight);
+
+			char proceed;
+			printf("Proceed to next calibration exercise? (y/n): ");
+			scanf(" %c", &proceed);
+			if (proceed == 'n') {
+				break;
+			}
+		}
+		if (strcmp(exercises_c[i].name, "Incline Dumbbell-Press") == 0) {
+			estIntensity = exercises_c[i].est_intensity;
+			weight_step = exercises_c[i].weight_step;
+			start_weight = 4;
+			exercises[i].user_exercise_data->weight = start_weight;
+			int current_intensity;
+			printf("Calibrating for CHEST exercises\n");
+			do {
+				printf("#############################################\n");
+				printf("Exercise: %s\n", exercises[i].name);
+				// printf("Estimated Intensity: %lf\n", exercises[i].est_intensity);
+				printf("Current Weight: %lf\n", exercises[i].user_exercise_data->weight);
+				printf("Current Reps: %d\n", reps);
+				printf("#############################################\n\n");
+
+				printf("Input Intensity: ");
+				scanf(" %d", &current_intensity); printf("\n");
+				if (current_intensity <= 3) {
+					exercises[i].user_exercise_data->weight += weight_step*3;
+				} else if (current_intensity >= 4 && current_intensity <= 6) {
+					exercises[i].user_exercise_data->weight += weight_step*2;
+				} else if (current_intensity >= 7 && current_intensity <= 8) {
+					exercises[i].user_exercise_data->weight += weight_step;
+				} else if (current_intensity == 10) {
+					exercises[i].user_exercise_data->weight -= weight_step;
+				}
+			} while (current_intensity < estIntensity);
+			printf("Final result for %s = %.2lf kg\n\n", exercises[i].name, exercises[i].user_exercise_data->weight);
+
+			char proceed;
+			printf("Proceed to next calibration exercise? (y/n): ");
+			scanf(" %c", &proceed);
+			if (proceed == 'n') {
+				break;
+			}
+		}
+		if (strcmp(exercises_c[i].name, "Leg Extensions") == 0) {
+			estIntensity = exercises_c[i].est_intensity;
+			weight_step = exercises_c[i].weight_step;
+			start_weight = 12;
+			exercises[i].user_exercise_data->weight = start_weight;
+			int current_intensity;
+			printf("Calibrating for UPPER THIGH exercises\n");
+			do {
+				printf("#############################################\n");
+				printf("Exercise: %s\n", exercises[i].name);
+				// printf("Estimated Intensity: %lf\n", exercises[i].est_intensity);
+				printf("Current Weight: %lf\n", exercises[i].user_exercise_data->weight);
+				printf("Current Reps: %d\n", reps);
+				printf("#############################################\n\n");
+
+				printf("Input Intensity: ");
+				scanf(" %d", &current_intensity); printf("\n");
+				if (current_intensity <= 3) {
+					exercises[i].user_exercise_data->weight += weight_step*3;
+				} else if (current_intensity >= 4 && current_intensity <= 6) {
+					exercises[i].user_exercise_data->weight += weight_step*2;
+				} else if (current_intensity >= 7 && current_intensity <= 8) {
+					exercises[i].user_exercise_data->weight += weight_step;
+				} else if (current_intensity == 10) {
+					exercises[i].user_exercise_data->weight -= weight_step;
+				}
+			} while (current_intensity < estIntensity);
+			printf("Final result for %s = %.2lf kg\n\n", exercises[i].name, exercises[i].user_exercise_data->weight);
+
+			char proceed;
+			printf("Proceed to next calibration exercise? (y/n): ");
+			scanf(" %c", &proceed);
+			if (proceed == 'n') {
+				break;
+			}
+		}
+		if (strcmp(exercises_c[i].name, "Romanian Deadlifts") == 0) {
+			estIntensity = exercises_c[i].est_intensity;
+			weight_step = exercises_c[i].weight_step;
+			start_weight = 2;
+			exercises[i].user_exercise_data->weight = start_weight;
+			int current_intensity;
+			printf("Calibrating for LOWER THIGH exercises\n");
+			do {
+				printf("#############################################\n");
+				printf("Exercise: %s\n", exercises[i].name);
+				// printf("Estimated Intensity: %lf\n", exercises[i].est_intensity);
+				printf("Current Weight: %lf\n", exercises[i].user_exercise_data->weight);
+				printf("Current Reps: %d\n", reps);
+				printf("#############################################\n\n");
+
+				printf("Input Intensity: ");
+				scanf(" %d", &current_intensity); printf("\n");
+				if (current_intensity <= 3) {
+					exercises[i].user_exercise_data->weight += weight_step*3;
+				} else if (current_intensity >= 4 && current_intensity <= 6) {
+					exercises[i].user_exercise_data->weight += weight_step*2;
+				} else if (current_intensity >= 7 && current_intensity <= 8) {
+					exercises[i].user_exercise_data->weight += weight_step;
+				} else if (current_intensity == 10) {
+					exercises[i].user_exercise_data->weight -= weight_step;
+				}
+			} while (current_intensity < estIntensity);
+			printf("Final result for %s = %.2lf kg\n\n", exercises[i].name, exercises[i].user_exercise_data->weight);
+
+			char proceed;
+			printf("Proceed to next calibration exercise? (y/n): ");
+			scanf(" %c", &proceed);
+			if (proceed == 'n') {
+				break;
+			}
+		}
 	}
 
-	printf("6 Reps @ %lf kg\n", calibration_data->weight);
-	printf("Enter Intensity: ");
-
-	int intensity = 0;
-	scanf("%d", &intensity);
-
-	if (intensity >= 9) {
-		return;
-	}
-	else if (intensity >= 7)
-	{
-		calibration_data->weight += 2.5;
-		calibrate_workout_routine(calibration_data, exercises);
-	}
-	else {
-		calibration_data->weight += 5.0;
-		calibrate_workout_routine(calibration_data, exercises);
-	}
-
+	// TODO: Write new data to userFILE
+	// Writing to userFILE
+	// USE THIS: write_user_data(FILE* userFILE, int exercise_index, user_exercise_data_t new_data
 	// function that does the opposite of 'parse_user_data'
+
+	printf("Calibration finished!");
+
+	// TODO: Make intensity limits work with est_intensity and remember calibration is 5 reps vs min_reps
+
+
+
 }
 
 /** @brief Function that runs the exercise

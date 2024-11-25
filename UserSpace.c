@@ -88,7 +88,7 @@ void user_start_workout(UserPreferences_t* user_prefs, workout_days_t* workout_p
 
 void user_recalibrate() {
 	// TODO:
-	// calibrate_workout_routine();
+	calibrate_workout_routine(exercises_c);
 }
 
 void user_view_report() {
