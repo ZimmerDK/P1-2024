@@ -479,7 +479,7 @@ void calibrate_workout_routine(exercise_t exercises[]) {
 	// USE THIS: write_user_data(FILE* userFILE, int exercise_index, user_exercise_data_t new_data
 	// function that does the opposite of 'parse_user_data'
 
-	printf("Calibration finished!");
+	printf("Calibration finished!\n");
 
 	// TODO: Make intensity limits work with est_intensity and remember calibration is 5 reps vs min_reps
 
