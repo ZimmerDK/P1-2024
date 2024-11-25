@@ -93,7 +93,7 @@ void user_start_workout(user_file_header_prefs* user_prefs, workout_days_t* work
 
 void user_recalibrate() {
 	// TODO:
-	// calibrate_workout_routine();
+	calibrate_workout_routine(exercises_c);
 }
 
 void user_view_report() {
