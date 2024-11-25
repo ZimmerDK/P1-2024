@@ -538,6 +538,35 @@ int update_user_exercise_data() {
     return 0; // Success
 }
 
+void read_previous_user_workout_data(user_file_exercise_data* data, int index) {
+
+    const size_t SKIP_PREFS = sizeof(user_file_header_prefs);
+	const size_t RECORD_SIZE = sizeof(double) + sizeof(int);
+
+	// Validate file pointer
+	if (local_userFILE == NULL) {
+		printf("Error: Invalid file pointer\n");
+		return;
+	}
+
+	// Read the user preferences
+	user_file_header_prefs* user_prefs = read_user_preferences(local_userFILE);
+
+	// Calculate file position for desired exercise
+	long position = SKIP_PREFS + user_prefs->prefered_days * sizeof(workout_days_t) + (1+index)*(AMOUNT_EXERCISES*RECORD_SIZE);
+
+	// Seek to exercise position
+	if (fseek(local_userFILE, position, SEEK_SET) != 0) {
+		printf("Error: Could not seek to exercise position\n");
+		return;
+	}
+
+    for(int i = 0; i < AMOUNT_EXERCISES; i++) {
+		fread(&data[i].weight, sizeof(double), 1, local_userFILE);
+		fread(&data[i].reps, sizeof(int), 1, local_userFILE);
+	}
+}
+
 workout_days_t* read_user_workout_data() {
 	// Read user preferences
 	user_file_header_prefs* user_file_header_prefs = read_user_preferences(local_userFILE);
