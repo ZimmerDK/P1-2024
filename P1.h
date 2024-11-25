@@ -8,8 +8,6 @@
 
 #include "workout_program.h"
 #include "UserData.h"
-#include "workout_program.h"
-#include "UserData.h"
 #include "UserSpace.h"
 
 #include<stdio.h>

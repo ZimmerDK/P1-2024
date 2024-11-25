@@ -5,7 +5,7 @@
 
 #include <math.h>
 
-typedef struct workout_days_t {
+typedef struct {
     int compound[AMOUNT_COMPOUND];
     int secondary[AMOUNT_SECONDARY];
     int tertiary[AMOUNT_TERTIARY];
@@ -17,7 +17,13 @@ typedef struct {
     int time;
 } UserPreferences_t;
 
-workout_days_t* generate_workout_program(UserPreferences_t userprefs);
+typedef struct {
+    int prefered_days;
+    int perfered_time;
+    int workout_counter;
+} user_file_header_prefs;
+
+workout_days_t* generate_workout_program(user_file_header_prefs userprefs);
 
 workout_days_t* allocate_workout_program(int number_of_days);
 

@@ -41,11 +41,6 @@ typedef struct {
     double weight;
 } user_file_exercise_data;
 
-typedef struct {
-    int prefered_days;
-    int perfered_time;
-    int workout_counter;
-} user_file_header_prefs;
 
 typedef struct {
     workout_days_t* workout;
@@ -73,10 +68,11 @@ FILE* create_new_user(FILE* accountsFILE, char username[MAX_LENGTH], HashMap_t* 
 
 void user_setup(FILE* userFILE, int* days, int* time);
 
-void parse_user_data(exercise_t* exercises);
+void parse_user_data(exercise_t** exercises);
 void fill_user_data(FILE* userFILE, int days, int time);
-user_file_exercise_data read_single_exercise_data(FILE* userFILE, int exercise_index);
-user_file_header_prefs read_user_preferences(FILE* userFILE);
+void read_single_exercise_data(FILE* userFILE, int exercise_index, user_exercise_data_t* data);
+user_file_header_prefs* read_user_preferences(FILE* userFILE);
+workout_days_t* read_user_workout_data();
 
 int update_user_exercise_data();
 
@@ -88,6 +84,8 @@ int write_user_data_post_workout();
 extern char userprofile_path[MAX_LENGTH+15];  // Declare the variable as external
 
 extern int userfile_workout_counter;
+
+extern FILE* local_userFILE;
 
 // Function declarations
 //void init_username(const char* input);

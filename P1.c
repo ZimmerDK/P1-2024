@@ -31,6 +31,20 @@ int main(void) {
 
 	UserData_main();
 
+	user_file_header_prefs* userPrefs = read_user_preferences(local_userFILE);
+	workout_days_t* workout = read_user_workout_data();
+	
+	user_space_main(userPrefs, workout, local_userFILE);
+
+	// Test open acc file
+	/*FILE* accFile = fopen("./userfiles/accounts.dat", "rb+");
+	if (accFile == NULL) {
+		printf("ERROR: Could not open file\n");
+		return 1;
+	}*/
+
+	//fprintf(accFile, "Hello World\n");
+
 	//FILE* userFILE = NULL;
 	//userFILE = fopen(userprofile_path, "rb+");
 	//ProfilePage(userFILE, userPrefs);
@@ -266,6 +280,9 @@ void run_exercise(exercise_t* exercise) {
 	scanf("%d %d %d", &setData[0].intensity, &setData[1].intensity, &setData[2].intensity);
 
 	workout_result_t workout_result = calculate_workout(setData, exercise->user_exercise_data, 3);
+
+	exercise->user_exercise_data->reps+= workout_result.repChange;
+	exercise->user_exercise_data->weight += workout_result.weightChange;
 
 	printf("\nRep Change : %d\n", workout_result.repChange);
 	printf("Weight Change : %lf\n", workout_result.weightChange);
