@@ -99,8 +99,39 @@ void user_start_workout(user_file_header_prefs* user_prefs, workout_days_t* work
 }
 
 void user_recalibrate() {
-	// TODO:
-	calibrate_workout_routine(exercises_c);
+	char recalibrate_input[17];
+	printf("\nSelect from the following menu:");
+	printf("\n1. Recalibrate ALL exercises");
+	printf("\n2. Recalibrate SPECIFIC exercise");
+	printf("\n3. Manually edit weight for specific exercise");
+	printf("\n4. Return to Main Menu");
+	printf("\n\nEnter your choice: ");
+	scanf(" %s", recalibrate_input); printf("\n");
+
+	int choice = atoi(recalibrate_input);
+
+	switch (choice) {
+		case RECALIBRATE_ALL:
+			calibrate_workout_routine(exercises_c);
+			break;
+		case RECALIBRATE_SPECIFIC:
+			int chosen_index;
+			// TODO: function that scans for exercise name and converts it to an index number
+			recalibrate_specific_exercise(exercises_c, chosen_index);
+			break;
+		case MANUALLY_EDIT_SPECIFIC:
+			// TODO: function that scans for exercise name and converts it to an index number
+			// TODO: Manually edit a specific exercise
+			break;
+		case 4:
+			break;
+		default:
+			printf("ERROR: Please enter valid choice\n");
+	}
+}
+
+void recalibrate_specific_exercise(exercise_t exercises[], int chosen_index) {
+	// TODO: recalibrate a specific exercise using index_number
 }
 
 void user_view_report() {

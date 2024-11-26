@@ -21,13 +21,21 @@ enum UserSpace_options {
 	VIEW_REPORT = 4
 };
 
+enum Recalibrate_options {
+	RECALIBRATE_ALL = 1,
+	RECALIBRATE_SPECIFIC = 2,
+	MANUALLY_EDIT_SPECIFIC = 3,
+};
+
 void user_space_main(user_file_header_prefs* userPrefs, workout_days_t* workout_plan, FILE* user_file);
 
 void user_start_workout(user_file_header_prefs* userPrefs, workout_days_t* workout_plan);
 
+void user_change_preferences();
+
 void user_recalibrate();
 
-void user_change_preferences();
+void recalibrate_specific_exercise(exercise_t exercises[], int chosen_index);
 
 void user_view_report();
 

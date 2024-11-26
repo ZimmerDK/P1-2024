@@ -32,6 +32,11 @@ int main(void) {
 	UserData_main();
 
 	user_file_header_prefs* userPrefs = read_user_preferences(local_userFILE);
+	if (userPrefs->workout_counter == 1) {
+		// TODO: the '1' should be a '0' when no workouts have been done before
+		calibrate_workout_routine(exercises_c);
+	}
+
 	workout_days_t* workout = read_user_workout_data();
 	
 	user_space_main(userPrefs, workout, local_userFILE);
