@@ -1,8 +1,11 @@
 #include "UserSpace.h"
+#include "progress_report.h"
 
 
 void user_space_main(user_file_header_prefs* userPrefs, workout_days_t* workout_plan, FILE* userFILE) {
 	int running = 1;
+	int _days = 0;
+	int _time = 0;
 	while (running) {
 		char input[17];
 
@@ -41,7 +44,6 @@ void user_space_main(user_file_header_prefs* userPrefs, workout_days_t* workout_
 			continue;
 
 		case CHANGE_PREFERENCES:
-			int _days = 0; int _time = 0;
 			user_setup(local_userFILE, &_days, &_time);
 			userPrefs->prefered_days = _days;
 			userPrefs->perfered_time = _time;
@@ -94,6 +96,8 @@ void user_start_workout(user_file_header_prefs* user_prefs, workout_days_t* work
 	run_day(*user_selected_workout);
 
 	update_user_exercise_data();
+
+	print_progress_report();
 
 }
 
