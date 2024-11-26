@@ -633,14 +633,17 @@ int update_user_workout_data(workout_days_t *workout) {
     // Seek to exercise position
     if (fseek(local_userFILE, position, SEEK_SET) != 0) {
 		printf("Error: Could not seek to exercise position\n");
+        return -1;
 	}
 
     // Write workout days to file explicitly with error 
     if (fwrite(workout, sizeof(workout_days_t), user_file_header_prefs->prefered_days, local_userFILE) != user_file_header_prefs->prefered_days) {
         printf("\nError writing workout days to file!\n");
+        return -1;
     }
 
     fflush(local_userFILE);
+    return 0;
 }
 
 int write_user_data_post_workout() {

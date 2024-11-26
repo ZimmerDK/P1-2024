@@ -476,8 +476,9 @@ void calibrate_workout_routine(exercise_t exercises[]) {
 
 	// TODO: Write new data to userFILE
 	// Writing to userFILE
-	// USE THIS: write_user_data(FILE* userFILE, int exercise_index, user_exercise_data_t new_data
-	// function that does the opposite of 'parse_user_data'
+	if (update_user_exercise_data() != 0) {
+		printf("ERROR: Could not update userFILE calibration\n");
+	}
 
 	printf("Calibration finished!\n");
 
