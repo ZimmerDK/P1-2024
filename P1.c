@@ -1,10 +1,8 @@
 ﻿// P1.cpp : Defines the entry point for the application.
 //
+#include "P1.h"
 
 #include "exercises.h"
-#include "P1.h"
-#include "workout_program.h"
-//#include "UserData.h"
 
 #include<stdio.h>
 #include<math.h>
@@ -31,22 +29,24 @@ typedef struct workout_result_t {
 
 int main(void) {
 
-	UserPreferences_t* userPrefs = malloc(sizeof(UserPreferences_t));
+	UserData_main();
 
-	if (userPrefs == NULL) {
-		printf("Memory allocation failed");
-		return -1;
-	};
+	user_file_header_prefs* userPrefs = read_user_preferences(local_userFILE);
+	workout_days_t* workout = read_user_workout_data();
+	
+	user_space_main(userPrefs, workout, local_userFILE);
 
-	UserData_main(userPrefs);
+	// Test open acc file
+	/*FILE* accFile = fopen("./userfiles/accounts.dat", "rb+");
+	if (accFile == NULL) {
+		printf("ERROR: Could not open file\n");
+		return 1;
+	}*/
 
-	workout_days_t* workout = (workout_days_t*)generate_workout_program(*userPrefs);
+	//fprintf(accFile, "Hello World\n");
 
-
-	FILE* userFILE = NULL;
-	char filepath[MAX_LENGTH + 15];
-	snprintf(filepath, sizeof(filepath), "%s/%s.dat", USER_FILES_DIR, username);
-	userFILE = fopen(filepath, "rb+");
+	//FILE* userFILE = NULL;
+	//userFILE = fopen(userprofile_path, "rb+");
 	//ProfilePage(userFILE, userPrefs);
 
 	//print_workout_program(workout, userPrefs->days);
@@ -54,12 +54,12 @@ int main(void) {
 	/*for (int i = 0; i < userPrefs->days; i++) {
 		run_day(&workout[i]);
 	};*/
-	user_space_main(userPrefs, workout, userFILE);
+	//user_space_main(userPrefs, workout, userFILE);
 
 	return 0;
 }
 
-
+/*
 int ProfilePage(FILE* userFILE, UserPreferences_t* userPrefs) {
 	int input;
 	printf("Welcome!\n");
@@ -75,6 +75,7 @@ int ProfilePage(FILE* userFILE, UserPreferences_t* userPrefs) {
 			*userPrefs = read_user_preferences(userFILE);
 			workout_days_t* workout = (workout_days_t*)generate_workout_program(*userPrefs);
 			print_workout_program(workout, userPrefs->days);
+			save_workout_data(workout, userPrefs->days);
 			char c_input;
 			want_to_start_workout:
 			printf("Do you want to start the workout? (y/n)\n");
@@ -85,6 +86,8 @@ int ProfilePage(FILE* userFILE, UserPreferences_t* userPrefs) {
 				// Run day workout
 				for (int i = 0; i < userPrefs->days; i++) {
 					run_day(&workout[i]);
+					backup_user_data();
+					update_user_data();
 				};
 			} else {
 				printf("ERROR: Please enter valid input ('y' or 'n')\n");
@@ -99,7 +102,7 @@ int ProfilePage(FILE* userFILE, UserPreferences_t* userPrefs) {
 
 		case 3:
 			UserProfileView:
-			printf("USER PROFILE  |  Logged in as: %s\n", username);
+			//printf("USER PROFILE  |  Logged in as: %s\n", username);
 			printf("Please input an option below:\n");
 			printf("1 = View Progress Report   |   2 = Workout Streak\n>");
 			scanf(" %d", &input);
@@ -129,7 +132,7 @@ int ProfilePage(FILE* userFILE, UserPreferences_t* userPrefs) {
 
 	return 0;
 }
-
+*/
 
 /** @brief Function that calculates the workout
  *  @param data @in The data from the sets
@@ -502,6 +505,9 @@ void run_exercise(exercise_t* exercise) {
 
 	workout_result_t workout_result = calculate_workout(setData, exercise->user_exercise_data, 3);
 
+	exercise->user_exercise_data->reps+= workout_result.repChange;
+	exercise->user_exercise_data->weight += workout_result.weightChange;
+
 	printf("\nRep Change : %d\n", workout_result.repChange);
 	printf("Weight Change : %lf\n", workout_result.weightChange);
 
@@ -535,6 +541,6 @@ void run_day(workout_days_t* workout_day) {
 	}
 }
 
-struct user_meta_data {
+/*struct user_meta_data {
 	char username[16];
-};
+};*/

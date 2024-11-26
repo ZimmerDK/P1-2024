@@ -21,9 +21,9 @@ enum UserSpace_options {
 	VIEW_REPORT = 4
 };
 
-void user_space_main(UserPreferences_t* userPrefs, workout_days_t* workout_plan, FILE* user_file);
+void user_space_main(user_file_header_prefs* userPrefs, workout_days_t* workout_plan, FILE* user_file);
 
-void user_start_workout(UserPreferences_t* userPrefs, workout_days_t* workout_plan);
+void user_start_workout(user_file_header_prefs* userPrefs, workout_days_t* workout_plan);
 
 void user_recalibrate();
 
