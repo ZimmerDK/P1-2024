@@ -80,10 +80,10 @@ int handle_signup(HashMap_t* map, char* accountsPath, FILE* accountsFILE, char* 
         //Flush
         //fflush(local_userFILE);
 
-        user_file_header_prefs prefs = { .prefered_days = _days, .perfered_time = _time, .workout_counter = 0 };
-        read_user_preferences(local_userFILE, &prefs);
+        user_file_header_prefs* prefs = read_user_preferences(local_userFILE);
+
         update_user_workout_data(
-            generate_workout_program(prefs));
+            generate_workout_program(*prefs));
 
         // Reopen accounts file in read mode
         fclose(accountsFILE);
@@ -120,7 +120,7 @@ int handle_login(HashMap_t* map, FILE* userFILE, char* input) {
             return 1;
 		}
         
-        parse_user_data(exercises_c, local_userFILE);
+        parse_user_data(exercises_c);
 
         /*
         // Read and display user preferences
@@ -437,7 +437,7 @@ void read_single_exercise_data(FILE* userFILE, int exercise_index, user_exercise
     // Validate file pointer
     if (userFILE == NULL) {
         printf("Error: Invalid file pointer\n");
-        return data;
+        return;
     }
 
     // Read the user preferences
@@ -450,13 +450,13 @@ void read_single_exercise_data(FILE* userFILE, int exercise_index, user_exercise
     // Seek to exercise position
     if (fseek(userFILE, position, SEEK_SET) != 0) {
         printf("Error: Could not seek to exercise position\n");
-        return data;
+        return;
     }
 
     fread(&data->weight, sizeof(double), 1, userFILE);
     fread(&data->reps, sizeof(int), 1, userFILE);
 
-    return data;
+    return;
 }
 
 /**@brief Reads user preferences from the data file
@@ -594,22 +594,22 @@ workout_days_t* read_user_workout_data() {
 	return workout;
 }
 
-int update_user_preferences(user_file_header_prefs new_user_preferences) {
+void update_user_preferences(user_file_header_prefs* user_prefs) {
 
     // Seek to start of file where preferences are stored
     
     long position = fseek(local_userFILE, 0, SEEK_SET);
 
     // Write user preferences to file
-	if (fwrite(&new_user_preferences.prefered_days, sizeof(int), 1, local_userFILE) != 1) {
+	if (fwrite(&user_prefs->prefered_days, sizeof(int), 1, local_userFILE) != 1) {
 		printf("\nError writing preferences to file!\n");
 	}
 
-	if (fwrite(&new_user_preferences.perfered_time, sizeof(int), 1, local_userFILE) != 1) {
+	if (fwrite(&user_prefs->perfered_time, sizeof(int), 1, local_userFILE) != 1) {
 		printf("\nError writing preferences to file!\n");
 	}
 
-	if (fwrite(&new_user_preferences.workout_counter, sizeof(int), 1, local_userFILE) != 1) {
+	if (fwrite(&user_prefs->workout_counter, sizeof(int), 1, local_userFILE) != 1) {
 		printf("\nError writing preferences to file!\n");
 	}
 
@@ -660,7 +660,7 @@ int write_user_data_post_workout() {
 
     userPrefs->workout_counter++;
 
-    update_user_preferences(*userPrefs);
+    update_user_preferences(userPrefs);
 
     if (fseek(local_userFILE, 0, SEEK_END)) return 1;
 

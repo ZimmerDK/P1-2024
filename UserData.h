@@ -68,7 +68,7 @@ FILE* create_new_user(FILE* accountsFILE, char username[MAX_LENGTH], HashMap_t* 
 
 void user_setup(FILE* userFILE, int* days, int* time);
 
-void parse_user_data(exercise_t** exercises);
+void parse_user_data(exercise_t* exercises);
 void fill_user_data(FILE* userFILE, int days, int time);
 void read_single_exercise_data(FILE* userFILE, int exercise_index, user_exercise_data_t* data);
 user_file_header_prefs* read_user_preferences(FILE* userFILE);
@@ -79,6 +79,8 @@ int update_user_exercise_data();
 int update_user_workout_data(workout_days_t *workout);
 
 int write_user_data_post_workout();
+
+void update_user_preferences(user_file_header_prefs* user_prefs);
 
 // username malloc thing
 extern char userprofile_path[MAX_LENGTH+15];  // Declare the variable as external

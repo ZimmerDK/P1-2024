@@ -41,7 +41,13 @@ void user_space_main(user_file_header_prefs* userPrefs, workout_days_t* workout_
 			continue;
 
 		case CHANGE_PREFERENCES:
-			//user_setup(userFILE);
+			int _days = 0; int _time = 0;
+			user_setup(local_userFILE, &_days, &_time);
+			userPrefs->prefered_days = _days;
+			userPrefs->perfered_time = _time;
+			update_user_preferences(userPrefs);
+			workout_plan = generate_workout_program(*userPrefs);
+			update_user_workout_data(workout_plan);
 			continue;
 
 		case VIEW_REPORT:
