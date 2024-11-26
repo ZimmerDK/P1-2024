@@ -10,7 +10,7 @@ exercise_t exercises_c[AMOUNT_EXERCISES] = {
 	{"Bench Press", 2.5, 6, 10, COMPOUND, 9.0, CHEST, NULL},
 	{"Squat", 2.5, 8, 10, COMPOUND, 9.0, UPP_THIGH, NULL},
 	{"Deadlift", 2.5, 8, 12, COMPOUND, 8.5, BACK, NULL},
-	{"Military Press", 2, 6, 10, COMPOUND, 8.0, SHOULDER, NULL},
+	{"Dumbbell Military Press", 2, 6, 10, COMPOUND, 8.0, SHOULDER, NULL},
 	{"Barbell Rows", 2.5, 8, 12, COMPOUND, 8.5, BACK, NULL},
 	{"Romanian Deadlifts", 2.5, 6, 12, SECONDARY, 9.0, LOW_THIGH, NULL},
 	{"Lat Pull-Down", 2.5, 6, 12, SECONDARY, 9.0, BACK, NULL},
@@ -22,7 +22,7 @@ exercise_t exercises_c[AMOUNT_EXERCISES] = {
 	{"Leg Extensions", 2.5, 10, 14, ISOLATION, 9.0, UPP_THIGH, NULL},
 	{"Skull Crushers", 2.5, 6, 12, ISOLATION, 9.0, TRICEPS, NULL},
 	{"Flies", 2.5, 6, 12, ISOLATION, 9.0, CHEST, NULL},
-	{"Supinated Bicep Curls", 2.5, 6, 12, ISOLATION, 9.0, BICEPS, NULL},
+	{"Seated Hammer Curls", 2.5, 6, 12, ISOLATION, 9.0, BICEPS, NULL},
 	{"Reverse Flies", 2.5, 6, 12, ISOLATION, 9.0, SHOULDER, NULL},
 	{"Face Pulls", 2.5, 6, 12, ISOLATION, 9.0, SHOULDER, NULL}
 };

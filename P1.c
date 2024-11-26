@@ -249,6 +249,24 @@ void calibrate_workout_routine(exercise_t exercises[]) {
 
 			printf("Final result for %s = %.2lf kg\n\n", exercises[i].name, exercises[i].user_exercise_data->weight);
 
+			// Update other exercises in same muscle group
+			int n = 0;
+			while (n < AMOUNT_EXERCISES) {
+				if (exercises_c[n].muscle_group == SHOULDER && strcmp(exercises_c[n].name, "Dumbbell Military Press")) {
+					double muscle_group_scale = 1.2;
+					exercises[n].user_exercise_data->weight = round(exercises_c[i].user_exercise_data->weight * muscle_group_scale);
+				}
+				if (exercises_c[n].muscle_group == SHOULDER && strcmp(exercises_c[n].name, "Reverse Flies")) {
+					double muscle_group_scale = 1.3;
+					exercises[n].user_exercise_data->weight = round(exercises_c[i].user_exercise_data->weight * muscle_group_scale);
+				}
+				if (exercises_c[n].muscle_group == SHOULDER && strcmp(exercises_c[n].name, "Face Pulls")) {
+					double muscle_group_scale = 1.8;
+					exercises[n].user_exercise_data->weight = round(exercises_c[i].user_exercise_data->weight * muscle_group_scale);
+				}
+				n++;
+			}
+
 			char proceed;
 			printf("Proceed to next calibration exercise? (y/n): ");
 			scanf(" %c", &proceed);
@@ -284,6 +302,17 @@ void calibrate_workout_routine(exercise_t exercises[]) {
 				}
 			} while (current_intensity < estIntensity);
 			printf("Final result for %s = %.2lf kg\n\n", exercises[i].name, exercises[i].user_exercise_data->weight);
+
+			// Update other exercises in same muscle group
+			int n = 0;
+			while (n < AMOUNT_EXERCISES) {
+				// TODO: Check if 2nd biceps exercise name is correct
+				if (exercises_c[n].muscle_group == BICEPS && strcmp(exercises_c[n].name, "Seated Hammer Curls")) {
+					double muscle_group_scale = 0.9;
+					exercises[n].user_exercise_data->weight = round(exercises_c[i].user_exercise_data->weight * muscle_group_scale);
+				}
+				n++;
+			}
 
 			char proceed;
 			printf("Proceed to next calibration exercise? (y/n): ");
@@ -321,6 +350,16 @@ void calibrate_workout_routine(exercise_t exercises[]) {
 			} while (current_intensity < estIntensity);
 			printf("Final result for %s = %.2lf kg\n\n", exercises[i].name, exercises[i].user_exercise_data->weight);
 
+			// Update other exercises in same muscle group
+			int n = 0;
+			while (n < AMOUNT_EXERCISES) {
+				if (exercises_c[n].muscle_group == TRICEPS && strcmp(exercises_c[n].name, "Skull Crushers")) {
+					double muscle_group_scale = 0.6;
+					exercises[n].user_exercise_data->weight = round(exercises_c[i].user_exercise_data->weight * muscle_group_scale);
+				}
+				n++;
+			}
+
 			char proceed;
 			printf("Proceed to next calibration exercise? (y/n): ");
 			scanf(" %c", &proceed);
@@ -356,6 +395,20 @@ void calibrate_workout_routine(exercise_t exercises[]) {
 				}
 			} while (current_intensity < estIntensity);
 			printf("Final result for %s = %.2lf kg\n\n", exercises[i].name, exercises[i].user_exercise_data->weight);
+
+			// Update other exercises in same muscle group
+			int n = 0;
+			while (n < AMOUNT_EXERCISES) {
+				if (exercises_c[n].muscle_group == BACK && strcmp(exercises_c[n].name, "Deadlift")) {
+					double muscle_group_scale = 1;
+					exercises[n].user_exercise_data->weight = exercises_c[i].user_exercise_data->weight * muscle_group_scale;
+				}
+				if (exercises_c[n].muscle_group == BACK && strcmp(exercises_c[n].name, "Barbell Rows")) {
+					double muscle_group_scale = 0.6;
+					exercises[n].user_exercise_data->weight = round(exercises_c[i].user_exercise_data->weight * muscle_group_scale);
+				}
+				n++;
+			}
 
 			char proceed;
 			printf("Proceed to next calibration exercise? (y/n): ");
@@ -393,6 +446,20 @@ void calibrate_workout_routine(exercise_t exercises[]) {
 			} while (current_intensity < estIntensity);
 			printf("Final result for %s = %.2lf kg\n\n", exercises[i].name, exercises[i].user_exercise_data->weight);
 
+			// Update other exercises in same muscle group
+			int n = 0;
+			while (n < AMOUNT_EXERCISES) {
+				if (exercises_c[n].muscle_group == CHEST && strcmp(exercises_c[n].name, "Bench Press")) {
+					double muscle_group_scale = 2;
+					exercises[n].user_exercise_data->weight = exercises_c[i].user_exercise_data->weight * muscle_group_scale;
+				}
+				if (exercises_c[n].muscle_group == CHEST && strcmp(exercises_c[n].name, "Flies")) {
+					double muscle_group_scale = 0.8;
+					exercises[n].user_exercise_data->weight = round(exercises_c[i].user_exercise_data->weight * muscle_group_scale);
+				}
+				n++;
+			}
+
 			char proceed;
 			printf("Proceed to next calibration exercise? (y/n): ");
 			scanf(" %c", &proceed);
@@ -428,6 +495,16 @@ void calibrate_workout_routine(exercise_t exercises[]) {
 				}
 			} while (current_intensity < estIntensity);
 			printf("Final result for %s = %.2lf kg\n\n", exercises[i].name, exercises[i].user_exercise_data->weight);
+
+			// Update other exercises in same muscle group
+			int n = 0;
+			while (n < AMOUNT_EXERCISES) {
+				if (exercises_c[n].muscle_group == UPP_THIGH && strcmp(exercises_c[n].name, "Squat")) {
+					double muscle_group_scale = 1;
+					exercises[n].user_exercise_data->weight = exercises_c[i].user_exercise_data->weight * muscle_group_scale;
+				}
+				n++;
+			}
 
 			char proceed;
 			printf("Proceed to next calibration exercise? (y/n): ");
@@ -465,6 +542,16 @@ void calibrate_workout_routine(exercise_t exercises[]) {
 			} while (current_intensity < estIntensity);
 			printf("Final result for %s = %.2lf kg\n\n", exercises[i].name, exercises[i].user_exercise_data->weight);
 
+			// Update other exercises in same muscle group
+			int n = 0;
+			while (n < AMOUNT_EXERCISES) {
+				if (exercises_c[n].muscle_group == LOW_THIGH && strcmp(exercises_c[n].name, "Hip-Thrusts")) {
+					double muscle_group_scale = 1.2;
+					exercises[n].user_exercise_data->weight = round(exercises_c[i].user_exercise_data->weight * muscle_group_scale);
+				}
+				n++;
+			}
+
 			char proceed;
 			printf("Proceed to next calibration exercise? (y/n): ");
 			scanf(" %c", &proceed);
@@ -472,6 +559,10 @@ void calibrate_workout_routine(exercise_t exercises[]) {
 				break;
 			}
 		}
+	}
+
+	for (int n = 0; n < AMOUNT_EXERCISES; n++) {
+		exercises[n].user_exercise_data->reps = exercises[n].min_reps;
 	}
 
 	// TODO: Write new data to userFILE
