@@ -117,6 +117,7 @@ void user_recalibrate() {
 		case RECALIBRATE_SPECIFIC:
 			int chosen_index;
 			// TODO: function that scans for exercise name and converts it to an index number
+
 			recalibrate_specific_exercise(exercises_c, chosen_index);
 			break;
 		case MANUALLY_EDIT_SPECIFIC:
