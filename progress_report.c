@@ -9,6 +9,7 @@ void user_view_report(workout_days_t* workout_day) {
 
     inputs_progress(&input_workout_progress, amount_of_workouts, &input_print_day, amount_of_different_workouts);
     input_print_day--;
+    input_workout_progress--;
 
 
     print_progress_workout_day(workout_day, input_print_day, amount_of_workouts, input_workout_progress);
@@ -47,18 +48,20 @@ void print_progress_workout_day(workout_days_t* workout_day, int input_print_day
     int input_workout_progress) {
 
     int amountOfExercises = 0;
+    printf("_________________\n");
     for (int i = 0; i < AMOUNT_COMPOUND; i++) {
+        printf("%d\n", workout_day[input_print_day].compound[i]);
         if (workout_day[input_print_day].compound[i] == 1) {
             amountOfExercises++;
         }
     }
     for (int i = 0; i < AMOUNT_SECONDARY; i++) {
-        if (workout_day[input_print_day].compound[i] == 1) {
+        if (workout_day[input_print_day].secondary[i] == 1) {
             amountOfExercises++;
         }
     }
     for (int i = 0; i < AMOUNT_TERTIARY; i++) {
-        if (workout_day[input_print_day].compound[i] == 1) {
+        if (workout_day[input_print_day].tertiary[i] == 1) {
             amountOfExercises++;
         }
     }
@@ -71,16 +74,16 @@ void print_progress_workout_day(workout_days_t* workout_day, int input_print_day
     user_file_exercise_data* previous_exercise_data =
         (user_file_exercise_data*)malloc(sizeof(user_file_exercise_data)*AMOUNT_EXERCISES);
 
-    read_previous_user_workout_data(previous_exercise_data, amount_of_workouts - input_workout_progress);
+    read_previous_user_workout_data(previous_exercise_data, (amount_of_workouts - input_workout_progress));
     read_previous_user_workout_data(current_exercise_data, (amount_of_workouts));
 
     for (int i = 0; i < AMOUNT_EXERCISES; i++) {
-        printf("Weight: %lf\n", current_exercise_data[i].weight);
+        printf("Current weight: %lf\n", current_exercise_data[i].weight);
     }
 
     printf("---------------------\n");
     for (int i = 0; i < AMOUNT_EXERCISES; i++) {
-        printf("Weight: %lf\n", previous_exercise_data[i].weight);
+        printf(" Prevuous weight: %lf\n", previous_exercise_data[i].weight);
     }
     printf("---------------------\n");
 
