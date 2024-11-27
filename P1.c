@@ -570,7 +570,6 @@ void calibrate_workout_routine(exercise_t exercises[]) {
 		exercises[n].user_exercise_data->reps = exercises[n].min_reps;
 	}
 
-	// TODO: Write new data to userFILE
 	// Writing to userFILE
 	if (update_user_exercise_data() != 0) {
 		printf("ERROR: Could not update userFILE calibration\n");

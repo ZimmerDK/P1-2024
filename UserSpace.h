@@ -1,7 +1,7 @@
 /* OPTIONS
 * Start workout -> Select workout
 * Recalibrate
-* User Prefrences
+* User Preferences
 * View report
 */
 #pragma once
@@ -35,7 +35,7 @@ void user_change_preferences();
 
 void user_recalibrate();
 
-void recalibrate_specific_exercise(exercise_t exercises[], int chosen_index);
+void recalibrate_specific_exercise(exercise_t exercises[], int index);
 
 void user_view_report();
 

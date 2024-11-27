@@ -115,9 +115,15 @@ void user_recalibrate() {
 			calibrate_workout_routine(exercises_c);
 			break;
 		case RECALIBRATE_SPECIFIC:
-			int chosen_index;
 			// TODO: function that scans for exercise name and converts it to an index number
-
+			printf("EXERCISES LIST:\n");
+			for (int i = 0; i < AMOUNT_EXERCISES; i++) {
+				printf("%d = %s\n", i, exercises_c[i].name);
+			}
+			int chosen_index = 0;
+			printf("Input desired exercise to recalibrate: ");
+			scanf(" %d", &chosen_index);
+			printf("chosen_index: %d", chosen_index);
 			recalibrate_specific_exercise(exercises_c, chosen_index);
 			break;
 		case MANUALLY_EDIT_SPECIFIC:
@@ -131,8 +137,51 @@ void user_recalibrate() {
 	}
 }
 
-void recalibrate_specific_exercise(exercise_t exercises[], int chosen_index) {
+void recalibrate_specific_exercise(exercise_t exercises[], int index) {
 	// TODO: recalibrate a specific exercise using index_number
+	const int reps = 5;
+	double estIntensity = exercises->est_intensity;
+	double weight_step = exercises->weight_step;
+	int start_weight = 0;
+
+	estIntensity = exercises_c[index].est_intensity;
+	weight_step = exercises_c[index].weight_step;
+	start_weight = 2;
+	exercises[index].user_exercise_data->weight = start_weight;
+	int current_intensity;
+	printf("Calibrating for %s exercises\n", exercises[index].name);
+	do {
+		printf("#############################################\n");
+		printf("Exercise: %s\n", exercises[index].name);
+		// printf("Estimated Intensity: %lf\n", exercises[i].est_intensity);
+		printf("Current Weight: %lf\n", exercises[index].user_exercise_data->weight);
+		printf("Current Reps: %d\n", reps);
+		printf("#############################################\n\n");
+
+		printf("Input Intensity: ");
+		scanf(" %d", &current_intensity); printf("\n");
+		if (current_intensity <= 3) {
+			exercises[index].user_exercise_data->weight += weight_step*3;
+		} else if (current_intensity >= 4 && current_intensity <= 6) {
+			exercises[index].user_exercise_data->weight += weight_step*2;
+		} else if (current_intensity >= 7 && current_intensity <= 8) {
+			exercises[index].user_exercise_data->weight += weight_step;
+		} else if (current_intensity == 10) {
+			exercises[index].user_exercise_data->weight -= weight_step;
+		}
+	} while (current_intensity < estIntensity);
+
+	printf("Final result for %s = %.2lf kg\n\n", exercises[index].name, exercises[index].user_exercise_data->weight);
+
+	exercises[index].user_exercise_data->reps = exercises[index].min_reps;
+
+	// Writing to userFILE
+	if (update_user_exercise_data() != 0) {
+		printf("ERROR: Could not update userFILE calibration\n");
+	}
+
+	printf("Calibration finished!\n");
+
 }
 
 void user_view_report() {
