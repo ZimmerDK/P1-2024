@@ -1,5 +1,7 @@
 #include "UserSpace.h"
 
+#include <float.h>
+
 
 void user_space_main(user_file_header_prefs* userPrefs, workout_days_t* workout_plan, FILE* userFILE) {
 	int running = 1;
@@ -110,25 +112,29 @@ void user_recalibrate() {
 
 	int choice = atoi(recalibrate_input);
 
+	int chosen_index = 0;
+
 	switch (choice) {
 		case RECALIBRATE_ALL:
 			calibrate_workout_routine(exercises_c);
 			break;
 		case RECALIBRATE_SPECIFIC:
-			// TODO: function that scans for exercise name and converts it to an index number
 			printf("EXERCISES LIST:\n");
 			for (int i = 0; i < AMOUNT_EXERCISES; i++) {
 				printf("%d = %s\n", i, exercises_c[i].name);
 			}
-			int chosen_index = 0;
 			printf("Input desired exercise to recalibrate: ");
 			scanf(" %d", &chosen_index);
-			printf("chosen_index: %d", chosen_index);
 			recalibrate_specific_exercise(exercises_c, chosen_index);
 			break;
 		case MANUALLY_EDIT_SPECIFIC:
-			// TODO: function that scans for exercise name and converts it to an index number
-			// TODO: Manually edit a specific exercise
+			printf("EXERCISES LIST:\n");
+			for (int i = 0; i < AMOUNT_EXERCISES; i++) {
+				printf("%d = %s\n", i, exercises_c[i].name);
+			}
+			printf("Input desired exercise to manually edit: ");
+			scanf(" %d", &chosen_index);
+			manual_exercise_edit(exercises_c, chosen_index);
 			break;
 		case 4:
 			break;
@@ -178,10 +184,53 @@ void recalibrate_specific_exercise(exercise_t exercises[], int index) {
 	// Writing to userFILE
 	if (update_user_exercise_data() != 0) {
 		printf("ERROR: Could not update userFILE calibration\n");
+		return;
 	}
 
 	printf("Calibration finished!\n");
+}
 
+void manual_exercise_edit(exercise_t exercises[], int chosen_index) {
+	if (chosen_index < 0 || chosen_index > AMOUNT_EXERCISES-1) {
+		printf("\nERROR: Invalid selection  |  Please input valid exercise index\n");
+		return;
+	}
+
+	printf("#############################################\n");
+	printf("Exercise: %s\n", exercises_c[chosen_index].name);
+	printf("Current Weight: %lf\n", exercises_c[chosen_index].user_exercise_data->weight);
+	printf("Current Reps: %d\n", exercises_c[chosen_index].user_exercise_data->reps);
+	printf("#############################################\n\n");
+
+	printf("Input new weight: ");
+
+	do {
+		scanf(" %lf", &exercises_c[chosen_index].user_exercise_data->weight);
+		if (exercises_c[chosen_index].user_exercise_data->weight > 9999.0 ||
+			exercises_c[chosen_index].user_exercise_data->weight < 0.0) {
+				printf("\nERROR: Invalid weight |  Please input valid weight: ");
+				continue;
+		} break;
+	} while (1);
+	printf("\nInput new rep amount: ");
+
+	do {
+		scanf(" %d", &exercises_c[chosen_index].user_exercise_data->reps);
+		if (exercises_c[chosen_index].user_exercise_data->reps > exercises_c[chosen_index].max_reps ||
+			exercises_c[chosen_index].user_exercise_data->reps < exercises_c[chosen_index].min_reps) {
+				printf("\nERROR: Invalid reps |  Please input valid reps: ");
+			continue;
+		} break;
+	} while (1);
+	printf("\n");
+
+	// Writing to userFILE
+	if (update_user_exercise_data() != 0) {
+		printf("ERROR: Could not update userFILE calibration\n");
+		return;
+	}
+
+	printf("Manual edit finished!\n");
 }
 
 void user_view_report() {
