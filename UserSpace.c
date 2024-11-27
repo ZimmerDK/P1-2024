@@ -75,12 +75,11 @@ void user_space_main(user_file_header_prefs* userPrefs, workout_days_t* workout_
 		}
 
 		// Clear console for different operating systems
-#if defined(_WIN32) || defined(_WIN64) || defined(__CYGWIN__)
-		system("cls");  // Clear screen on Windows
-#else
-		system("clear");  // Clear screen on Unix-like systems
-#endif
-
+		#if defined(_WIN32) || defined(_WIN64) || defined(__CYGWIN__)
+			system("cls");  // Clear screen on Windows
+		#else
+			system("clear");  // Clear screen on Unix-like systems
+		#endif
 	}
 }
 
@@ -233,7 +232,6 @@ void recalibrate_specific_exercise(exercise_t exercises[], int index) {
 		printf("ERROR: Could not update userFILE calibration\n");
 		return;
 	}
-
 	printf("Calibration finished!\n");
 }
 
@@ -289,12 +287,10 @@ void manual_exercise_edit(exercise_t exercises[], int chosen_index) {
 		printf("ERROR: Could not update userFILE calibration\n");
 		return;
 	}
-
 	printf("Manual edit finished!\n");
 }
 
-/**
- * @brief Placeholder function for generating a user workout report
+/**@brief Placeholder function for generating a user workout report
  *
  * Currently unimplemented. Intended to display a summary or report
  * of the user's workout progress and statistics.*/
