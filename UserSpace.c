@@ -53,7 +53,7 @@ void user_space_main(user_file_header_prefs* userPrefs, workout_days_t* workout_
 			continue;
 
 		case VIEW_REPORT:
-			user_view_report();
+			user_view_report(workout_plan);
 			continue;
 
 		case 5:
@@ -97,8 +97,6 @@ void user_start_workout(user_file_header_prefs* user_prefs, workout_days_t* work
 
 	update_user_exercise_data();
 
-	print_progress_report();
-
 }
 
 void user_recalibrate() {
@@ -106,6 +104,6 @@ void user_recalibrate() {
 	calibrate_workout_routine(exercises_c);
 }
 
-void user_view_report() {
+/*void user_view_report() {
 	// TODO: USER REPORT
-}
+}*/

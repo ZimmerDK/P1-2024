@@ -29,6 +29,6 @@ void user_recalibrate();
 
 void user_change_preferences();
 
-void user_view_report();
+void user_view_report(workout_days_t* workout_days);
 
 
