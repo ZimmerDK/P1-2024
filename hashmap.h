@@ -2,6 +2,7 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
 
 // #define HASHMAP_SIZE 3072
 /** @brief Initial capacity of the hashmap */

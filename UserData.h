@@ -76,6 +76,8 @@ workout_days_t* read_user_workout_data();
 
 int update_user_exercise_data();
 
+void read_previous_user_workout_data(user_file_exercise_data* data, int index);
+
 int update_user_workout_data(workout_days_t *workout);
 
 int write_user_data_post_workout();

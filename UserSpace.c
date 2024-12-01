@@ -1,4 +1,5 @@
 #include "UserSpace.h"
+#include "progress_report.h"
 
 #include <float.h>
 
