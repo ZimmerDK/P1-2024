@@ -90,6 +90,7 @@ extern char userprofile_path[MAX_LENGTH+15];  // Declare the variable as externa
 extern int userfile_workout_counter;
 
 extern FILE* local_userFILE;
+extern user_file_header_prefs* local_userPrefs;
 
 // Function declarations
 //void init_username(const char* input);

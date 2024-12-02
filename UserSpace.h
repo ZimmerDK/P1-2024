@@ -39,6 +39,7 @@ void recalibrate_specific_exercise(exercise_t exercises[], int index);
 
 void manual_exercise_edit(exercise_t exercises[], int chosen_index);
 
-void user_view_report(workout_days_t* workout_days);
+void user_view_statusreport();
+
 
 

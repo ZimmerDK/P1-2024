@@ -66,7 +66,7 @@ void print_progress_workout_day(workout_days_t* workout_day, int input_print_day
         }
     }
 
-    user_exercise_data_t improved_exercise[amountOfExercises];
+	user_exercise_data_t* improved_exercise = (user_exercise_data_t*)malloc(sizeof(user_exercise_data_t) * amountOfExercises);
 
     user_file_exercise_data* current_exercise_data =
      (user_file_exercise_data*)malloc(sizeof(user_file_exercise_data)*AMOUNT_EXERCISES);

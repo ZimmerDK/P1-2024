@@ -65,7 +65,7 @@ void user_space_main(user_file_header_prefs* userPrefs, workout_days_t* workout_
 			continue;
 
 		case VIEW_REPORT:
-			user_view_report();  // Placeholder for workout report
+			user_view_statusreport();  // Placeholder for workout report
 			continue;
 
 		case 5:
@@ -295,7 +295,7 @@ void manual_exercise_edit(exercise_t exercises[], int chosen_index) {
  *
  * Currently unimplemented. Intended to display a summary or report
  * of the user's workout progress and statistics.*/
-void user_view_report() {
+void user_view_statusreport() {
 	// TODO: Implement comprehensive workout report generation
 	// Potential features:
 	// - Total workouts completed
