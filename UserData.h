@@ -28,6 +28,17 @@
 #define USER_FILES_DIR "./userfiles"
 #define DEFAULT_VALUE 0
 
+#define USERDATA_SUCCESS 0x0
+#define USERDATA_FAILURE 0x1
+
+#define USERDATA_CONTEXT_VALID (char)0x0
+#define USERDATA_CONTEXT_INVALID (char)0x1
+
+typedef struct {
+    FILE* userFILE;
+    user_file_header_prefs* userPrefs;
+    char contextExists;
+} user_context_t;
 
 typedef struct user_exercise_data_t {
     int index_number;
@@ -54,21 +65,21 @@ typedef struct {
 
 
 
-int UserData_main();
+int establish_userdata_context();
 
 int handle_signup(HashMap_t* map, char* accountsPath, FILE* accountsFILE, char* input);
 int handle_login(HashMap_t* map, FILE* userFILE, char* input);
 
-int userVerify(char* usernameInput, HashMap_t* map);
+int verify_user_existence(char* usernameInput, HashMap_t* map);
 int startHashMap(FILE* accountsFILE, HashMap_t* map);
 
 static int ensure_user_directory();
 
 FILE* create_new_user(FILE* accountsFILE, char username[MAX_LENGTH], HashMap_t* map);
 
-void user_setup(FILE* userFILE, int* days, int* time);
+void user_preferences_prompt(FILE* userFILE, int* days, int* time);
 
-void parse_user_data(exercise_t* exercises);
+void parse_user_data_into_array(exercise_t* exercises);
 void fill_user_data(FILE* userFILE, int days, int time);
 void read_single_exercise_data(FILE* userFILE, int exercise_index, user_exercise_data_t* data);
 user_file_header_prefs* read_user_preferences(FILE* userFILE);
@@ -89,8 +100,7 @@ extern char userprofile_path[MAX_LENGTH+15];  // Declare the variable as externa
 
 extern int userfile_workout_counter;
 
-extern FILE* local_userFILE;
-extern user_file_header_prefs* local_userPrefs;
+extern user_context_t local_userContext;
 
 // Function declarations
 //void init_username(const char* input);

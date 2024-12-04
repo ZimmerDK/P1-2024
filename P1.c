@@ -29,7 +29,7 @@ typedef struct workout_result_t {
 
 int main(void) {
 
-	UserData_main();
+	establish_userdata_context();
 
 	user_file_header_prefs* userPrefs = read_user_preferences(local_userFILE);
 	if (userPrefs->workout_counter == 1) {

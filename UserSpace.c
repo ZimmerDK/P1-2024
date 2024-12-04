@@ -54,7 +54,7 @@ void user_space_main(user_file_header_prefs* userPrefs, workout_days_t* workout_
 
 		case CHANGE_PREFERENCES:
 			// Update user preferences
-			user_setup(local_userFILE, &_days, &_time);
+			user_preferences_prompt(local_userFILE, &_days, &_time);
 			userPrefs->prefered_days = _days;
 			userPrefs->perfered_time = _time;
 			update_user_preferences(userPrefs);
