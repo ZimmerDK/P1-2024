@@ -3,27 +3,32 @@
 #include "workout_program.h"
 #include "P1.h"
 
+// Typedef for equipment availability using bitwise flags
 typedef long equipment_avalibility;
 
+// Enum for different types of workout equipment
 enum equipment_e {
-    DUMBBELLS = 0x1,
-    BARBELL = 0x2,
-    MACHINE = 0x4,
-    CABLE = 0x8,
-    BODYWEIGHT = 0x10,
+    DUMBBELLS = 0x1,    // Represents dumbbells
+    BARBELL = 0x2,      // Represents barbell
+    MACHINE = 0x4,      // Represents weight machines
+    CABLE = 0x8,        // Represents cable machines
+    BODYWEIGHT = 0x10,  // Represents bodyweight exercises
 };
 
-
-/**@brief Struct to track changes in workout performance*/
+/**@brief Struct to track changes in workout performance
+ * Stores the changes in number of repetitions and weight used */
 typedef struct workout_result_t {
     int repChange;        // Change in number of reps
     double weightChange;  // Change in weight used
 } workout_result_t;
 
+// Global path for user profile
 char userprofile_path[MAX_LENGTH+15];
 
+// Counter to track number of workouts in user file
 int userfile_workout_counter = 0;
 
+// Global user context structure initialized with default/invalid values
 user_context_t local_userContext = {
     .userFILE = NULL,
     .userPrefs = NULL,
@@ -172,12 +177,19 @@ int handle_login(HashMap_t* map, FILE** userFILE, char* input) {
     return USERDATA_SUCCESS;  // Successfully logged in
 }
 
-
-/**@brief Establishes a context for user data
- * @return USERDATA_SUCCESS on success, USERDATA_FAILURE on failure
+/**@brief Establishes a context for user data management
+ *
+ * This function initializes the user data system by:
+ * - Ensuring user directory exists
+ * - Opening accounts file
+ * - Creating a username hashmap
+ * - Providing login/signup interface
+ *
+ * @return USERDATA_SUCCESS if context is successfully established, USERDATA_FAILURE otherwise
+ *
  * @note This function is the entry point for the UserData module
  * @note This function should be called before any other UserData functions
- * @note This function should be called only once per program execution*/
+ * @note This function should be called only once per program execution */
 int establish_userdata_context() {
     
     // Ensure user directory exists before opening files
@@ -288,9 +300,13 @@ int establish_userdata_context() {
 }
 
 
-/**@brief Validates a user_context
- * @param user_context Pointer to the user_context_t to be validated
- * @return USERDATA_SUCCESS if valid, USERDATA_FAILURE if invalid */
+/**@brief Validates the integrity of a user context
+ *
+ * Checks if the user context contains valid file pointers and has been properly initialized
+ *
+ * @param user_context Pointer to the user context to be validated
+ *
+ * @return USERDATA_SUCCESS if context is valid, USERDATA_FAILURE otherwise */
 int validate_user_context(user_context_t* user_context) {
     if ((user_context->userFILE == NULL) || (!user_context->contextExists) || (user_context->userPrefs == NULL)) {
         return USERDATA_FAILURE;
@@ -299,9 +315,9 @@ int validate_user_context(user_context_t* user_context) {
 }
 
 
-/**@brief Verifies whether a username exists in the hashmap
+/**@brief Verifies if a username exists in the system
  * @param usernameInput The username to verify
- * @param map The hashmap containing valid usernames
+ * @param map The hashmap containing registered usernames
  * @return int 1 if username exists, 0 if it doesn't exist */
 int verify_user_existence(char* usernameInput, HashMap_t* map) {
     int value = get(map, usernameInput);
@@ -429,9 +445,13 @@ void user_preferences_prompt(int* days, int* time) {
     printf("\nPreferences saved successfully!\n");
 }
 
-
 /**@brief Initializes exercise data for all exercises in the exercises_c array
- * @param userFILE Pointer to the file where exercise data will be written
+
+ * Writes default weight and rep values to the user's data file
+ * Creates initial workout structure based on user's preferred days
+ * @param userContext Pointer to the user context for file writing
+ * @param days Number of workout days selected by user
+ * @param time Preferred workout duration in minutes
  * @note Writes weight (double) and reps (int) for each exercise
  * @note Skips past user preferences section before writing exercise data */
 void fill_user_data(user_context_t* userContext, int days, int time) {
@@ -442,9 +462,10 @@ void fill_user_data(user_context_t* userContext, int days, int time) {
 		return;
 	}
 
-    // Default workout
+    // Allocate memory for workout days
     workout_days_t* workout = malloc(sizeof(workout_days_t) * days);
     for (int i = 0; i < days; i++) {
+        // Initialize workout days with empty exercise slots
         workout[i] = (workout_days_t){
             .compound = {0},
             .secondary = {0},
@@ -453,22 +474,24 @@ void fill_user_data(user_context_t* userContext, int days, int time) {
     }
 
 
-    // Write user preferences to file
+    // // Prepare user preferences header for writing user preferences to file
     user_file_header_prefs user_file_header_prefs = {
         .prefered_days = days,
         .perfered_time = time,
         .workout_counter = -1,
     };
 
+    // Prepare user data header
     user_file_header_data user_file_header_data = {
 		.workout = workout
 	};
 
+    // Initialize exercise data with default values
     for (int i = 0; i < AMOUNT_EXERCISES; i++) {
         // Initialize exercise data with default values
         user_file_header_data.exercise_data[i] = (user_file_exercise_data){
-            .weight = 10.0,
-            .reps = 7,
+            .weight = 10.0,     // Default starting weight
+            .reps = 7,          // Default starting reps
         };
     }
 
@@ -510,12 +533,16 @@ void fill_user_data(user_context_t* userContext, int days, int time) {
     printf("\nUser Exercise Data saved successfully!\n");
     
 
-    // Free resources
+    // Free allocated memory resources
     free(workout);
 }
 
 
 /**@brief Parses user data from the user's file and assigns it to exercise structures
+ *
+ * Reads exercise-specific data (weight, reps) from user file
+ * Allocates and populates user exercise data for each exercise
+ *
  * @param exercises Pointer to the exercise array to update with user data */
 void parse_user_data_into_array(exercise_t* exercises) {
     for (int i = 0; i < AMOUNT_EXERCISES; i++) { 
@@ -539,10 +566,11 @@ void parse_user_data_into_array(exercise_t* exercises) {
 
 
 /**@brief Reads exercise data for a single exercise from the user's file
- * @param userFILE Pointer to the file containing user data
+ *
+ * Seeks to the correct file position and reads weight and rep data
+ * @param user_context Pointer to the user context containing file information
  * @param exercise_index Index of the exercise to read data for
- * @param data Pointer to the user_exercise_data_t structure to store the data
- * @note This function reads weight and reps for a single exercise */
+ * @param data Pointer to the user_exercise_data_t structure to store the data */
 void read_single_exercise_data(user_context_t* user_context, int exercise_index, user_exercise_data_t* data) {
 
     const size_t SKIP_PREFS = sizeof(user_file_header_prefs);
@@ -582,6 +610,8 @@ void read_single_exercise_data(user_context_t* user_context, int exercise_index,
 
 
 /**@brief Reads user preferences from the user's file
+ *
+ * Allocates memory and reads preferences such as workout days and time
  * @param userFILE Pointer to the file containing user data
  * @return user_file_header_prefs* Pointer to the user preferences structure else NULL*/
 user_file_header_prefs* read_user_preferences(FILE* userFILE) {
@@ -613,7 +643,9 @@ user_file_header_prefs* read_user_preferences(FILE* userFILE) {
 
 
 /**@brief Updates user exercise data in the user's file
- * @param user_context Pointer to the user context to update
+ *
+ * Writes current exercise weights and reps to the user's data file
+ * @param user_context Pointer to the user context containing file information to update
  * @return USERDATA_SUCCESS on success, USERDATA_FAILURE on failure */
 int update_user_exercise_data(const user_context_t* user_context) {
     
@@ -672,10 +704,12 @@ int update_user_exercise_data(const user_context_t* user_context) {
 
 
 /**@brief Reads previous user workout data from the user's file
+ *
+ * Retrieves exercise data for a specific previous workout
  * @param user_context Pointer to the user context to read data from
  * @param data Pointer to the user_file_exercise_data structure to store the data
  * @param index Index of the workout to read data from
- * @return USERDATA_SUCCESS on success, USERDATA_FAILURE on failure */
+ * @return USERDATA_SUCCESS if reading is successful, USERDATA_FAILURE on failure */
 int read_previous_user_workout_data(const user_context_t* user_context, user_file_exercise_data* data, int index) {
 
 	// Validate user_context
