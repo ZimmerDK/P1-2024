@@ -62,7 +62,7 @@ typedef struct {
 int establish_userdata_context();
 
 int handle_signup(HashMap_t* map, char* accountsPath, FILE* accountsFILE, char* input);
-int handle_login(HashMap_t* map, FILE* userFILE, char* input);
+int handle_login(HashMap_t* map, FILE** userFILE, char* input);
 
 int verify_user_existence(char* usernameInput, HashMap_t* map);
 int startHashMap(FILE* accountsFILE, HashMap_t* map);
