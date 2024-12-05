@@ -13,7 +13,7 @@ void set_program_day(workout_days_t* program_day, int amountOfDays, int time );
 workout_days_t* generate_workout_program(user_file_header_prefs userPrefs) {
 
     int amountOfDays = userPrefs.prefered_days;
-	int time = userPrefs.perfered_time;
+	int time = userPrefs.prefered_time;
 	workout_days_t* program_day = allocate_workout_program(amountOfDays);
 
 	set_program_day(program_day, amountOfDays, time );

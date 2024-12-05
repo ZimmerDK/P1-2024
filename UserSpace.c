@@ -65,7 +65,7 @@ void user_space_main(const user_context_t* user_context) {
 			// Update user preferences
 			user_preferences_prompt(&_days, &_time);
 			user_context->userPrefs->prefered_days = _days;
-			user_context->userPrefs->perfered_time = _time;
+			user_context->userPrefs->prefered_time = _time;
 			update_user_preferences(user_context);
 
 			// Regenerate workout plan based on new preferences

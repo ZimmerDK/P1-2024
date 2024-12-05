@@ -459,7 +459,7 @@ void fill_user_data(user_context_t* userContext, int days, int time) {
     // // Prepare user preferences header for writing user preferences to file
     user_file_header_prefs user_file_header_prefs = {
         .prefered_days = days,
-        .perfered_time = time,
+        .prefered_time = time,
         .workout_counter = -1,
     };
 
@@ -483,7 +483,7 @@ void fill_user_data(user_context_t* userContext, int days, int time) {
 		printf("\nError writing preferences to file!\n");
 	}
 
-    if (fwrite(&user_file_header_prefs.perfered_time, sizeof(int), 1, userContext->userFILE) != 1) {
+    if (fwrite(&user_file_header_prefs.prefered_time, sizeof(int), 1, userContext->userFILE) != 1) {
         printf("\nError writing preferences to file!\n");
     }
 
@@ -782,7 +782,7 @@ int update_user_preferences(const user_context_t* user_context) {
 	if (fwrite(&user_context->userPrefs->prefered_days, sizeof(int), 1, user_context->userFILE) != 1) {
         printf("\nError writing preferences to file!\n"); return USERDATA_FAILURE;
 	}
-	if (fwrite(&user_context->userPrefs->perfered_time, sizeof(int), 1, user_context->userFILE) != 1) {
+	if (fwrite(&user_context->userPrefs->prefered_time, sizeof(int), 1, user_context->userFILE) != 1) {
 		printf("\nError writing preferences to file!\n"); return USERDATA_FAILURE;
 	}
 	if (fwrite(&user_context->userPrefs->workout_counter, sizeof(int), 1, user_context->userFILE) != 1) {

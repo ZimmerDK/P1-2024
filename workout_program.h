@@ -19,7 +19,7 @@ typedef struct {
 
 typedef struct {
     int prefered_days;
-    int perfered_time;
+    int prefered_time;
     int workout_counter;
 } user_file_header_prefs;
 
