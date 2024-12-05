@@ -27,17 +27,15 @@ enum Recalibrate_options {
 	MANUALLY_EDIT_SPECIFIC = 3,
 };
 
-void user_space_main(user_file_header_prefs* userPrefs, workout_days_t* workout_plan, FILE* user_file);
+void user_space_main(const user_context_t* user_context);
 
-void user_start_workout(user_file_header_prefs* userPrefs, workout_days_t* workout_plan);
+void user_start_workout(const user_context_t* user_context, workout_days_t* workout_plan);
 
-void user_change_preferences();
+void user_recalibrate(const user_context_t* user_context);
 
-void user_recalibrate();
+void recalibrate_specific_exercise(const user_context_t* user_context, exercise_t exercises[], int index);
 
-void recalibrate_specific_exercise(exercise_t exercises[], int index);
-
-void manual_exercise_edit(exercise_t exercises[], int chosen_index);
+void manual_exercise_edit(const user_context_t* user_context, exercise_t exercises[], int chosen_index);
 
 void user_view_statusreport();
 

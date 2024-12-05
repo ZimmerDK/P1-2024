@@ -31,35 +31,18 @@ int main(void) {
 
 	establish_userdata_context();
 
-	user_file_header_prefs* userPrefs = read_user_preferences(local_userFILE);
-	if (userPrefs->workout_counter == 1) {
-		// TODO: the '1' should be a '0' when no workouts have been done before
+
+	if (local_userContext.userPrefs->workout_counter == -1) {
 		calibrate_workout_routine(exercises_c);
+		// Set the workout counter to 0
+		local_userContext.userPrefs->workout_counter = 0;
+		update_user_preferences(&local_userContext);
 	}
 
-	workout_days_t* workout = read_user_workout_data();
+	workout_days_t* workout = read_user_workout_data(&local_userContext);
 	
-	user_space_main(userPrefs, workout, local_userFILE);
-
-	// Test open acc file
-	/*FILE* accFile = fopen("./userfiles/accounts.dat", "rb+");
-	if (accFile == NULL) {
-		printf("ERROR: Could not open file\n");
-		return 1;
-	}*/
-
-	//fprintf(accFile, "Hello World\n");
-
-	//FILE* userFILE = NULL;
-	//userFILE = fopen(userprofile_path, "rb+");
-	//ProfilePage(userFILE, userPrefs);
-
-	//print_workout_program(workout, userPrefs->days);
-
-	/*for (int i = 0; i < userPrefs->days; i++) {
-		run_day(&workout[i]);
-	};*/
-	//user_space_main(userPrefs, workout, userFILE);
+	user_space_main(&local_userContext);
+	
 
 	return 0;
 }
@@ -571,8 +554,8 @@ void calibrate_workout_routine(exercise_t exercises[]) {
 	}
 
 	// Writing to userFILE
-	if (update_user_exercise_data() != 0) {
-		printf("ERROR: Could not update userFILE calibration\n");
+	if (update_user_exercise_data(&local_userContext) == USERDATA_FAILURE) {
+		printf("ERROR: login\n");
 	}
 
 	printf("Calibration finished!\n");

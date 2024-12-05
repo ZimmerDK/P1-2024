@@ -13,12 +13,14 @@ typedef enum exercise_type_e {
     COMPOUND, SECONDARY, ISOLATION
 } exercise_type_e;
 
-typedef struct user_exercise_data_t user_exercise_data_t;
 
 typedef enum MUSCLE_GROUP_e {BICEPS, TRICEPS, SHOULDER, CHEST, BACK, UPP_THIGH, LOW_THIGH} MUSCLE_GROUP_e;
 
+typedef struct user_exercise_data_t user_exercise_data_t;
+typedef struct exercise_t exercise_t;
+
 // Exercise constant
-typedef struct exercise_t {
+struct exercise_t {
     char name[30];
     double weight_step;  // eg 2 or 2.5 etc
     int min_reps, max_reps;
@@ -26,8 +28,14 @@ typedef struct exercise_t {
     double est_intensity;  //
     MUSCLE_GROUP_e muscle_group;
     user_exercise_data_t* user_exercise_data;
-} exercise_t;
+};
 
+struct user_exercise_data_t {
+    int index_number;
+    double weight;
+    int reps;
+    exercise_t* exercise;
+};
 
 extern exercise_t exercises_c[AMOUNT_EXERCISES];
 

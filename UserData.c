@@ -97,6 +97,12 @@ int handle_signup(HashMap_t* map, char* accountsPath, FILE* accountsFILE, char* 
 
     // Read user preferences, this also acts as a validation step
     user_file_header_prefs* prefs = read_user_preferences(local_userContext.userFILE);
+
+    
+    local_userContext.userPrefs = prefs;
+	local_userContext.contextExists = USERDATA_CONTEXT_VALID;
+    
+    
     if(!prefs) {
 		printf("Error reading user preferences\n");
 		return USERDATA_FAILURE;
@@ -104,7 +110,7 @@ int handle_signup(HashMap_t* map, char* accountsPath, FILE* accountsFILE, char* 
 
 
     // Generate a new workout program based on user preferences, and update user data
-    update_user_workout_data(
+	update_user_workout_data(&local_userContext,
         generate_workout_program(*prefs));
 
 
@@ -127,7 +133,7 @@ int handle_signup(HashMap_t* map, char* accountsPath, FILE* accountsFILE, char* 
  * @param userFILE Pointer to the user's data file
  * @param input Buffer to store user input
  * @return USERDATA_SUCCESS on success, USERDATA_FAILURE on failure */
-int handle_login(HashMap_t* map, FILE* userFILE, char* input) {
+int handle_login(HashMap_t* map, FILE** userFILE, char* input) {
     
     // Read username from user
     printf("\nEnter your username: ");
@@ -154,19 +160,14 @@ int handle_login(HashMap_t* map, FILE* userFILE, char* input) {
     printf("\nLogged in as %s!\n", input);
     char filepath[MAX_LENGTH + 15];
     snprintf(filepath, sizeof(filepath), "%s/%s.dat", USER_FILES_DIR, input);
-    userFILE = fopen(filepath, "rb+");
+    *userFILE = fopen(filepath, "rb+");
 
 
     // Validate file pointer
-    if (!userFILE) {
+    if (!*userFILE) {
         printf("Error opening user file\n");
         return USERDATA_FAILURE;
     }
-
-
-    // Read user data into exercises_c
-    parse_user_data_into_array(exercises_c);
-
 
     return USERDATA_SUCCESS;  // Successfully logged in
 }
@@ -247,7 +248,7 @@ int establish_userdata_context() {
 
         // Handle login process
         else if (strcmp(input, "login") == 0) {
-            if (handle_login(map, local_userContext.userFILE, input)) {
+            if (handle_login(map, &local_userContext.userFILE, input)) {
                 goto login_screen;
             }
             else {
@@ -277,6 +278,11 @@ int establish_userdata_context() {
     // Setup context
     local_userContext.contextExists = USERDATA_CONTEXT_VALID;
     local_userContext.userPrefs = read_user_preferences(local_userContext.userFILE);
+
+
+    // Read user data into exercises_c
+    parse_user_data_into_array(exercises_c);
+
 
     return USERDATA_SUCCESS; // Context successfully established
 }
@@ -451,7 +457,7 @@ void fill_user_data(user_context_t* userContext, int days, int time) {
     user_file_header_prefs user_file_header_prefs = {
         .prefered_days = days,
         .perfered_time = time,
-        .workout_counter = 0,
+        .workout_counter = -1,
     };
 
     user_file_header_data user_file_header_data = {
@@ -561,11 +567,11 @@ void read_single_exercise_data(user_context_t* user_context, int exercise_index,
 
 
     // Read weight and reps with error checking
-    if(fread(&data->weight, sizeof(double), 1, user_context->userFILE) != 1) {
+    if(fread(&(data->weight), sizeof(double), 1, user_context->userFILE) != 1) {
         printf("Error reading weight for exercise %d (%s)\n", exercise_index, exercises_c[exercise_index].name);
 		return;
 	}
-    if (fread(&data->reps, sizeof(int), 1, user_context->userFILE) != 1) {
+    if (fread(&(data->reps), sizeof(int), 1, user_context->userFILE) != 1) {
         printf("Error reading reps for exercise %d (%s)\n", exercise_index, exercises_c[exercise_index].name);
         return;
     }
@@ -606,22 +612,21 @@ user_file_header_prefs* read_user_preferences(FILE* userFILE) {
 }
 
 
-/**@brief Updates exercise data for a specific exercise in the user's file
- * @param userFILE Pointer to the file containing exercise data
- * @param exercise_index Index of the exercise to update
- * @param new_data New exercise data to write (weight and reps)
- * @return 0 on success, -1 on error */
-int update_user_exercise_data() {
+/**@brief Updates user exercise data in the user's file
+ * @param user_context Pointer to the user context to update
+ * @return USERDATA_SUCCESS on success, USERDATA_FAILURE on failure */
+int update_user_exercise_data(const user_context_t* user_context) {
     
+	// Validate user_context
+    if (!validate_user_context(user_context)) {
+        printf("Error: Invalid user context\n");
+        return USERDATA_FAILURE;
+    }
+
+
     const size_t RECORD_SIZE = sizeof(double) + sizeof(int);
     const size_t SKIP_PREFS = sizeof(user_file_header_prefs);
-    const size_t SKIP_WORKOUT = local_userPrefs->prefered_days * sizeof(workout_days_t);
-
-    // Validate file pointer
-    if (local_userFILE == NULL) {
-        printf("Error: Invalid file pointer\n");
-        return -1;
-    }
+    const size_t SKIP_WORKOUT = user_context->userPrefs->prefered_days * sizeof(workout_days_t);
 
 
     for(int i = 0; i < AMOUNT_EXERCISES; i++) {
@@ -629,242 +634,234 @@ int update_user_exercise_data() {
         // Calculate position for target exercise
         long position = SKIP_PREFS + SKIP_WORKOUT + i * RECORD_SIZE;
 
+
         // Seek to exercise position
-        if (fseek(local_userFILE, position, SEEK_SET) != 0) {
+        if (fseek(user_context->userFILE, position, SEEK_SET) != 0) {
             printf("Error: Could not seek to exercise position\n");
-            return -1;
+            return USERDATA_FAILURE;
         }
+
 
         user_file_exercise_data new_data = {
 			.weight = exercises_c[i].user_exercise_data->weight,
 			.reps = exercises_c[i].user_exercise_data->reps,
 		};
 
+
         // Write weight and reps explicitly with error checking
-        if (fwrite(&new_data.weight, sizeof(double), 1, local_userFILE) != 1) {
+        if (fwrite(&new_data.weight, sizeof(double), 1, user_context->userFILE) != 1) {
 			printf("Error writing weight for exercise %d (%s)\n",
 				   i, exercises_c[i].name);
-			return -1;
+			return USERDATA_FAILURE;
 		}
 
-        if (fwrite(&new_data.reps, sizeof(int), 1, local_userFILE) != 1) {
+
+        if (fwrite(&new_data.reps, sizeof(int), 1, user_context->userFILE) != 1) {
             printf("Error writing reps for exercise %d (%s)\n",
                 i, exercises_c[i].name);
-            return -1;
+            return USERDATA_FAILURE;
         }
     }
 
-    fflush(local_userFILE); // Ensure data is written to disk
-    return 0; // Success
+
+    fflush(user_context->userFILE); // Ensure data is written to disk
+    
+    
+    return USERDATA_SUCCESS; // Success
 }
 
-void read_previous_user_workout_data(user_file_exercise_data* data, int index) {
+
+/**@brief Reads previous user workout data from the user's file
+ * @param user_context Pointer to the user context to read data from
+ * @param data Pointer to the user_file_exercise_data structure to store the data
+ * @param index Index of the workout to read data from
+ * @return USERDATA_SUCCESS on success, USERDATA_FAILURE on failure */
+int read_previous_user_workout_data(const user_context_t* user_context, user_file_exercise_data* data, int index) {
+
+	// Validate user_context
+	if (!validate_user_context(user_context)) {
+		printf("Error: Invalid user context\n");
+		return USERDATA_FAILURE;
+	}
+
 
     const size_t SKIP_PREFS = sizeof(user_file_header_prefs);
 	const size_t RECORD_SIZE = sizeof(double) + sizeof(int);
+	
+    // Calculate file position for desired exercise
+	long position = SKIP_PREFS + user_context->userPrefs->prefered_days * sizeof(workout_days_t) + (1+index)*(AMOUNT_EXERCISES*RECORD_SIZE);
 
-	// Validate file pointer
-	if (local_userFILE == NULL) {
-		printf("Error: Invalid file pointer\n");
-		return;
-	}
-
-	// Read the user preferences
-	user_file_header_prefs* user_prefs = read_user_preferences(local_userFILE);
-
-	// Calculate file position for desired exercise
-	long position = SKIP_PREFS + user_prefs->prefered_days * sizeof(workout_days_t) + (1+index)*(AMOUNT_EXERCISES*RECORD_SIZE);
-
-	// Seek to exercise position
-	if (fseek(local_userFILE, position, SEEK_SET) != 0) {
+	
+    // Seek to exercise position
+	if (fseek(user_context->userFILE, position, SEEK_SET) != 0) {
 		printf("Error: Could not seek to exercise position\n");
-		return;
+		return USERDATA_FAILURE;
 	}
+
 
     for(int i = 0; i < AMOUNT_EXERCISES; i++) {
-		fread(&data[i].weight, sizeof(double), 1, local_userFILE);
-		fread(&data[i].reps, sizeof(int), 1, local_userFILE);
+		fread(&data[i].weight, sizeof(double), 1, user_context->userFILE);
+		fread(&data[i].reps, sizeof(int), 1, user_context->userFILE);
 	}
+
+    return USERDATA_SUCCESS;
 }
 
-workout_days_t* read_user_workout_data() {
-	// Read user preferences
-	user_file_header_prefs* user_file_header_prefs = read_user_preferences(local_userFILE);
+
+/**@brief Reads user workout data from the user's file
+ * @param user_context Pointer to the user context to read data from
+ * @return workout_days_t* Pointer to the workout days structure else NULL */
+workout_days_t* read_user_workout_data(const user_context_t* user_context) {
+
+	// Validate user_context
+	if (!validate_user_context(user_context)) {
+		printf("Error: Invalid user context\n");
+		return NULL;
+	}
+
 
 	const size_t SKIP_PREFS = sizeof(user_file_header_prefs);
 
+
 	long position = SKIP_PREFS;
 
-	if (local_userFILE == NULL) {
-		printf("Error: Invalid file pointer\n");
-	}
 
 	// Seek to exercise position
-	if (fseek(local_userFILE, position, SEEK_SET) != 0) {
+	if (fseek(user_context->userFILE, position, SEEK_SET) != 0) {
 		printf("Error: Could not seek to exercise position\n");
+		return NULL;
 	}
 
-	workout_days_t* workout = malloc(sizeof(workout_days_t) * user_file_header_prefs->prefered_days);
+
+	workout_days_t* workout = malloc(sizeof(workout_days_t) * user_context->userPrefs->prefered_days);
+
 
 	// Read workout days with error checking
-	if (fread(workout, sizeof(workout_days_t), user_file_header_prefs->prefered_days, local_userFILE) != user_file_header_prefs->prefered_days) {
+	if (fread(workout, sizeof(workout_days_t), user_context->userPrefs->prefered_days, user_context->userFILE) != user_context->userPrefs->prefered_days) {
 		printf("Error reading workout days from file\n");
 	}
+
 
 	return workout;
 }
 
-void update_user_preferences(user_file_header_prefs* user_prefs) {
+
+/**@brief Updates user preferences in the user's file
+ * @param user_context Pointer to the user context to update
+ * @return USERDATA_SUCCESS on success, USERDATA_FAILURE on failure */
+int update_user_preferences(const user_context_t* user_context) {
+
+	// Validate user_context
+	if (!validate_user_context(user_context)) {
+		printf("Error: Invalid user context\n");
+		return USERDATA_FAILURE;
+	}
+
 
     // Seek to start of file where preferences are stored
-    
-    long position = fseek(local_userFILE, 0, SEEK_SET);
+    long position = fseek(user_context->userFILE, 0, SEEK_SET);
+
 
     // Write user preferences to file
-	if (fwrite(&user_prefs->prefered_days, sizeof(int), 1, local_userFILE) != 1) {
-		printf("\nError writing preferences to file!\n");
+	if (fwrite(&user_context->userPrefs->prefered_days, sizeof(int), 1, user_context->userFILE) != 1) {
+        printf("\nError writing preferences to file!\n"); return USERDATA_FAILURE;
+	}
+	if (fwrite(&user_context->userPrefs->perfered_time, sizeof(int), 1, user_context->userFILE) != 1) {
+		printf("\nError writing preferences to file!\n"); return USERDATA_FAILURE;
+	}
+	if (fwrite(&user_context->userPrefs->workout_counter, sizeof(int), 1, user_context->userFILE) != 1) {
+		printf("\nError writing preferences to file!\n"); return USERDATA_FAILURE;
 	}
 
-	if (fwrite(&user_prefs->perfered_time, sizeof(int), 1, local_userFILE) != 1) {
-		printf("\nError writing preferences to file!\n");
-	}
+    
+	// Flush the file to ensure data is written to disk
+	fflush(user_context->userFILE);
 
-	if (fwrite(&user_prefs->workout_counter, sizeof(int), 1, local_userFILE) != 1) {
-		printf("\nError writing preferences to file!\n");
-	}
 
-	fflush(local_userFILE);
+	return USERDATA_SUCCESS;
 }
 
-int update_user_workout_data(workout_days_t *workout) {
+
+
+/**@brief Updates user workout data in the user's file
+ * @param workout Pointer to the workout days structure to update
+ * @return USERDATA_SUCCESS on success, USERDATA_FAILURE on failure */
+int update_user_workout_data(const user_context_t* user_context, workout_days_t* workout) {
     // We implicitly assume that workout_days* has a length equal to the user's preferred days
     // This is a bit of a hack, but it's the easiest way to do it
 
-    user_file_header_prefs* user_file_header_prefs = read_user_preferences(local_userFILE);
+	// Validate user_context
+	if (!validate_user_context(user_context)) {
+		printf("Error: Invalid user context\n");
+		return USERDATA_FAILURE;
+	}
 
-    const size_t SKIP_PREFS = sizeof(user_file_header_prefs);
+
+    const size_t SKIP_PREFS = sizeof(int)*3;
+
 
     long position = SKIP_PREFS;
 
-    if (local_userFILE == NULL) {
-        printf("Error: Invalid file pointer\n");
-    }
 
     // Seek to exercise position
-    if (fseek(local_userFILE, position, SEEK_SET) != 0) {
+    if (fseek(user_context->userFILE, position, SEEK_SET) != 0) {
 		printf("Error: Could not seek to exercise position\n");
-        return -1;
+        return USERDATA_FAILURE;
 	}
 
+
     // Write workout days to file explicitly with error 
-    if (fwrite(workout, sizeof(workout_days_t), user_file_header_prefs->prefered_days, local_userFILE) != user_file_header_prefs->prefered_days) {
+    if (fwrite(workout, sizeof(workout_days_t), user_context->userPrefs->prefered_days, user_context->userFILE) != user_context->userPrefs->prefered_days) {
         printf("\nError writing workout days to file!\n");
-        return -1;
+        return USERDATA_FAILURE;
     }
 
-    fflush(local_userFILE);
+
+    fflush(user_context->userFILE);
+    
+    
     return 0;
 }
 
-int write_user_data_post_workout() {
+
+/**@brief Writes user data to the user's file after a workout
+ * @param user_context Pointer to the user context to write data for
+ * @return USERDATA_SUCCESS on success, USERDATA_FAILURE on failure */
+int write_user_data_post_workout(const user_context_t* user_context) {
     
-    // Save workout data post workout at end of file:
-    // FILE - HEADER - PREFS
-    // FILE - HEADER - DATA
-    // FILE - EXERCISE DATA
-    // FILE - PREVIOUS EXERCISE DATA
+	// Validate user_context
+	if (!validate_user_context(user_context)) {
+		printf("Error: Invalid user context\n");
+		return USERDATA_FAILURE;
+	}
 
-    // SEEK to end
-    // WRITE to end
-    // SEEK to workout_counter
-    // WRITE to workout_counter workout_counter + 1
 
-    user_file_header_prefs* userPrefs = read_user_preferences(local_userFILE);
+    user_context->userPrefs->workout_counter++;
 
-    userPrefs->workout_counter++;
 
-    update_user_preferences(userPrefs);
+    update_user_preferences(user_context);
 
-    if (fseek(local_userFILE, 0, SEEK_END)) return 1;
+
+    if (fseek(user_context->userFILE, 0, SEEK_END)) return 1;
+
 
     for (int i = 0; i < AMOUNT_EXERCISES; i++) {
-		if (fwrite(&exercises_c[i].user_exercise_data->weight, sizeof(double), 1, local_userFILE) != 1) {
+		if (fwrite(&exercises_c[i].user_exercise_data->weight, sizeof(double), 1, user_context->userFILE) != 1) {
 			printf("Error writing weight for exercise %d (%s)\n",
 				   i, exercises_c[i].name);
-			return -1;
+			return USERDATA_FAILURE;
 		}
 
-		if (fwrite(&exercises_c[i].user_exercise_data->reps, sizeof(int), 1, local_userFILE) != 1) {
+		if (fwrite(&exercises_c[i].user_exercise_data->reps, sizeof(int), 1, user_context->userFILE) != 1) {
 			printf("Error writing reps for exercise %d (%s)\n",
 				   i, exercises_c[i].name);
-			return -1;
+			return USERDATA_FAILURE;
 		}
 	}
 
 
-    fflush(local_userFILE);
+    fflush(user_context->userFILE);
 
-    free(userPrefs);
 
     return 0;
-    /*FILE* userFILE = fopen(userprofile_path, "rb+");
-
-    const size_t RECORD_SIZE = sizeof(double) + sizeof(int);
-    const size_t SKIP_PREFS = sizeof(UserPreferences_t);
-
-    // Calculate position for target exercise
-    long position = SKIP_PREFS + AMOUNT_EXERCISES * RECORD_SIZE;
-
-    // Validate file pointer
-    if (userFILE == NULL) {
-        printf("Error: Invalid file pointer\n");
-        return -1;
-    }
-
-    // Seek to workout counter position
-    if (fseek(userFILE, position, SEEK_SET) != 0) {
-        printf("Error: Could not seek to workout counter position\n");
-        return -1;
-    }
-
-    if (fread(&userfile_workout_counter, sizeof(int), 1, userFILE) != 1) {
-        printf("Error reading workout counter in userfile\n");
-    }
-
-    // Det virker ikke rigtigt det her
-    userfile_workout_counter++;
-
-    if (fseek(userFILE, position, SEEK_SET) != 0) {
-        printf("Error: Could not seek to workout counter position\n");
-        return -1;
-    }
-
-    if (fwrite(&userfile_workout_counter, sizeof(int), 1, userFILE) != 1) {
-        printf("Error updating workout counter in userfile\n");
-        return -1;
-    }
-
-    for (int i = 0; i < AMOUNT_EXERCISES; i++) {
-
-        // Seek to exercise position
-        if (fseek(userFILE, 0, SEEK_END) != 0) {
-            printf("Error: Could not seek to exercise position\n");
-            return -1;
-        }
-
-        if (fwrite(&exercises_c[i].user_exercise_data->weight, sizeof(double), 1, userFILE) != 1) {
-            printf("Error writing weight for exercise %d (%s)\n",
-                   i, exercises_c[i].name);
-            return -1;
-        }
-
-        if (fwrite(&exercises_c[i].user_exercise_data->reps, sizeof(int), 1, userFILE) != 1) {
-            printf("Error writing reps for exercise %d (%s)\n",
-                   i, exercises_c[i].name);
-            return -1;
-        }
-    }
-    fflush(userFILE);
-    return 0;
-    */
 }

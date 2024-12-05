@@ -1,9 +1,10 @@
 #include "progress_report.h"
-void user_view_report(workout_days_t* workout_day) {
 
-    user_file_header_prefs* user_prefs = read_user_preferences(local_userFILE);
-    int amount_of_workouts = user_prefs->workout_counter-2;
-    int amount_of_different_workouts = user_prefs->prefered_days;
+
+void user_view_report(const user_context_t* user_context, workout_days_t* workout_day) {
+
+    int amount_of_workouts = user_context->userPrefs->workout_counter-2;
+    int amount_of_different_workouts = user_context->userPrefs->prefered_days;
     int input_workout_progress;
     int input_print_day;
 
@@ -12,8 +13,9 @@ void user_view_report(workout_days_t* workout_day) {
     input_workout_progress--;
 
 
-    print_progress_workout_day(workout_day, input_print_day, amount_of_workouts, input_workout_progress);
-    }
+    print_progress_workout_day(user_context, workout_day, input_print_day, amount_of_workouts, input_workout_progress);
+}
+
 
 void inputs_progress(int* input_workout_progress, int amount_of_workouts, int* input_print_day, int amount_of_different_workouts) {
     do {
@@ -40,53 +42,59 @@ void inputs_progress(int* input_workout_progress, int amount_of_workouts, int* i
     } while (*input_workout_progress > amount_of_workouts + 1 || *input_workout_progress <= 0);
 }
 
+
 int sort_array_progress_weight(const void* a, const void* b) {
     return(int)(-((user_file_exercise_data *)a)->weight - ((user_file_exercise_data*)b)->weight);
 }
 
-void print_progress_workout_day(workout_days_t* workout_day, int input_print_day, int amount_of_workouts,
-    int input_workout_progress) {
 
-    int amountOfExercises = 0;
-    printf("_________________\n");
-    for (int i = 0; i < AMOUNT_COMPOUND; i++) {
-        printf("%d\n", workout_day[input_print_day].compound[i]);
-        if (workout_day[input_print_day].compound[i] == 1) {
-            amountOfExercises++;
-        }
-    }
-    for (int i = 0; i < AMOUNT_SECONDARY; i++) {
-        if (workout_day[input_print_day].secondary[i] == 1) {
-            amountOfExercises++;
-        }
-    }
-    for (int i = 0; i < AMOUNT_TERTIARY; i++) {
-        if (workout_day[input_print_day].tertiary[i] == 1) {
-            amountOfExercises++;
-        }
-    }
+void print_progress_workout_day(const user_context_t* user_context, workout_days_t* workout_day, int input_print_day, int amount_of_workouts, int input_workout_progress) {
 
-	user_exercise_data_t* improved_exercise = (user_exercise_data_t*)malloc(sizeof(user_exercise_data_t) * amountOfExercises);
+	user_exercise_data_t* improved_exercise = (user_exercise_data_t*)malloc(sizeof(user_exercise_data_t) * AMOUNT_EXERCISES);
 
-    user_file_exercise_data* current_exercise_data =
-     (user_file_exercise_data*)malloc(sizeof(user_file_exercise_data)*AMOUNT_EXERCISES);
+    user_file_exercise_data* previous_exercise_data = (user_file_exercise_data*)malloc(sizeof(user_file_exercise_data) * AMOUNT_EXERCISES);
 
-    user_file_exercise_data* previous_exercise_data =
-        (user_file_exercise_data*)malloc(sizeof(user_file_exercise_data)*AMOUNT_EXERCISES);
+    read_previous_user_workout_data(user_context, previous_exercise_data, (amount_of_workouts - input_workout_progress));
 
-    read_previous_user_workout_data(previous_exercise_data, (amount_of_workouts - input_workout_progress));
-    read_previous_user_workout_data(current_exercise_data, (amount_of_workouts));
+    // Look through all the exercises and compare the weight reps
 
     for (int i = 0; i < AMOUNT_EXERCISES; i++) {
-        printf("Current weight: %lf\n", current_exercise_data[i].weight);
+		improved_exercise[i].weight = exercises_c[i].user_exercise_data->weight - previous_exercise_data[i].weight;
+		improved_exercise[i].reps = exercises_c[i].user_exercise_data->reps - previous_exercise_data[i].reps;
     }
 
-    printf("---------------------\n");
+
+    // Sort by weight
+    qsort(improved_exercise, AMOUNT_EXERCISES, sizeof(user_exercise_data_t), sort_array_progress_weight);
+
+	// DEBUG: Print the current data, prev data and sorted array
+    
+    /*for (int i = 0; i < AMOUNT_EXERCISES; i++) {
+		printf("Exercise: %s %lf kg\n", exercises_c[i].name, improved_exercise[i].weight);
+    }*/
+
+	// Print the exercises
+	// only if the weight or reps have changed then print
+	
     for (int i = 0; i < AMOUNT_EXERCISES; i++) {
-        printf(" Prevuous weight: %lf\n", previous_exercise_data[i].weight);
-    }
-    printf("---------------------\n");
+		if (improved_exercise[i].weight != 0 || improved_exercise[i].reps != 0) {
+			
+			// print: Exercise: {exercise_name} +/- {weight}kg
 
+            // setup string
+			
+			char sign = '+';
+			if (improved_exercise[i].weight < 0) {
+				sign = '-';
+			}
+
+            printf("Exercise: %s %c %lf kg\n", exercises_c[i].name, sign, fabs(improved_exercise[i].weight));
+		}
+	}
+    
+
+
+    /*
     int counter = 0;
     int exc_counter = 0;
     for (int i = 0; i < AMOUNT_COMPOUND; i++) {
@@ -146,9 +154,5 @@ void print_progress_workout_day(workout_days_t* workout_day, int input_print_day
         }
         counter++;
     }
-    qsort(improved_exercise, amountOfExercises, sizeof(user_exercise_data_t), sort_array_progress_weight);
-
-    for (int i = 0; i < amountOfExercises; i++) {
-        printf("Weight : %lf \n", improved_exercise[i].weight);
-    }
+    */
 }

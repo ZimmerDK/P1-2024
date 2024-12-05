@@ -40,12 +40,6 @@ typedef struct {
     char contextExists;
 } user_context_t;
 
-typedef struct user_exercise_data_t {
-    int index_number;
-    double weight;
-    int reps;
-    exercise_t* exercise;
-} user_exercise_data_t;
 
 typedef struct {
     int reps;
@@ -75,25 +69,31 @@ int startHashMap(FILE* accountsFILE, HashMap_t* map);
 
 static int ensure_user_directory();
 
+int validate_user_context(user_context_t* user_context);
+
 FILE* create_new_user(FILE* accountsFILE, char username[MAX_LENGTH], HashMap_t* map);
 
-void user_preferences_prompt(FILE* userFILE, int* days, int* time);
+void user_preferences_prompt(int* days, int* time);
 
 void parse_user_data_into_array(exercise_t* exercises);
-void fill_user_data(FILE* userFILE, int days, int time);
-void read_single_exercise_data(FILE* userFILE, int exercise_index, user_exercise_data_t* data);
+
+void fill_user_data(user_context_t* userContext, int days, int time);
+
+void read_single_exercise_data(user_context_t* user_context, int exercise_index, user_exercise_data_t* data);
+
 user_file_header_prefs* read_user_preferences(FILE* userFILE);
-workout_days_t* read_user_workout_data();
 
-int update_user_exercise_data();
+workout_days_t* read_user_workout_data(const user_context_t* user_context);
 
-void read_previous_user_workout_data(user_file_exercise_data* data, int index);
+int update_user_exercise_data(const user_context_t* user_context);
 
-int update_user_workout_data(workout_days_t *workout);
+int read_previous_user_workout_data(const user_context_t* user_context, user_file_exercise_data* data, int index);
 
-int write_user_data_post_workout();
+int update_user_workout_data(const user_context_t* user_context, workout_days_t* workout);
 
-void update_user_preferences(user_file_header_prefs* user_prefs);
+int write_user_data_post_workout(const user_context_t* user_context);
+
+int update_user_preferences(const user_context_t* user_context);
 
 // username malloc thing
 extern char userprofile_path[MAX_LENGTH+15];  // Declare the variable as external

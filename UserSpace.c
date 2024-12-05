@@ -11,7 +11,16 @@
  * @param userPrefs Pointer to user preference settings
  * @param workout_plan Pointer to the generated workout plan
  * @param userFILE File pointer for user data storage*/
-void user_space_main(user_file_header_prefs* userPrefs, workout_days_t* workout_plan, FILE* userFILE) {
+void user_space_main(const user_context_t* user_context) {
+	
+	// Verify user context
+	if (!validate_user_context(user_context)) {
+		printf("Error: Invalid user context\n");
+		return;
+	}
+	
+	workout_days_t* workout_plan = read_user_workout_data(user_context);
+
 	int running = 1;    // Flag to control the main program loop
 	int _days = 0; int _time = 0;  // Temporary variables for user preferences
 
@@ -33,7 +42,7 @@ void user_space_main(user_file_header_prefs* userPrefs, workout_days_t* workout_
 		switch (choice) {
 		case PRINT_WORKOUT_PLAN:
 			// Display current workout plan
-			print_workout_program(workout_plan, userPrefs->prefered_days);
+			print_workout_program(workout_plan, user_context->userPrefs->prefered_days);
 			char c_input;
 			want_to_start_workout:  // Label for goto error handling
 			printf("Do you want to start the workout? (y/n)\n");
@@ -41,7 +50,7 @@ void user_space_main(user_file_header_prefs* userPrefs, workout_days_t* workout_
 			if (c_input == 'n') {
 				continue;  // Return to main menu
 			} else if (c_input == 'y') {
-				user_start_workout(userPrefs, workout_plan);  // Begin selected workout
+				user_start_workout(user_context, workout_plan);  // Begin selected workout
 			} else {
 				printf("ERROR: Please enter valid input ('y' or 'n')\n");
 				goto want_to_start_workout;  // Retry input
@@ -49,23 +58,25 @@ void user_space_main(user_file_header_prefs* userPrefs, workout_days_t* workout_
 			continue;
 
 		case RECALIBRATE:
-			user_recalibrate();  // Open exercise recalibration submenu
+			user_recalibrate(user_context);  // Open exercise recalibration submenu
 			continue;
 
 		case CHANGE_PREFERENCES:
 			// Update user preferences
-			user_preferences_prompt(local_userFILE, &_days, &_time);
-			userPrefs->prefered_days = _days;
-			userPrefs->perfered_time = _time;
-			update_user_preferences(userPrefs);
+			user_preferences_prompt(&_days, &_time);
+			user_context->userPrefs->prefered_days = _days;
+			user_context->userPrefs->perfered_time = _time;
+			update_user_preferences(user_context);
 
 			// Regenerate workout plan based on new preferences
-			workout_plan = generate_workout_program(*userPrefs);
-			update_user_workout_data(workout_plan);
+			workout_plan = generate_workout_program(*(user_context->userPrefs));
+			update_user_workout_data(user_context, workout_plan);
 			continue;
 
 		case VIEW_REPORT:
-			user_view_statusreport();  // Placeholder for workout report
+			//user_view_statusreport();  // Placeholder for workout report
+			
+			user_view_report(user_context, workout_plan);
 			continue;
 
 		case 5:
@@ -84,24 +95,25 @@ void user_space_main(user_file_header_prefs* userPrefs, workout_days_t* workout_
 	}
 }
 
+
 /**@brief Starts a user-selected workout
  *
  * Prompts the user to select a specific day from their workout plan,
  * validates the selection, and runs the chosen workout.
  * @param user_prefs Pointer to user preference settings
  * @param workout_plan Pointer to the generated workout plan*/
-void user_start_workout(user_file_header_prefs* user_prefs, workout_days_t* workout_plan) {
+void user_start_workout(const user_context_t* user_context, workout_days_t* workout_plan) {
 	int selected_index = 0;
 	do {
 		// Prompt user to select a workout day
-		printf("Select workout (%d-%d): ", 1, user_prefs->prefered_days);
+		printf("Select workout (%d-%d): ", 1, user_context->userPrefs->prefered_days);
 		scanf(" %d", &selected_index); printf("\n");
 
 		// Validate user input
-		if (selected_index < 1 || selected_index > user_prefs->prefered_days) {
+		if (selected_index < 1 || selected_index > user_context->userPrefs->prefered_days) {
 			printf("\nERROR: Invalid selection  |  Please input valid day\n");
 		}
-	} while (selected_index < 1 || selected_index > user_prefs->prefered_days);
+	} while (selected_index < 1 || selected_index > user_context->userPrefs->prefered_days);
 
 	// Allocate memory for the selected workout
 	workout_days_t** user_selected_workout = (workout_days_t**)malloc(sizeof(workout_days_t*) * 1);
@@ -110,14 +122,15 @@ void user_start_workout(user_file_header_prefs* user_prefs, workout_days_t* work
 	*user_selected_workout = &(workout_plan[selected_index - 1]);
 
 	// Log pre-workout data
-	write_user_data_post_workout();
+	write_user_data_post_workout(user_context);
 
 	// Execute the selected workout
 	run_day(*user_selected_workout);
 
 	// Update exercise data after workout
-	update_user_exercise_data();
+	update_user_exercise_data(user_context);
 }
+
 
 /**@brief Provides a submenu for exercise recalibration
  *
@@ -125,7 +138,7 @@ void user_start_workout(user_file_header_prefs* user_prefs, workout_days_t* work
  * - Recalibrate all exercises
  * - Recalibrate a specific exercise
  * - Manually edit weight for a specific exercise*/
-void user_recalibrate() {
+void user_recalibrate(const user_context_t* user_context) {
 	char recalibrate_input[17];  // Buffer for user input
 
 	// Display recalibration menu
@@ -155,7 +168,7 @@ void user_recalibrate() {
 			// Prompt for specific exercise to recalibrate
 			printf("Input desired exercise to recalibrate: ");
 			scanf(" %d", &chosen_index);
-			recalibrate_specific_exercise(exercises_c, chosen_index);
+			recalibrate_specific_exercise(user_context, exercises_c, chosen_index);
 			break;
 		case MANUALLY_EDIT_SPECIFIC:
 			// Display list of exercises
@@ -167,7 +180,7 @@ void user_recalibrate() {
 			// Prompt for specific exercise to manually edit
 			printf("Input desired exercise to manually edit: ");
 			scanf(" %d", &chosen_index);
-			manual_exercise_edit(exercises_c, chosen_index);
+			manual_exercise_edit(user_context, exercises_c, chosen_index);
 			break;
 		case 4:
 			break;  // Return to main menu
@@ -182,7 +195,7 @@ void user_recalibrate() {
  * intensity, with the goal of matching the estimated exercise intensity.
  * @param exercises Array of exercise structures
  * @param index Index of the exercise to recalibrate*/
-void recalibrate_specific_exercise(exercise_t exercises[], int index) {
+void recalibrate_specific_exercise(const user_context_t* user_context, exercise_t exercises[], int index) {
 	const int reps = 5;  // Default number of repetitions
 
 	// Initialize variables for intensity and weight adjustment
@@ -229,7 +242,7 @@ void recalibrate_specific_exercise(exercise_t exercises[], int index) {
 	exercises[index].user_exercise_data->reps = exercises[index].min_reps;
 
 	// Update exercise data in file
-	if (update_user_exercise_data() != 0) {
+	if (!update_user_exercise_data(user_context)) {
 		printf("ERROR: Could not update userFILE calibration\n");
 		return;
 	}
@@ -242,7 +255,7 @@ void recalibrate_specific_exercise(exercise_t exercises[], int index) {
  * repetition count for a specific exercise, with input validation.
  * @param exercises Array of exercise structures
  * @param chosen_index Index of the exercise to manually edit*/
-void manual_exercise_edit(exercise_t exercises[], int chosen_index) {
+void manual_exercise_edit(const user_context_t* user_context, exercise_t exercises[], int chosen_index) {
 	// Validate exercise index
 	if (chosen_index < 0 || chosen_index > AMOUNT_EXERCISES-1) {
 		printf("\nERROR: Invalid selection  |  Please input valid exercise index\n");
@@ -284,7 +297,7 @@ void manual_exercise_edit(exercise_t exercises[], int chosen_index) {
 	printf("\n");
 
 	// Update exercise data in file
-	if (update_user_exercise_data() != 0) {
+	if (!update_user_exercise_data(user_context)) {
 		printf("ERROR: Could not update userFILE calibration\n");
 		return;
 	}
@@ -302,4 +315,6 @@ void user_view_statusreport() {
 	// - Progress tracking
 	// - Performance metrics
 	// - Graphical representation of fitness improvements
+
+	//user_view_report
 }
