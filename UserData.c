@@ -51,26 +51,22 @@ int handle_signup(HashMap_t* map, char* accountsPath, FILE* accountsFILE, char* 
         return USERDATA_FAILURE;
     }
 
-    
     // Validate username length
     if (strlen(input) >= MAX_LENGTH) {
         printf("\nUsername too long! Maximum %d characters.\n", MAX_LENGTH - 1);
         return USERDATA_FAILURE;
     }
 
-
     // Convert username to lowercase
     for (int n = 0; input[n]; n++) {
         input[n] = tolower(input[n]);
     }
-
 
     // Check if username already exists
     if (verify_user_existence(input, map)) {
         printf("\nUsername already exists!\n");
         return USERDATA_FAILURE;
     }
-
 
     // Validate file pointer
     if (!accountsFILE) {
@@ -82,52 +78,42 @@ int handle_signup(HashMap_t* map, char* accountsPath, FILE* accountsFILE, char* 
     // Create user's data file within the current context
     local_userContext.userFILE = create_new_user(accountsFILE, input, map);
 
-
     // Revalidate creation (the function should return error if else)
     if (!local_userContext.userFILE) {
 		printf("\Could not validate user file!\n");
 		return USERDATA_FAILURE;
 	}
 
-
     // Initialize user preferences and exercise data
     int _days = 0; int _time = 0;
     user_preferences_prompt(&_days, &_time);
     fill_user_data(&local_userContext, _days, _time);
 
-
     // Add new user to hashmap
     set(map, input, map->size * MAX_LENGTH);
-
 
     // Read user preferences, this also acts as a validation step
     user_file_header_prefs* prefs = read_user_preferences(local_userContext.userFILE);
 
-    
     local_userContext.userPrefs = prefs;
 	local_userContext.contextExists = USERDATA_CONTEXT_VALID;
-    
     
     if(!prefs) {
 		printf("Error reading user preferences\n");
 		return USERDATA_FAILURE;
 	}
 
-
     // Generate a new workout program based on user preferences, and update user data
 	update_user_workout_data(&local_userContext,
         generate_workout_program(*prefs));
-
 
     // Reopen accounts file in read mode and flush the context
     fclose(accountsFILE);
     fclose(local_userContext.userFILE);
     accountsFILE = fopen(accountsPath, "r");
 
-    
     // Free resources
     free(prefs);
-
 
     return USERDATA_SUCCESS;
 }
@@ -147,12 +133,10 @@ int handle_login(HashMap_t* map, FILE** userFILE, char* input) {
         return USERDATA_FAILURE;
     }
 
-
     // Convert username to lowercase
     for (int n = 0; input[n]; n++) {
         input[n] = tolower(input[n]);
     }
-
 
     // Check if username exists
     if (!verify_user_existence(input, map)) {
@@ -160,13 +144,11 @@ int handle_login(HashMap_t* map, FILE** userFILE, char* input) {
         return USERDATA_FAILURE;
     }
 
-    
     // Construct path to user's data file
     printf("\nLogged in as %s!\n", input);
     char filepath[MAX_LENGTH + 15];
     snprintf(filepath, sizeof(filepath), "%s/%s.dat", USER_FILES_DIR, input);
     *userFILE = fopen(filepath, "rb+");
-
 
     // Validate file pointer
     if (!*userFILE) {
