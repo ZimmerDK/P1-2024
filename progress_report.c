@@ -43,8 +43,8 @@ void inputs_progress(int* input_workout_progress, int amount_of_workouts, int* i
 }
 
 
-int sort_array_progress_weight(const void* a, const void* b) {
-    return(int)(-((user_file_exercise_data *)a)->weight - ((user_file_exercise_data*)b)->weight);
+int sort_array_progress_weight(const user_file_exercise_data* a, const user_file_exercise_data* b) {
+    return(int)-(a->weight - b->weight);
 }
 
 
@@ -77,7 +77,7 @@ void print_progress_workout_day(const user_context_t* user_context, workout_days
 	// only if the weight or reps have changed then print
 	
     for (int i = 0; i < AMOUNT_EXERCISES; i++) {
-		if (improved_exercise[i].weight != 0 || improved_exercise[i].reps != 0) {
+		if ((improved_exercise[i].weight > 0 + 0.00001f || improved_exercise[i].weight < 0 - 0.00001f)) {
 			
 			// print: Exercise: {exercise_name} +/- {weight}kg
 
@@ -88,7 +88,7 @@ void print_progress_workout_day(const user_context_t* user_context, workout_days
 				sign = '-';
 			}
 
-            printf("Exercise: %s %c %lf kg\n", exercises_c[i].name, sign, fabs(improved_exercise[i].weight));
+            printf("Exercise: %s %c %.2lf kg\n", exercises_c[i].name, sign, fabs(improved_exercise[i].weight));
 		}
 	}
     

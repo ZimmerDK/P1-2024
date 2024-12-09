@@ -445,7 +445,7 @@ void fill_user_data(user_context_t* userContext, int days, int time) {
 	}
 
     // Allocate memory for workout days
-    workout_days_t* workout = malloc(sizeof(workout_days_t) * days);
+    workout_days_t* workout = malloc(sizeof(workout_days_t) * 7);
     for (int i = 0; i < days; i++) {
         // Initialize workout days with empty exercise slots
         workout[i] = (workout_days_t){
@@ -493,7 +493,7 @@ void fill_user_data(user_context_t* userContext, int days, int time) {
 
 
     // Write workout days to file explicitly with error 
-    if (fwrite(workout, sizeof(workout_days_t), days, userContext->userFILE) != days) {
+    if (fwrite(workout, sizeof(workout_days_t), 7, userContext->userFILE) != days) {
 		printf("\nError writing workout days to file!\n");
 	}
 
@@ -566,7 +566,7 @@ void read_single_exercise_data(user_context_t* user_context, int exercise_index,
 
 
     // Calculate file position for desired exercise
-    long position = SKIP_PREFS + user_context->userPrefs->prefered_days * sizeof(workout_days_t) + exercise_index * RECORD_SIZE;
+    long position = SKIP_PREFS + 7 * sizeof(workout_days_t) + exercise_index * RECORD_SIZE;
 
 
     // Seek to exercise position
@@ -640,7 +640,7 @@ int update_user_exercise_data(const user_context_t* user_context) {
 
     const size_t RECORD_SIZE = sizeof(double) + sizeof(int);
     const size_t SKIP_PREFS = sizeof(user_file_header_prefs);
-    const size_t SKIP_WORKOUT = user_context->userPrefs->prefered_days * sizeof(workout_days_t);
+    const size_t SKIP_WORKOUT = 7 * sizeof(workout_days_t);
 
 
     for(int i = 0; i < AMOUNT_EXERCISES; i++) {
@@ -705,7 +705,7 @@ int read_previous_user_workout_data(const user_context_t* user_context, user_fil
 	const size_t RECORD_SIZE = sizeof(double) + sizeof(int);
 	
     // Calculate file position for desired exercise
-	long position = SKIP_PREFS + user_context->userPrefs->prefered_days * sizeof(workout_days_t) + (1+index)*(AMOUNT_EXERCISES*RECORD_SIZE);
+	long position = SKIP_PREFS + 7 * sizeof(workout_days_t) + (1+index)*(AMOUNT_EXERCISES*RECORD_SIZE);
 
 	
     // Seek to exercise position
@@ -756,7 +756,6 @@ workout_days_t* read_user_workout_data(const user_context_t* user_context) {
 	if (fread(workout, sizeof(workout_days_t), user_context->userPrefs->prefered_days, user_context->userFILE) != user_context->userPrefs->prefered_days) {
 		printf("Error reading workout days from file\n");
 	}
-
 
 	return workout;
 }

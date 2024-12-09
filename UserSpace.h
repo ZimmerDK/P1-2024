@@ -39,5 +39,6 @@ void manual_exercise_edit(const user_context_t* user_context, exercise_t exercis
 
 void user_view_statusreport();
 
+void _clear_console();
 
 

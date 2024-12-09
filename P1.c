@@ -576,11 +576,36 @@ void run_exercise(exercise_t* exercise) {
 	printf("Estimated Intensity: %lf\n", exercise->est_intensity);
 	printf("Current Weight: %lf\n", exercise->user_exercise_data->weight);
 	printf("Current Reps: %d\n", exercise->user_exercise_data->reps);
-	printf("#############################################\n\n");
+	switch (exercise->type) {
+		case COMPOUND:
+			printf("Type: Compound\n");
+			printf("#############################################\n\n\n");
+			printf("*Note that you have 5 minutes of rest between sets\n");
+			break;
+		case SECONDARY:
+			printf("Type: Secondary\n");
+			printf("#############################################\n\n\n");
+			printf("*Note that you have 4 minutes of rest between sets\n");
+			break;
+		case ISOLATION:
+			printf("Type: Tertiary\n");
+			printf("#############################################\n\n\n");
+			printf("*Note that you have 3 minutes of rest between sets\n");
+			break;
+	}
+
 
 	set_data_t* setData = malloc(sizeof(set_data_t) * 3);
+	printf("Please input the intensity for each set (1-10):\n");
+	printf("Set 1: ");
+	scanf("%d", &setData[0].intensity);
+	printf("Set 2: ");
+	scanf("%d", &setData[1].intensity);
+	printf("Set 3: ");
+	scanf("%d", &setData[2].intensity);
+	printf("\n");
 
-	scanf("%d %d %d", &setData[0].intensity, &setData[1].intensity, &setData[2].intensity);
+
 
 	workout_result_t workout_result = calculate_workout(setData, exercise->user_exercise_data, 3);
 
@@ -602,6 +627,12 @@ void run_day(workout_days_t* workout_day) {
 	for (int i = 0; i < AMOUNT_COMPOUND; i++) {
 		if (workout_day->compound[i] == 1) {
 			run_exercise(&exercises_c[exercise_compound_c[i]]);
+
+			_clear_console();
+			printf("Take a 4 minute break, press ENTER when ready\n");
+			getchar();
+			getchar();
+			_clear_console();	
 		}
 	}
 
@@ -609,6 +640,12 @@ void run_day(workout_days_t* workout_day) {
 	for (int i = 0; i < AMOUNT_SECONDARY; i++) {
 		if (workout_day->secondary[i] == 1) {
 			run_exercise(&exercises_c[exercise_secondary_c[i]]);
+
+			_clear_console();
+			printf("Take a 3 minute break, press ENTER when ready\n");
+			getchar();
+			getchar();
+			_clear_console();
 		}
 	}
 
@@ -616,6 +653,12 @@ void run_day(workout_days_t* workout_day) {
 	for (int i = 0; i < AMOUNT_TERTIARY; i++) {
 		if (workout_day->tertiary[i] == 1) {
 			run_exercise(&exercises_c[exercise_tertiary_c[i]]);
+
+			_clear_console();
+			printf("Take a 2 minute break, press ENTER when ready\n");
+			getchar();
+			getchar();
+			_clear_console();
 		}
 	}
 }

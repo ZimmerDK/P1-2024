@@ -86,13 +86,20 @@ void user_space_main(const user_context_t* user_context) {
 			printf("ERROR: Please enter valid choice\n");
 		}
 
-		// Clear console for different operating systems
-		#if defined(_WIN32) || defined(_WIN64) || defined(__CYGWIN__)
-			system("cls");  // Clear screen on Windows
-		#else
-			system("clear");  // Clear screen on Unix-like systems
-		#endif
+		// Clear console screen for next menu display
+		_clear_console();
 	}
+}
+
+
+/**@brief Clears the console*/
+void _clear_console() {
+	// Clear console for different operating systems
+	#if defined(_WIN32) || defined(_WIN64) || defined(__CYGWIN__)
+		system("cls");  // Clear screen on Windows
+	#else
+		system("clear");  // Clear screen on Unix-like systems
+	#endif
 }
 
 
