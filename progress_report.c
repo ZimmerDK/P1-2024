@@ -43,8 +43,8 @@ void inputs_progress(int* input_workout_progress, int amount_of_workouts, int* i
 }
 
 
-int sort_array_progress_weight(const user_file_exercise_data* a, const user_file_exercise_data* b) {
-    return(int)-(a->weight - b->weight);
+int sort_array_progress_weight(const void* a, const void* b) {
+    return(int)-(((user_file_exercise_data*)a)->weight- ((user_file_exercise_data*)b)->weight);
 }
 
 
