@@ -80,7 +80,7 @@ int handle_signup(HashMap_t* map, char* accountsPath, FILE* accountsFILE, char* 
 
     // Revalidate creation (the function should return error if else)
     if (!local_userContext.userFILE) {
-		printf("\Could not validate user file!\n");
+		printf("\nCould not validate user file!\n");
 		return USERDATA_FAILURE;
 	}
 
@@ -493,7 +493,7 @@ void fill_user_data(user_context_t* userContext, int days, int time) {
 
 
     // Write workout days to file explicitly with error 
-    if (fwrite(workout, sizeof(workout_days_t), 7, userContext->userFILE) != days) {
+    if (fwrite(workout, sizeof(workout_days_t), 7, userContext->userFILE) != 7) {
 		printf("\nError writing workout days to file!\n");
 	}
 
