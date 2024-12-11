@@ -1,10 +1,4 @@
-﻿// P1.h : Include file for standard system include files,
-// or project specific include files.
 #pragma once
-
-
-#ifndef P1_H
-#define P1_h
 
 #include "workout_program.h"
 #include "UserData.h"
@@ -15,4 +9,5 @@
 #include<string.h>
 #include<stdlib.h>
 
-#endif // P1_H
+void calibrate_workout_routine(exercise_t exercises[]);
+void run_day(workout_days_t* workout_day);

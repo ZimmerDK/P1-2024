@@ -30,11 +30,23 @@ add_executable (P1 "P1.c" "P1.h" "workout_program.c" "workout_program.h" "exerci
         hashmap.h
         progress_report.c
         progress_report.h
-)
+ "Algorithms.c" "Algorithms.h")
 
-add_executable (UserData "UserData.c" "UserData.h"
+
+add_executable (TEST_P1 "workout_program.c" "workout_program.h" "exercises.c" "exercises.h" "UserData.c" "UserData.h" "UserSpace.c" "UserSpace.h" "hashmap.c" "hashmap.h" "progress_report.c" "progress_report.h"
+        exercises.c
+        exercises.h
+        workout_program.c
+        workout_program.h
         UserData.c
-        UserData.h)
+        UserData.h
+        UserSpace.c
+        UserSpace.h
+        hashmap.c
+        hashmap.h
+        progress_report.c
+        progress_report.h
+ "Algorithms.c" "Algorithms.h" "testcases.c")
 
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
