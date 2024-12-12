@@ -217,7 +217,7 @@ int establish_userdata_context() {
         printf("\nLogin or signup? (or 'exit' to quit)\n");
         printf("Type 'login' if you already have an account.\n");
         printf("Type 'signup' if you want to create a new account.\n");
-
+		fflush(stdout);
 
         // Read user input
         if (scanf("%s", input) != 1) {

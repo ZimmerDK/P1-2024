@@ -13,12 +13,15 @@ int main(void) {
 
 	//char* buffer = malloc(4096);
 	//int what = setvbuf(stdout, NULL, _IOFBF, 4096);
+	
+	setvbuf(stdout, NULL, _IONBF, 0);
 
 	printf("TEST?????????");
-	fflush(stdout);
+	//fflush(stdout);
 
 	establish_userdata_context();
 
+	fflush(stdout);
 
 	if (local_userContext.userPrefs->workout_counter == -1) {
 		calibrate_workout_routine(exercises_c);
