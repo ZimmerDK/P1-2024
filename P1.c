@@ -16,9 +16,6 @@ int main(void) {
 	
 	setvbuf(stdout, NULL, _IONBF, 0);
 
-	printf("TEST?????????");
-	//fflush(stdout);
-
 	establish_userdata_context();
 
 	fflush(stdout);

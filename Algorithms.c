@@ -4,20 +4,6 @@ void run_day(workout_days_t* workout_day);
 
 
 
-typedef struct set_data_t {
-	//const int estWorkoutIntensity;
-
-	int intensity;
-
-	//float score;
-} set_data_t;
-
-typedef struct workout_result_t {
-	int repChange;
-	double weightChange;
-} workout_result_t;
-
-
 /*
 int ProfilePage(FILE* userFILE, UserPreferences_t* userPrefs) {
 	int input;
@@ -132,7 +118,7 @@ workout_result_t calculate_workout(set_data_t* data, user_exercise_data_t* exerc
 		collectedScore /= maxPossibleScore;
 	}
 
-	printf("Collected Score : %lf \n", collectedScore);
+	//printf("Collected Score : %lf \n", collectedScore);
 
 	// Check if the collected score is higher or lower than the estimated intensity
 	if (collectedScore > (estIntensity + 0.5) + 0.0001) {

@@ -12,10 +12,12 @@ exercise_t exercises_c[AMOUNT_EXERCISES] = {
 	{"Deadlift", 2.5, 8, 12, COMPOUND, 8.5, BACK, NULL},
 	{"Dumbbell Military Press", 2, 6, 10, COMPOUND, 8.0, SHOULDER, NULL},
 	{"Barbell Rows", 2.5, 8, 12, COMPOUND, 8.5, BACK, NULL},
+
 	{"Romanian Deadlifts", 2.5, 6, 12, SECONDARY, 9.0, LOW_THIGH, NULL},
 	{"Lat Pull-Down", 2.5, 6, 12, SECONDARY, 9.0, BACK, NULL},
 	{"Incline Dumbbell-Press", 2, 6, 12, SECONDARY, 9.0, CHEST, NULL},
 	{"Hip-Thrusts", 2.5, 6, 12, SECONDARY, 9.0, LOW_THIGH, NULL},
+
 	{"Triceps Pushdown", 2.5, 6, 12, ISOLATION, 9.0, TRICEPS, NULL},
 	{"Seated Dumbbell Curls", 2.5, 6, 12, ISOLATION, 9.0, BICEPS, NULL},
 	{"Lateral Raises", 2.5, 6, 12, ISOLATION, 9.0, SHOULDER, NULL},

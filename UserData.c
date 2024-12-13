@@ -446,7 +446,7 @@ void fill_user_data(user_context_t* userContext, int days, int time) {
 
     // Allocate memory for workout days
     workout_days_t* workout = malloc(sizeof(workout_days_t) * 7);
-    for (int i = 0; i < days; i++) {
+    for (int i = 0; i < 7; i++) {
         // Initialize workout days with empty exercise slots
         workout[i] = (workout_days_t){
             .compound = {0},
@@ -493,7 +493,7 @@ void fill_user_data(user_context_t* userContext, int days, int time) {
 
 
     // Write workout days to file explicitly with error 
-    if (fwrite(workout, sizeof(workout_days_t), 7, userContext->userFILE) != days) {
+    if (fwrite(workout, sizeof(workout_days_t), 7, userContext->userFILE) != 7) {
 		printf("\nError writing workout days to file!\n");
 	}
 

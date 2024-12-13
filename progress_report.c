@@ -3,7 +3,7 @@
 
 void user_view_report(const user_context_t* user_context, workout_days_t* workout_day) {
 
-    int amount_of_workouts = user_context->userPrefs->workout_counter-2;
+    int amount_of_workouts = user_context->userPrefs->workout_counter-1;
     int amount_of_different_workouts = user_context->userPrefs->prefered_days;
     int input_workout_progress;
     int input_print_day;
@@ -17,17 +17,7 @@ void user_view_report(const user_context_t* user_context, workout_days_t* workou
 }
 
 
-void inputs_progress(int* input_workout_progress, int amount_of_workouts, int* input_print_day, int amount_of_different_workouts) {
-    do {
-        printf("Enter a workout to see progress from 1 - %d. \n", amount_of_different_workouts);
-        scanf(" %d", input_print_day);
-
-        if (*input_print_day > amount_of_different_workouts || *input_print_day <= 0) {
-            printf("Your total number of different workouts is: %d.\n"
-                   "Therefore enter an amount from 1 - %d:\n",
-                   amount_of_different_workouts, amount_of_different_workouts);
-        }
-    } while (*input_print_day > amount_of_different_workouts || *input_print_day <= 0);
+void inputs_progress(int* input_workout_progress, int amount_of_workouts) {
 
     do {
         printf("You have trained a total of %d times! \n", amount_of_workouts+1);
@@ -44,7 +34,19 @@ void inputs_progress(int* input_workout_progress, int amount_of_workouts, int* i
 
 
 int sort_array_progress_weight(const void* a, const void* b) {
-    return(int)-(((user_file_exercise_data*)a)->weight- ((user_file_exercise_data*)b)->weight);
+
+    user_exercise_data_t* user_exercise_data_a = (user_exercise_data_t*)a;
+	user_exercise_data_t* user_exercise_data_b = (user_exercise_data_t*)b;
+
+	if (user_exercise_data_a->weight > user_exercise_data_b->weight) {
+		return -1;
+	}
+	else if (user_exercise_data_a->weight < user_exercise_data_b->weight) {
+		return 1;
+	}
+	else {
+		return 0;
+	}
 }
 
 
@@ -84,7 +86,7 @@ void print_progress_workout_day(const user_context_t* user_context, workout_days
             // setup string
 			
 			char sign = '+';
-			if (improved_exercise[i].weight < 0) {
+			if (improved_exercise[i].weight < 0.0) {
 				sign = '-';
 			}
 

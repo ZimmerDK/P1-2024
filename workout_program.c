@@ -349,7 +349,7 @@ void set_program_day(workout_days_t* program_day, int amountOfDays, int time) {
     int counter = 0;
 
     // Sets the compound exercises, if there is time (17 minutes)
-    while((AMOUNT_COMPOUND > i) && (counter <= DifferentProgramDays) && (CompoundCounter < maxAmountOfCompound))
+    while((AMOUNT_COMPOUND > i) && (counter < DifferentProgramDays) && (CompoundCounter < maxAmountOfCompound))
     {
         if(timePerDay[day%DifferentProgramDays] >= 17) {
             program_day[day%DifferentProgramDays].compound[i] = 1;
@@ -367,7 +367,7 @@ void set_program_day(workout_days_t* program_day, int amountOfDays, int time) {
     i = 0; counter = 0;
 
     // Sets the secondary exercises, if there is time (14 minutes)
-    while(AMOUNT_SECONDARY > i && counter <= DifferentProgramDays)
+    while(AMOUNT_SECONDARY > i && counter < DifferentProgramDays)
     {
         if(timePerDay[day%DifferentProgramDays] >= 14) {
             program_day[day%DifferentProgramDays].secondary[i] = 1;
@@ -382,7 +382,7 @@ void set_program_day(workout_days_t* program_day, int amountOfDays, int time) {
     counter = 0; i = 0;
 
     // Sets the tertiary exercises, if there is time (10 minutes)
-    while((AMOUNT_TERTIARY > i) && counter <= DifferentProgramDays)
+    while((AMOUNT_TERTIARY > i) && counter < DifferentProgramDays)
     {
         if(timePerDay[day % DifferentProgramDays] >= 10) {
             program_day[day%DifferentProgramDays].tertiary[i] = 1;
