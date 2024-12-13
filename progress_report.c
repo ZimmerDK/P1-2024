@@ -8,7 +8,7 @@ void user_view_report(const user_context_t* user_context, workout_days_t* workou
     int input_workout_progress;
     int input_print_day;
 
-    inputs_progress(&input_workout_progress, amount_of_workouts, &input_print_day, amount_of_different_workouts);
+    inputs_progress(&input_workout_progress, amount_of_workouts);
     input_print_day--;
     input_workout_progress--;
 
