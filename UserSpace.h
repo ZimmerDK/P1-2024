@@ -9,6 +9,7 @@
 #include "workout_program.h"
 #include "UserData.h"
 #include "exercises.h"
+#include "Algorithms.h"
 #include "P1.h"
 #include <stdio.h>
 #include <stdlib.h>

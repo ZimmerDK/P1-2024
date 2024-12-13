@@ -2,6 +2,7 @@
 #include "exercises.h"
 #include "workout_program.h"
 #include "P1.h"
+#include "Algorithms.h"
 
 // Typedef for equipment availability using bitwise flags
 typedef long equipment_avalibility;
@@ -14,13 +15,6 @@ enum equipment_e {
     CABLE = 0x8,        // Represents cable machines
     BODYWEIGHT = 0x10,  // Represents bodyweight exercises
 };
-
-/**@brief Struct to track changes in workout performance
- * Stores the changes in number of repetitions and weight used */
-typedef struct workout_result_t {
-    int repChange;        // Change in number of reps
-    double weightChange;  // Change in weight used
-} workout_result_t;
 
 // Global path for user profile
 char userprofile_path[MAX_LENGTH+15];
