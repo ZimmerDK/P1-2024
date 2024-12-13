@@ -5,7 +5,7 @@
 #include "workout_program.h"
 #include "exercises.h"
 
-void inputs_progress(int* input_workout_progress, int amount_of_workouts, int* input_print_day, int amount_of_different_workouts);
+void inputs_progress(int* input_workout_progress, int amount_of_workouts);
 
 void user_view_report(const user_context_t* user_context, workout_days_t* workout_day);
 
