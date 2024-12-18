@@ -3,6 +3,7 @@
 #include "P1.h"
 
 #include "exercises.h"
+#include "Algorithms.h"
 
 #include<stdio.h>
 #include<math.h>
