@@ -1,7 +1,7 @@
 ﻿// P1.cpp : Defines the entry point for the application.
 //
 #include "P1.h"
-
+#include "Algorithms.h"
 #include "exercises.h"
 #include "Algorithms.h"
 
